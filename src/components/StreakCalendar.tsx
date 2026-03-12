@@ -180,12 +180,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e1e1e',
   },
   cellActive: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
   },
   cellToday: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: '#6C63FF',
+    borderColor: '#3B82F6',
   },
   cellFuture: {
     backgroundColor: '#141414',

@@ -61,7 +61,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
                       styles.bar,
                       {
                         height: barHeight,
-                        backgroundColor: item.volume > 0 ? '#6C63FF' : '#2a2a2a',
+                        backgroundColor: item.volume > 0 ? '#3B82F6' : '#2a2a2a',
                         opacity: item.volume > 0 ? (index === maxIndex ? 1 : 0.7) : 1,
                       },
                     ]}
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   maxLabel: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 10,
     fontWeight: '700',
     marginBottom: 4,

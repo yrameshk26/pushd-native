@@ -4,9 +4,12 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Modal,
+  FlatList,
   StyleSheet,
   Animated,
   RefreshControl,
+  Pressable,
 } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -19,9 +22,12 @@ import { StreakCalendar } from '../../../src/components/StreakCalendar';
 import { RecoveryWidget } from '../../../src/components/RecoveryWidget';
 import { DeloadRecommendationCard } from '../../../src/components/DeloadRecommendationCard';
 import { WeeklyReviewCard } from '../../../src/components/WeeklyReviewCard';
+import type { RecoveryData } from '../../../src/components/RecoveryWidget';
+import type { WeeklyReview } from '../../../src/components/WeeklyReviewCard';
+import type { DeloadResult } from '../../../src/components/DeloadRecommendationCard';
 import type { Routine, WorkoutListItem } from '../../../src/types/index';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface MeData {
   displayName: string;
@@ -39,25 +45,6 @@ interface VolumeWeek {
   volume: number;
 }
 
-interface DeloadResult {
-  shouldDeload: boolean;
-  reason: string;
-  suggestedWeek?: string;
-}
-
-interface WeeklyReview {
-  summary: string;
-  highlights: string[];
-  improvements: string[];
-}
-
-interface RecoveryData {
-  score: number;
-  recommendation: string;
-  sleepHours?: number;
-  sorenessLevel?: number;
-}
-
 interface PREntry {
   id: string;
   exerciseId: string;
@@ -73,16 +60,7 @@ interface ProgressSummary {
   totalVolume: number;
 }
 
-// ─── Greeting ────────────────────────────────────────────────────────────────
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-// ─── Relative date ───────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function timeAgo(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -95,9 +73,14 @@ function timeAgo(iso: string): string {
   return `${weeks} weeks ago`;
 }
 
-// ─── Skeleton placeholder ────────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
-function Skeleton({ width, height, borderRadius = 8, style }: {
+function Skeleton({
+  width,
+  height,
+  borderRadius = 8,
+  style,
+}: {
   width?: number | string;
   height: number;
   borderRadius?: number;
@@ -132,39 +115,110 @@ function Skeleton({ width, height, borderRadius = 8, style }: {
   );
 }
 
-// ─── Section wrapper ─────────────────────────────────────────────────────────
+// ─── Section header ───────────────────────────────────────────────────────────
 
-function Section({ title, icon, children }: {
-  title: string;
-  icon?: string;
-  children: React.ReactNode;
-}) {
+function SectionHeader({ icon, title }: { icon: string; title: string }) {
   return (
-    <View style={styles.section}>
-      <View style={styles.sectionHeaderRow}>
-        {icon ? <Ionicons name={icon as never} size={14} color="#888" style={{ marginRight: 6 }} /> : null}
-        <Text style={styles.sectionTitle}>{title}</Text>
-      </View>
-      {children}
+    <View style={styles.sectionHeaderRow}>
+      <Ionicons name={icon as never} size={14} color="#888" style={{ marginRight: 6 }} />
+      <Text style={styles.sectionTitle}>{title}</Text>
     </View>
   );
 }
 
-// ─── Quick action button ──────────────────────────────────────────────────────
+// ─── Start Workout Sheet ──────────────────────────────────────────────────────
 
-function QuickAction({ icon, label, color, onPress }: {
-  icon: string;
-  label: string;
-  color: string;
-  onPress: () => void;
-}) {
+interface StartWorkoutSheetProps {
+  visible: boolean;
+  onClose: () => void;
+  routines: Routine[];
+  onStartEmpty: () => void;
+  onStartRoutine: (routine: Routine) => void;
+}
+
+function StartWorkoutSheet({
+  visible,
+  onClose,
+  routines,
+  onStartEmpty,
+  onStartRoutine,
+}: StartWorkoutSheetProps) {
+  type SheetItem =
+    | { type: 'empty' }
+    | { type: 'header' }
+    | { type: 'routine'; routine: Routine };
+
+  const items: SheetItem[] = [
+    { type: 'empty' },
+    ...(routines.length > 0 ? [{ type: 'header' } as SheetItem] : []),
+    ...routines.map((r) => ({ type: 'routine', routine: r } as SheetItem)),
+  ];
+
   return (
-    <TouchableOpacity style={styles.quickAction} onPress={onPress} activeOpacity={0.7}>
-      <View style={[styles.quickActionIcon, { backgroundColor: `${color}20` }]}>
-        <Ionicons name={icon as never} size={22} color={color} />
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      onRequestClose={onClose}
+    >
+      <Pressable style={styles.sheetBackdrop} onPress={onClose} />
+      <View style={styles.sheet}>
+        {/* Drag indicator */}
+        <View style={styles.sheetHandle} />
+
+        <Text style={styles.sheetTitle}>Start Workout</Text>
+
+        <FlatList
+          data={items}
+          keyExtractor={(item, index) => {
+            if (item.type === 'empty') return 'empty';
+            if (item.type === 'header') return 'header';
+            return item.routine.id;
+          }}
+          renderItem={({ item }) => {
+            if (item.type === 'empty') {
+              return (
+                <TouchableOpacity
+                  style={styles.sheetEmptyOption}
+                  onPress={onStartEmpty}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.sheetEmptyIcon}>
+                    <Ionicons name="add-circle-outline" size={22} color="#3B82F6" />
+                  </View>
+                  <Text style={styles.sheetEmptyText}>Empty Workout</Text>
+                </TouchableOpacity>
+              );
+            }
+            if (item.type === 'header') {
+              return <Text style={styles.sheetRoutinesHeader}>YOUR ROUTINES</Text>;
+            }
+            const routine = item.routine;
+            const exCount =
+              routine._count?.exercises ?? routine.exercises?.length ?? 0;
+            return (
+              <TouchableOpacity
+                style={styles.sheetRoutineRow}
+                onPress={() => onStartRoutine(routine)}
+                activeOpacity={0.75}
+              >
+                <View style={styles.sheetRoutineInfo}>
+                  <Text style={styles.sheetRoutineName} numberOfLines={1}>
+                    {routine.name}
+                  </Text>
+                  <Text style={styles.sheetRoutineMeta}>
+                    {exCount} exercise{exCount !== 1 ? 's' : ''}
+                  </Text>
+                </View>
+                <Ionicons name="play-circle-outline" size={22} color="#3B82F6" />
+              </TouchableOpacity>
+            );
+          }}
+          style={styles.sheetList}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
-      <Text style={styles.quickActionLabel}>{label}</Text>
-    </TouchableOpacity>
+    </Modal>
   );
 }
 
@@ -175,8 +229,9 @@ export default function DashboardScreen() {
   const startWorkout = useWorkoutStore((s) => s.startWorkout);
   const startFromRoutine = useWorkoutStore((s) => s.startFromRoutine);
   const [refreshing, setRefreshing] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  // ── Parallel queries — each silently hides on error ──────────────────────
+  // ── Parallel queries ─────────────────────────────────────────────────────
 
   const { data: me, isLoading: meLoading } = useQuery<MeData>({
     queryKey: ['me'],
@@ -205,17 +260,17 @@ export default function DashboardScreen() {
       const res = await api.get('/api/ai/deload-check');
       return res.data.data ?? res.data;
     },
-    staleTime: 24 * 60 * 60 * 1000, // 24h
+    staleTime: 24 * 60 * 60 * 1000,
     retry: 1,
   });
 
   const { data: weeklyReview, isLoading: reviewLoading } = useQuery<WeeklyReview>({
     queryKey: ['weekly-review'],
     queryFn: async () => {
-      const res = await api.get('/api/ai/weekly-review');
+      const res = await api.get('/api/weekly-review/latest');
       return res.data.data ?? res.data;
     },
-    staleTime: 6 * 60 * 60 * 1000, // 6h
+    staleTime: 6 * 60 * 60 * 1000,
     retry: 1,
   });
 
@@ -235,8 +290,12 @@ export default function DashboardScreen() {
   });
 
   const { data: routinesData, isLoading: routinesLoading } = useQuery<{ routines: Routine[] }>({
-    queryKey: ['routines-suggested'],
-    queryFn: async () => (await api.get('/api/routines', { params: { limit: 1 } })).data,
+    queryKey: ['routines-dashboard'],
+    queryFn: async () => {
+      const res = await api.get('/api/routines');
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data ?? res.data?.routines ?? []);
+      return { routines: list };
+    },
     retry: 1,
   });
 
@@ -248,14 +307,15 @@ export default function DashboardScreen() {
 
   // ── Derived values ────────────────────────────────────────────────────────
 
-  const suggestedRoutine = routinesData?.routines?.[0] ?? null;
-  const recentPRs = progressSummary?.recentPRs ?? [];
-  const activeDates = streakData?.activeDates ?? [];
-  const streak = streakData?.streak ?? 0;
+  const routines: Routine[] = routinesData?.routines ?? [];
+  const suggestedRoutine: Routine | null = routines[0] ?? null;
+  const recentPRs: PREntry[] = progressSummary?.recentPRs ?? [];
+  const activeDates: string[] = streakData?.activeDates ?? [];
+  const streak: number = streakData?.streak ?? 0;
   const chartData: VolumeWeek[] = volumeData ?? [];
   const recentWorkouts: WorkoutListItem[] = recentWorkoutsData?.workouts ?? [];
 
-  // ── Pull-to-refresh ────────────────────────────────────────────────────────
+  // ── Pull-to-refresh ───────────────────────────────────────────────────────
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -263,18 +323,24 @@ export default function DashboardScreen() {
     setRefreshing(false);
   }, [queryClient]);
 
-  // ── Suggested routine start handler ───────────────────────────────────────
+  // ── Workout handlers ──────────────────────────────────────────────────────
 
-  function handleStartRoutine() {
-    if (!suggestedRoutine) return;
-    const exercises = (suggestedRoutine.exercises ?? []).map((e) => ({
+  function handleStartEmpty() {
+    setSheetOpen(false);
+    startWorkout('Workout');
+    router.push('/(app)/workout/active');
+  }
+
+  function handleStartRoutine(routine: Routine) {
+    setSheetOpen(false);
+    const exercises = (routine.exercises ?? []).map((e) => ({
       exerciseId: e.exerciseId,
       exerciseName: e.exercise?.name ?? e.exerciseId,
       order: e.order,
       sets: [],
       notes: e.notes,
     }));
-    startFromRoutine(suggestedRoutine.id, suggestedRoutine.name, exercises);
+    startFromRoutine(routine.id, routine.name, exercises);
     router.push('/(app)/workout/active');
   }
 
@@ -289,15 +355,15 @@ export default function DashboardScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#6C63FF"
-            colors={['#6C63FF']}
+            tintColor="#3B82F6"
+            colors={['#3B82F6']}
           />
         }
       >
-        {/* ── Header ──────────────────────────────────────────────── */}
+        {/* ── Section 0: Header ───────────────────────────────────────── */}
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
-            <Text style={styles.greeting}>{getGreeting()},</Text>
+            <Text style={styles.greeting}>Good to see you,</Text>
             {meLoading ? (
               <Skeleton width={140} height={28} borderRadius={6} style={{ marginTop: 4 }} />
             ) : (
@@ -307,77 +373,56 @@ export default function DashboardScreen() {
             )}
           </View>
 
-          {/* Streak badge — only shown when streak > 0 */}
+          {/* Streak badge */}
           {!streakLoading && streak > 0 && (
             <View style={styles.streakBadge}>
-              <Text style={styles.streakFlame}>🔥</Text>
+              <Ionicons name="flame-outline" size={16} color="#60a5fa" />
               <Text style={styles.streakCount}>{streak}</Text>
             </View>
           )}
         </View>
 
-        {/* ── Quick actions ────────────────────────────────────────── */}
-        <View style={styles.quickActionsRow}>
-          <QuickAction
-            icon="barbell-outline"
-            label="Start Workout"
-            color="#6C63FF"
-            onPress={() => {
-              startWorkout('Workout');
-              router.push('/(app)/workout/active');
-            }}
-          />
-          <QuickAction
-            icon="restaurant-outline"
-            label="Log Food"
-            color="#10B981"
-            onPress={() => router.push('/(app)/nutrition/log-food')}
-          />
-          <QuickAction
-            icon="body-outline"
-            label="Log Weight"
-            color="#F59E0B"
-            onPress={() => router.push('/(app)/progress/body')}
-          />
-        </View>
+        {/* ── Section 1: START WORKOUT button ─────────────────────────── */}
+        <TouchableOpacity
+          style={styles.startWorkoutBtn}
+          onPress={() => setSheetOpen(true)}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="play" size={20} color="#fff" style={{ marginRight: 10 }} />
+          <Text style={styles.startWorkoutText}>START WORKOUT</Text>
+        </TouchableOpacity>
 
-        {/* ── Recovery widget ───────────────────────────────────────── */}
+        {/* ── Section 2: Recovery Widget ───────────────────────────────── */}
         {recoveryLoading ? (
-          <Skeleton height={110} borderRadius={16} style={{ marginBottom: 16 }} />
+          <Skeleton height={170} borderRadius={14} style={styles.cardGap} />
         ) : recoveryData ? (
-          <View style={styles.cardSpacing}>
-            <RecoveryWidget
-              score={recoveryData.score}
-              recommendation={recoveryData.recommendation}
-              sleepHours={recoveryData.sleepHours}
-              sorenessLevel={recoveryData.sorenessLevel}
-            />
+          <View style={styles.cardGap}>
+            <RecoveryWidget data={recoveryData} />
           </View>
         ) : null}
 
-        {/* ── Deload recommendation ─────────────────────────────────── */}
-        {deloadLoading ? (
-          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 16 }} />
-        ) : deloadData?.shouldDeload ? (
-          <View style={styles.cardSpacing}>
-            <DeloadRecommendationCard recommendation={deloadData} />
+        {/* ── Section 3: Deload Card ───────────────────────────────────── */}
+        {!deloadLoading && deloadData?.shouldDeload ? (
+          <View style={styles.cardGap}>
+            <DeloadRecommendationCard data={deloadData} />
           </View>
         ) : null}
 
-        {/* ── AI weekly review ──────────────────────────────────────── */}
+        {/* ── Section 4: Weekly Review Card ───────────────────────────── */}
         {reviewLoading ? (
-          <Skeleton height={100} borderRadius={16} style={{ marginBottom: 16 }} />
+          <Skeleton height={140} borderRadius={14} style={styles.cardGap} />
         ) : weeklyReview ? (
-          <View style={styles.cardSpacing}>
+          <View style={styles.cardGap}>
             <WeeklyReviewCard review={weeklyReview} />
           </View>
         ) : null}
 
-        {/* ── Suggested routine ─────────────────────────────────────── */}
+        {/* ── Section 5: Suggested Today ───────────────────────────────── */}
         {routinesLoading ? (
-          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 24 }} />
+          <Skeleton height={80} borderRadius={14} style={styles.sectionGap} />
         ) : suggestedRoutine ? (
-          <Section title="Suggested Today" icon="flash-outline">
+          <View style={styles.sectionGap}>
+            <SectionHeader icon="flash-outline" title="SUGGESTED TODAY" />
             <View style={styles.routineCard}>
               <View style={styles.routineInfo}>
                 <Text style={styles.routineName} numberOfLines={1}>
@@ -392,122 +437,133 @@ export default function DashboardScreen() {
                     {suggestedRoutine.exercises.length > 4 ? ' …' : ''}
                   </Text>
                 )}
-                <Text style={styles.routineMeta}>
-                  {suggestedRoutine._count?.exercises ?? suggestedRoutine.exercises?.length ?? 0} exercises
-                </Text>
               </View>
               <TouchableOpacity
-                style={styles.startRoutineBtn}
-                onPress={handleStartRoutine}
+                style={styles.startBtn}
+                onPress={() => handleStartRoutine(suggestedRoutine)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.startRoutineText}>Start</Text>
+                <Text style={styles.startBtnText}>Start</Text>
               </TouchableOpacity>
             </View>
-          </Section>
+          </View>
         ) : null}
 
-        {/* ── Recent PRs ───────────────────────────────────────────── */}
+        {/* ── Section 6: Recent PRs ────────────────────────────────────── */}
         {progressLoading ? (
-          <Skeleton height={90} borderRadius={14} style={{ marginBottom: 24 }} />
+          <Skeleton height={90} borderRadius={14} style={styles.sectionGap} />
         ) : recentPRs.length > 0 ? (
-          <Section title="Recent PRs" icon="trophy-outline">
-            {recentPRs.slice(0, 3).map((pr) => (
-              <TouchableOpacity
-                key={pr.id}
-                style={styles.prRow}
-                onPress={() => router.push(`/(app)/progress/${pr.exerciseId}` as never)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.prBadge}>
-                  <Text style={styles.prBadgeText}>PR</Text>
-                </View>
-                <View style={styles.prInfo}>
-                  <Text style={styles.prName} numberOfLines={1}>{pr.exerciseName}</Text>
-                  <Text style={styles.prMeta}>
-                    {pr.weight}kg × {pr.reps} reps
+          <View style={styles.sectionGap}>
+            <SectionHeader icon="trophy-outline" title="RECENT PRs" />
+            <View style={styles.card}>
+              {recentPRs.slice(0, 3).map((pr, index) => (
+                <TouchableOpacity
+                  key={pr.id}
+                  style={[
+                    styles.prRow,
+                    index < Math.min(recentPRs.length, 3) - 1 && styles.prRowBorder,
+                  ]}
+                  onPress={() =>
+                    router.push(`/(app)/progress/${pr.exerciseId}` as never)
+                  }
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.prName} numberOfLines={1}>
+                    {pr.exerciseName}
                   </Text>
-                </View>
-                <Text style={styles.prDate}>
-                  {new Date(pr.achievedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </Section>
+                  <Text style={styles.prValue}>
+                    {pr.weight}kg × {pr.reps}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         ) : null}
 
-        {/* ── Weekly Volume chart ────────────────────────────────────── */}
-        <Section title="Weekly Volume" icon="bar-chart-outline">
-          {volumeLoading ? (
-            <Skeleton height={160} borderRadius={12} />
-          ) : (
-            <View style={styles.chartCard}>
+        {/* ── Section 7: Weekly Volume chart ──────────────────────────── */}
+        <View style={styles.sectionGap}>
+          <SectionHeader icon="flash-outline" title="WEEKLY VOLUME" />
+          <View style={styles.card}>
+            {volumeLoading ? (
+              <Skeleton height={160} borderRadius={8} />
+            ) : (
               <VolumeChart data={chartData} />
-            </View>
-          )}
-        </Section>
+            )}
+          </View>
+        </View>
 
-        {/* ── Streak / Activity calendar ────────────────────────────── */}
-        {streakLoading ? (
-          <Skeleton height={130} borderRadius={12} style={{ marginBottom: 24 }} />
-        ) : (
-          <Section title="Activity" icon="flame-outline">
-            <View style={styles.calendarCard}>
+        {/* ── Section 8: Activity calendar ────────────────────────────── */}
+        <View style={styles.sectionGap}>
+          <SectionHeader icon="flame-outline" title="ACTIVITY" />
+          {streakLoading ? (
+            <Skeleton height={130} borderRadius={14} />
+          ) : (
+            <View style={styles.card}>
               <StreakCalendar activeDates={activeDates} weeks={16} />
             </View>
-          </Section>
-        )}
+          )}
+        </View>
 
-        {/* ── Recent Workouts ───────────────────────────────────────── */}
+        {/* ── Section 9: Recent Workouts ──────────────────────────────── */}
         {recentWorkoutsLoading ? (
-          <Skeleton height={150} borderRadius={14} style={{ marginBottom: 24 }} />
+          <Skeleton height={160} borderRadius={14} style={styles.sectionGap} />
         ) : recentWorkouts.length > 0 ? (
-          <Section title="Recent Workouts" icon="time-outline">
-            <View style={styles.recentWorkoutsCard}>
+          <View style={styles.sectionGap}>
+            <View style={styles.recentWorkoutsHeader}>
+              <Text style={styles.recentWorkoutsTitle}>Recent Workouts</Text>
               <TouchableOpacity
-                style={styles.recentWorkoutsSeeAll}
                 onPress={() => router.push('/(app)/workout/history' as never)}
-                activeOpacity={0.7}
+                hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
               >
-                <Text style={styles.recentWorkoutsSeeAllText}>See all</Text>
-                <Ionicons name="chevron-forward" size={13} color="#6C63FF" />
+                <Text style={styles.seeAllLink}>See all →</Text>
               </TouchableOpacity>
+            </View>
+            <View style={styles.card}>
               {recentWorkouts.map((w, index) => (
                 <TouchableOpacity
                   key={w.id}
                   style={[
-                    styles.recentWorkoutRow,
-                    index < recentWorkouts.length - 1 && styles.recentWorkoutRowBorder,
+                    styles.workoutRow,
+                    index < recentWorkouts.length - 1 && styles.workoutRowBorder,
                   ]}
                   onPress={() => router.push(`/(app)/workout/${w.id}` as never)}
                   activeOpacity={0.7}
                 >
-                  <View style={styles.recentWorkoutInfo}>
-                    <Text style={styles.recentWorkoutTitle} numberOfLines={1}>{w.title}</Text>
-                    <Text style={styles.recentWorkoutMeta}>
-                      {w.exercises.length} exercise{w.exercises.length !== 1 ? 's' : ''}
-                      {'  ·  '}
-                      {w.volume >= 1000
-                        ? `${(w.volume / 1000).toFixed(1)}t`
-                        : `${Math.round(w.volume)}kg`}
+                  <View style={styles.workoutRowInfo}>
+                    <Text style={styles.workoutTitle} numberOfLines={1}>
+                      {w.title}
+                    </Text>
+                    <Text style={styles.workoutMeta} numberOfLines={1}>
+                      {w.exercises
+                        .map((e) => e.exerciseName)
+                        .filter(Boolean)
+                        .join(', ')}
                     </Text>
                   </View>
-                  <Text style={styles.recentWorkoutDate}>{timeAgo(w.completedAt)}</Text>
-                  <Ionicons name="chevron-forward" size={14} color="#444" style={{ marginLeft: 6 }} />
+                  <Text style={styles.workoutDate}>{timeAgo(w.completedAt)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-          </Section>
+          </View>
         ) : null}
 
         {/* Bottom padding */}
         <View style={{ height: 32 }} />
       </ScrollView>
+
+      {/* ── Start Workout Sheet ──────────────────────────────────────── */}
+      <StartWorkoutSheet
+        visible={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        routines={routines}
+        onStartEmpty={handleStartEmpty}
+        onStartRoutine={handleStartRoutine}
+      />
     </SafeAreaView>
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -518,257 +574,287 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  // Header
+  // ── Header ────────────────────────────────────────────────────────────────
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   headerLeft: {
     flex: 1,
   },
   greeting: {
-    color: '#666',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#888',
+    fontSize: 13,
+    fontWeight: '400',
   },
   displayName: {
     color: '#fff',
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '800',
     marginTop: 2,
-    letterSpacing: -0.5,
+    letterSpacing: -0.4,
   },
   streakBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#1a1a0a',
+    backgroundColor: '#1e3a5f',
     borderWidth: 1,
-    borderColor: '#3d3000',
+    borderColor: '#3B82F630',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginTop: 4,
   },
-  streakFlame: {
-    fontSize: 16,
-  },
   streakCount: {
-    color: '#F59E0B',
-    fontSize: 16,
+    color: '#60a5fa',
+    fontSize: 14,
     fontWeight: '800',
   },
 
-  // Quick actions
-  quickActionsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 24,
-  },
-  quickAction: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+  // ── Start workout button ──────────────────────────────────────────────────
+  startWorkoutBtn: {
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    gap: 8,
-  },
-  quickActionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    paddingVertical: 16,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
   },
-  quickActionLabel: {
-    color: '#ccc',
-    fontSize: 11,
-    fontWeight: '600',
-    textAlign: 'center',
+  startWorkoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 
-  // Card spacing
-  cardSpacing: {
+  // ── Spacing helpers ───────────────────────────────────────────────────────
+  cardGap: {
     marginBottom: 16,
   },
-
-  // Sections
-  section: {
+  sectionGap: {
     marginBottom: 24,
   },
+
+  // ── Section header ────────────────────────────────────────────────────────
   sectionHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   sectionTitle: {
     color: '#888',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
 
-  // Suggested routine card
-  routineCard: {
-    backgroundColor: '#1a1a1a',
+  // ── Generic card ─────────────────────────────────────────────────────────
+  card: {
+    backgroundColor: '#111827',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
-    padding: 16,
+    borderColor: '#1f2937',
+    padding: 14,
+    overflow: 'hidden',
+  },
+
+  // ── Suggested routine ────────────────────────────────────────────────────
+  routineCard: {
+    backgroundColor: '#111827',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#1f2937',
+    padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
   },
   routineInfo: {
     flex: 1,
     minWidth: 0,
+    marginRight: 10,
   },
   routineName: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-    marginBottom: 3,
+    marginBottom: 4,
   },
   routineExercises: {
     color: '#888',
     fontSize: 12,
-    marginBottom: 4,
   },
-  routineMeta: {
-    color: '#6C63FF',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  startRoutineBtn: {
-    backgroundColor: '#6C63FF',
+  startBtn: {
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
-    paddingVertical: 9,
-    paddingHorizontal: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    flexShrink: 0,
   },
-  startRoutineText: {
+  startBtnText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '700',
   },
 
-  // PRs
+  // ── Recent PRs ───────────────────────────────────────────────────────────
   prRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    gap: 10,
+    justifyContent: 'space-between',
+    paddingVertical: 8,
   },
-  prBadge: {
-    backgroundColor: '#F59E0B20',
-    borderRadius: 6,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderWidth: 1,
-    borderColor: '#F59E0B40',
-  },
-  prBadgeText: {
-    color: '#F59E0B',
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  prInfo: {
-    flex: 1,
-    minWidth: 0,
+  prRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#1f2937',
   },
   prName: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 2,
+    color: '#aaa',
+    fontSize: 13,
+    flex: 1,
+    marginRight: 10,
   },
-  prMeta: {
-    color: '#888',
-    fontSize: 12,
-  },
-  prDate: {
-    color: '#555',
-    fontSize: 12,
+  prValue: {
+    color: '#60a5fa',
+    fontSize: 13,
+    fontWeight: '700',
     flexShrink: 0,
   },
 
-  // Charts
-  chartCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    padding: 16,
-  },
-  calendarCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    padding: 16,
-  },
-
-  // Recent workouts
-  recentWorkoutsCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    overflow: 'hidden',
-  },
-  recentWorkoutsSeeAll: {
+  // ── Recent workouts ───────────────────────────────────────────────────────
+  recentWorkoutsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 14,
-    paddingTop: 10,
-    paddingBottom: 4,
-    gap: 2,
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  recentWorkoutsSeeAllText: {
-    color: '#6C63FF',
-    fontSize: 12,
+  recentWorkoutsTitle: {
+    color: '#fff',
+    fontSize: 15,
     fontWeight: '600',
   },
-  recentWorkoutRow: {
+  seeAllLink: {
+    color: '#60a5fa',
+    fontSize: 13,
+  },
+  workoutRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    gap: 8,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
   },
-  recentWorkoutRowBorder: {
-    borderTopWidth: 1,
-    borderTopColor: '#222',
+  workoutRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#1f2937',
   },
-  recentWorkoutInfo: {
+  workoutRowInfo: {
     flex: 1,
     minWidth: 0,
+    marginRight: 10,
   },
-  recentWorkoutTitle: {
+  workoutTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  workoutMeta: {
+    color: '#888',
+    fontSize: 11,
+  },
+  workoutDate: {
+    color: '#888',
+    fontSize: 11,
+    flexShrink: 0,
+  },
+
+  // ── Start workout sheet ───────────────────────────────────────────────────
+  sheetBackdrop: {
+    flex: 1,
+    backgroundColor: '#00000080',
+  },
+  sheet: {
+    backgroundColor: '#111827',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    maxHeight: '70%',
+  },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#374151',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: 10,
+    marginBottom: 16,
+  },
+  sheetTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  sheetList: {
+    flexGrow: 0,
+  },
+  sheetEmptyOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    backgroundColor: '#1f2937',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sheetEmptyIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1e3a5f',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sheetEmptyText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  sheetRoutinesHeader: {
+    color: '#888',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+  sheetRoutineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1f2937',
+  },
+  sheetRoutineInfo: {
+    flex: 1,
+    minWidth: 0,
+    marginRight: 12,
+  },
+  sheetRoutineName: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 2,
   },
-  recentWorkoutMeta: {
-    color: '#666',
+  sheetRoutineMeta: {
+    color: '#888',
     fontSize: 12,
-  },
-  recentWorkoutDate: {
-    color: '#555',
-    fontSize: 12,
-    flexShrink: 0,
   },
 });

@@ -1,170 +1,243 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface MuscleRecovery {
+  muscle: string;
+  label: string;
+  hoursRested: number | null;
+  recoveryPct: number;
+  status: 'fresh' | 'recovering' | 'fatigued';
+}
+
+export interface RecoveryData {
+  score: number;
+  label: string;
+  insight: string;
+  weekWorkouts: number;
+  weekVolume: number;
+  trainedMuscles: MuscleRecovery[];
+  freshMuscles: string[];
+}
 
 interface RecoveryWidgetProps {
-  score: number; // 0-100
-  recommendation: string;
-  sleepHours?: number;
-  sorenessLevel?: number; // 1-5
+  data: RecoveryData;
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 80) return '#10B981'; // green
-  if (score >= 50) return '#F59E0B'; // yellow/amber
-  return '#EF4444'; // red
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function scoreColor(score: number): string {
+  if (score >= 80) return '#4ade80'; // green-400
+  if (score >= 60) return '#facc15'; // yellow-400
+  return '#fb923c'; // orange-400
 }
 
-function getScoreLabel(score: number): string {
-  if (score >= 80) return 'Optimal';
-  if (score >= 65) return 'Good';
-  if (score >= 50) return 'Fair';
-  if (score >= 35) return 'Poor';
-  return 'Rest Needed';
+function scoreBgColor(score: number): string {
+  if (score >= 80) return '#022c0f'; // deep green bg
+  if (score >= 60) return '#1c1200'; // deep yellow/amber bg
+  return '#1c0a00'; // deep orange bg
 }
 
-function getSorenessLabel(level: number): string {
-  const labels = ['', 'None', 'Mild', 'Moderate', 'High', 'Severe'];
-  return labels[Math.min(level, 5)] ?? 'Unknown';
+function scoreBorderColor(score: number): string {
+  if (score >= 80) return '#16a34a40'; // green border
+  if (score >= 60) return '#d9770040'; // amber border
+  return '#ea580c40'; // orange border
 }
 
-export function RecoveryWidget({ score, recommendation, sleepHours, sorenessLevel }: RecoveryWidgetProps) {
-  const clampedScore = Math.max(0, Math.min(100, score));
-  const color = getScoreColor(clampedScore);
-  const label = getScoreLabel(clampedScore);
+function muscleBarColor(status: MuscleRecovery['status']): string {
+  if (status === 'fresh') return '#22c55e'; // green-500
+  if (status === 'recovering') return '#eab308'; // yellow-500
+  return '#f97316'; // orange-500
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function RecoveryWidget({ data }: RecoveryWidgetProps) {
+  const color = scoreColor(data.score);
+  const bgColor = scoreBgColor(data.score);
+  const borderColor = scoreBorderColor(data.score);
+
+  const volumeLabel =
+    data.weekVolume > 0
+      ? ` · ${(data.weekVolume / 1000).toFixed(1)}t volume`
+      : '';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Recovery Score</Text>
+    <View style={[styles.container, { backgroundColor: bgColor, borderColor }]}>
+      {/* Header row */}
+      <View style={styles.headerRow}>
+        <View style={styles.headerLeft}>
+          <Ionicons name="pulse-outline" size={16} color={color} />
+          <Text style={styles.recoveryLabel}>RECOVERY</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => router.push('/(app)/coach')}
+          hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          style={styles.coachLink}
+        >
+          <Text style={styles.coachLinkText}>Ask Coach ›</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.body}>
-        {/* Circular score display */}
-        <View style={[styles.scoreCircle, { borderColor: color }]}>
-          <Text style={[styles.scoreNumber, { color }]}>{clampedScore}</Text>
-          <Text style={styles.scoreMax}>/100</Text>
-        </View>
-
-        <View style={styles.rightContent}>
-          <Text style={[styles.scoreLabel, { color }]}>{label}</Text>
-          <Text style={styles.recommendation} numberOfLines={3}>
-            {recommendation}
+      {/* Score + label row */}
+      <View style={styles.scoreRow}>
+        <Text style={[styles.scoreNumber, { color }]}>{data.score}</Text>
+        <View style={styles.scoreMeta}>
+          <Text style={styles.scoreLabel}>{data.label}</Text>
+          <Text style={styles.scoreSub}>
+            {data.weekWorkouts} workout{data.weekWorkouts !== 1 ? 's' : ''} this week{volumeLabel}
           </Text>
-
-          {/* Indicators row */}
-          {(sleepHours !== undefined || sorenessLevel !== undefined) && (
-            <View style={styles.indicators}>
-              {sleepHours !== undefined && (
-                <View style={styles.indicator}>
-                  <Text style={styles.indicatorIcon}>😴</Text>
-                  <Text style={styles.indicatorText}>{sleepHours}h sleep</Text>
-                </View>
-              )}
-              {sorenessLevel !== undefined && (
-                <View style={styles.indicator}>
-                  <Text style={styles.indicatorIcon}>💪</Text>
-                  <Text style={styles.indicatorText}>
-                    {getSorenessLabel(sorenessLevel)} soreness
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
         </View>
       </View>
 
-      {/* Score bar */}
-      <View style={styles.barTrack}>
-        <View style={[styles.barFill, { width: `${clampedScore}%` as unknown as number, backgroundColor: color }]} />
-      </View>
+      {/* Insight */}
+      <Text style={styles.insight}>{data.insight}</Text>
+
+      {/* Muscle recovery bars */}
+      {data.trainedMuscles.length > 0 && (
+        <View style={styles.muscleList}>
+          {data.trainedMuscles.slice(0, 4).map((m) => (
+            <View key={m.muscle} style={styles.muscleRow}>
+              <Text style={styles.muscleLabel} numberOfLines={1}>
+                {m.label}
+              </Text>
+              <View style={styles.barTrack}>
+                <View
+                  style={[
+                    styles.barFill,
+                    {
+                      width: `${m.recoveryPct}%` as unknown as number,
+                      backgroundColor: muscleBarColor(m.status),
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={styles.musclePct}>{m.recoveryPct}%</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Fresh muscles */}
+      {data.freshMuscles.length > 0 && (
+        <Text style={styles.freshLine}>
+          ✓ Fresh: {data.freshMuscles.slice(0, 3).join(', ')}
+        </Text>
+      )}
     </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    padding: 16,
   },
-  header: {
-    marginBottom: 14,
+
+  // Header
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  title: {
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  recoveryLabel: {
     color: '#888',
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  body: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 14,
-  },
-  scoreCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#111',
-    flexShrink: 0,
-  },
-  scoreNumber: {
-    fontSize: 28,
-    fontWeight: '800',
-    lineHeight: 30,
-  },
-  scoreMax: {
-    color: '#555',
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  rightContent: {
-    flex: 1,
-  },
-  scoreLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  recommendation: {
-    color: '#aaa',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  indicators: {
-    flexDirection: 'row',
-    gap: 12,
-    flexWrap: 'wrap',
-  },
-  indicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  indicatorIcon: {
+  coachLink: {},
+  coachLinkText: {
+    color: '#888',
     fontSize: 12,
   },
-  indicatorText: {
-    color: '#666',
+
+  // Score row
+  scoreRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 12,
+    marginBottom: 10,
+  },
+  scoreNumber: {
+    fontSize: 48,
+    fontWeight: '800',
+    lineHeight: 52,
+  },
+  scoreMeta: {
+    marginBottom: 4,
+  },
+  scoreLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  scoreSub: {
+    color: '#888',
     fontSize: 11,
-    fontWeight: '500',
+  },
+
+  // Insight
+  insight: {
+    color: '#888',
+    fontSize: 11,
+    lineHeight: 16,
+    marginBottom: 12,
+  },
+
+  // Muscle bars
+  muscleList: {
+    gap: 6,
+    marginBottom: 8,
+  },
+  muscleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  muscleLabel: {
+    color: '#888',
+    fontSize: 11,
+    width: 72,
+    flexShrink: 0,
   },
   barTrack: {
-    height: 4,
-    backgroundColor: '#2a2a2a',
-    borderRadius: 2,
+    flex: 1,
+    height: 6,
+    backgroundColor: '#ffffff15',
+    borderRadius: 3,
     overflow: 'hidden',
   },
   barFill: {
-    height: 4,
-    borderRadius: 2,
+    height: 6,
+    borderRadius: 3,
+  },
+  musclePct: {
+    color: '#888',
+    fontSize: 11,
+    width: 32,
+    textAlign: 'right',
+    flexShrink: 0,
+  },
+
+  // Fresh muscles
+  freshLine: {
+    color: '#86efac', // green-300
+    fontSize: 11,
+    marginTop: 4,
   },
 });
