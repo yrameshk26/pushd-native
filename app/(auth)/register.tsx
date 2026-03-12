@@ -6,6 +6,7 @@ import {
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/store/auth';
+import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
 
 interface PasswordStrength {
   hasMinLength: boolean;
@@ -80,8 +81,23 @@ export default function RegisterScreen() {
   const confirmRef = useRef<TextInput>(null);
 
   const register = useAuthStore((s) => s.register);
+  const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
   const strength = checkPasswordStrength(password);
   const allRulesMet = Object.values(strength).every(Boolean);
+
+  const handleGoogleSignUp = async () => {
+    if (googleError === 'Google sign-in not available') {
+      Alert.alert(
+        'Package Required',
+        'Install expo-auth-session to enable Google sign-up:\n\nnpx expo install expo-auth-session expo-web-browser expo-crypto',
+      );
+      return;
+    }
+    await promptAsync();
+    if (googleError) {
+      Alert.alert('Google Sign-Up Failed', googleError);
+    }
+  };
 
   const handleRegister = async () => {
     const trimmedEmail = email.trim().toLowerCase();
@@ -201,6 +217,31 @@ export default function RegisterScreen() {
           )}
         </TouchableOpacity>
 
+        {/* Divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Google Sign-Up */}
+        <TouchableOpacity
+          style={[styles.googleButton, googleLoading && styles.googleButtonDisabled]}
+          onPress={handleGoogleSignUp}
+          disabled={googleLoading}
+        >
+          {googleLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <View style={styles.googleIconCircle}>
+                <Text style={styles.googleIconText}>G</Text>
+              </View>
+              <Text style={styles.googleButtonText}>Sign up with Google</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
         <View style={styles.loginRow}>
           <Text style={styles.loginText}>Already have an account? </Text>
           <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
@@ -241,6 +282,22 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.5 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#333' },
+  dividerText: { color: '#555', fontSize: 14, marginHorizontal: 12 },
+  googleButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#333', marginBottom: 4,
+  },
+  googleButtonDisabled: { opacity: 0.6 },
+  googleIconCircle: {
+    width: 24, height: 24, borderRadius: 12,
+    backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center',
+    marginRight: 10,
+  },
+  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700' },
+  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
   loginText: { color: '#888', fontSize: 15 },
   loginLink: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },

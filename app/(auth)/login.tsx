@@ -5,24 +5,41 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
+import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
 
 export default function LoginScreen() {
   const { message } = useLocalSearchParams<{ message?: string }>();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const sendOtp = useAuthStore((s) => s.sendOtp);
+  const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   const handleSend = async () => {
     const trimmed = email.trim().toLowerCase();
-    if (!trimmed) return;
+    if (!trimmed || !password) return;
     setLoading(true);
     try {
-      await sendOtp(trimmed);
+      await sendOtp(trimmed, password);
       router.push('/(auth)/verify-otp');
     } catch {
-      Alert.alert('Error', 'Could not send code. Please check your email and try again.');
+      Alert.alert('Error', 'Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    if (googleError === 'Google sign-in not available') {
+      Alert.alert(
+        'Package Required',
+        'Install expo-auth-session to enable Google sign-in:\n\nnpx expo install expo-auth-session expo-web-browser expo-crypto',
+      );
+      return;
+    }
+    await promptAsync();
+    if (googleError) {
+      Alert.alert('Google Sign-In Failed', googleError);
     }
   };
 
@@ -33,7 +50,7 @@ export default function LoginScreen() {
     >
       <View style={styles.inner}>
         <Text style={styles.title}>Pushd</Text>
-        <Text style={styles.subtitle}>Enter your email to continue</Text>
+        <Text style={styles.subtitle}>Sign in to your account</Text>
 
         {message ? (
           <View style={styles.successBanner}>
@@ -50,15 +67,52 @@ export default function LoginScreen() {
           autoComplete="email"
           value={email}
           onChangeText={setEmail}
+          returnKeyType="next"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#666"
+          secureTextEntry
+          autoCapitalize="none"
+          autoComplete="password"
+          value={password}
+          onChangeText={setPassword}
           onSubmitEditing={handleSend}
-          returnKeyType="send"
+          returnKeyType="done"
         />
 
         <TouchableOpacity style={styles.button} onPress={handleSend} disabled={loading}>
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Send Code</Text>
+            <Text style={styles.buttonText}>Continue</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Google Sign-In */}
+        <TouchableOpacity
+          style={[styles.googleButton, googleLoading && styles.googleButtonDisabled]}
+          onPress={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
+          {googleLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <View style={styles.googleIconCircle}>
+                <Text style={styles.googleIconText}>G</Text>
+              </View>
+              <Text style={styles.googleButtonText}>Continue with Google</Text>
+            </>
           )}
         </TouchableOpacity>
 
@@ -100,6 +154,22 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center',
   },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#333' },
+  dividerText: { color: '#555', fontSize: 14, marginHorizontal: 12 },
+  googleButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#333', marginBottom: 4,
+  },
+  googleButtonDisabled: { opacity: 0.6 },
+  googleIconCircle: {
+    width: 24, height: 24, borderRadius: 12,
+    backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center',
+    marginRight: 10,
+  },
+  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700' },
+  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   forgotButton: { alignItems: 'center', marginTop: 20 },
   forgotText: { color: '#888', fontSize: 15 },
   registerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 16 },
