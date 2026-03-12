@@ -38,8 +38,8 @@ export interface SavedWorkoutSet {
   id: string;
   order: number;
   type: 'NORMAL' | 'WARMUP' | 'DROP' | 'FAILURE';
-  weight?: number;
-  reps?: number;
+  weight?: number | null;
+  reps?: number | null;
   isCompleted: boolean;
   isPR: boolean;
 }
@@ -47,25 +47,44 @@ export interface SavedWorkoutSet {
 export interface SavedWorkoutExercise {
   id: string;
   exerciseId: string;
+  /** Convenience alias kept for backward compat; prefer exercise.name */
   exerciseName: string;
   order: number;
   sets: SavedWorkoutSet[];
   notes?: string;
+  exercise: {
+    id: string;
+    name: string;
+    primaryMuscle: string;
+    gifUrl?: string | null;
+  };
 }
 
 export interface Workout {
   id: string;
   title: string;
+  /** ISO date string of when the workout was saved/completed */
   completedAt: string;
   startTime: string;
-  duration: number; // seconds
-  volume: number; // total kg lifted
+  /** Duration in seconds */
+  duration: number | null;
+  /** Total volume in kg — may be computed client-side */
+  volume: number;
   prCount: number;
   exercises: SavedWorkoutExercise[];
-  notes?: string;
+  notes?: string | null;
+  workoutTag?: string | null;
+  photoUrl?: string | null;
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;
+  _count?: { likes: number; comments: number };
+  user?: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+  };
 }
 
 export interface Comment {

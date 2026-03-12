@@ -20,7 +20,7 @@ function formatVolume(kg: number): string {
 }
 
 export function VolumeChart({ data }: VolumeChartProps) {
-  if (!data || data.length === 0) {
+  if (!data || !Array.isArray(data) || data.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>No volume data yet</Text>

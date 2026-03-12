@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,20 +17,29 @@ import { api } from '../../../src/api/client';
 import { useAuthStore } from '../../../src/store/auth';
 import NotificationSettings from '../../../src/components/NotificationSettings';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface UserProfile {
   displayName: string;
   username: string;
   bio: string;
   email: string;
   weightUnit: 'KG' | 'LBS';
+  avatarUrl?: string | null;
 }
 
-function useProfile() {
-  return useQuery<UserProfile>({
-    queryKey: ['profile'],
-    queryFn: async () => (await api.get('/api/user/profile')).data,
-  });
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((w) => w[0] ?? '')
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SectionHeader({ title }: { title: string }) {
   return <Text style={styles.sectionHeader}>{title}</Text>;
@@ -40,10 +49,45 @@ function RowSeparator() {
   return <View style={styles.separator} />;
 }
 
+function ToggleRow({
+  label,
+  description,
+  value,
+  onToggle,
+}: {
+  label: string;
+  description?: string;
+  value: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <TouchableOpacity style={styles.toggleRow} onPress={onToggle} activeOpacity={0.7}>
+      <View style={styles.toggleLabelGroup}>
+        <Text style={styles.toggleLabel}>{label}</Text>
+        {description ? <Text style={styles.toggleSub}>{description}</Text> : null}
+      </View>
+      <View
+        style={[styles.togglePill, value && styles.togglePillOn]}
+      >
+        <View style={[styles.toggleThumb, value && styles.toggleThumbOn]} />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
+
 export default function SettingsScreen() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useProfile();
   const logout = useAuthStore((s) => s.logout);
+
+  const { data, isLoading } = useQuery<UserProfile>({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: res } = await api.get('/api/user/profile');
+      return res?.data ?? res;
+    },
+  });
 
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
@@ -51,28 +95,32 @@ export default function SettingsScreen() {
   const [weightUnit, setWeightUnit] = useState<'KG' | 'LBS'>('KG');
   const [initialized, setInitialized] = useState(false);
 
-  if (data && !initialized) {
-    setDisplayName(data.displayName ?? '');
-    setUsername(data.username ?? '');
-    setBio(data.bio ?? '');
-    setWeightUnit(data.weightUnit ?? 'KG');
-    setInitialized(true);
-  }
+  // Populate fields once data arrives (immutable init pattern)
+  useEffect(() => {
+    if (data && !initialized) {
+      setDisplayName(data.displayName ?? '');
+      setUsername(data.username ?? '');
+      setBio(data.bio ?? '');
+      setWeightUnit(data.weightUnit ?? 'KG');
+      setInitialized(true);
+    }
+  }, [data, initialized]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const res = await api.patch('/api/user/profile', {
+      const { data: res } = await api.patch('/api/user/profile', {
         displayName: displayName.trim() || undefined,
         username: username.trim() || undefined,
         bio: bio.trim() || undefined,
         weightUnit,
       });
-      return res.data;
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       queryClient.invalidateQueries({ queryKey: ['me'] });
       Alert.alert('Saved', 'Your profile has been updated.');
+      router.back();
     },
     onError: (err: unknown) => {
       const message =
@@ -124,6 +172,14 @@ export default function SettingsScreen() {
     );
   };
 
+  const handleChangeAvatar = () => {
+    Alert.alert(
+      'Change Photo',
+      'Avatar upload is available in the web app, or will be available in a future app update.',
+      [{ text: 'OK' }],
+    );
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -131,6 +187,8 @@ export default function SettingsScreen() {
       </SafeAreaView>
     );
   }
+
+  const initials = getInitials(displayName || data?.username || '?');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -153,7 +211,20 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Avatar section */}
+        <View style={styles.avatarSection}>
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+          <TouchableOpacity onPress={handleChangeAvatar}>
+            <Text style={styles.changePhotoText}>Change Photo</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Profile Section */}
         <SectionHeader title="Profile" />
         <View style={styles.card}>
@@ -179,6 +250,7 @@ export default function SettingsScreen() {
               placeholderTextColor="#555"
               maxLength={30}
               autoCapitalize="none"
+              autoCorrect={false}
             />
           </View>
           <RowSeparator />
@@ -203,9 +275,7 @@ export default function SettingsScreen() {
         <SectionHeader title="Preferences" />
         <View style={styles.card}>
           <View style={styles.fieldRow}>
-            <View style={styles.toggleLabelGroup}>
-              <Text style={styles.toggleLabel}>Weight Unit</Text>
-            </View>
+            <Text style={styles.fieldLabel}>Weight Unit</Text>
             <View style={styles.segmentControl}>
               {(['KG', 'LBS'] as const).map((unit) => (
                 <TouchableOpacity
@@ -235,17 +305,17 @@ export default function SettingsScreen() {
         {/* Account Section */}
         <SectionHeader title="Account" />
         <View style={styles.card}>
-          <TouchableOpacity
-            style={styles.actionRow}
-            onPress={() =>
-              Alert.alert('Change Email', 'Email change is handled via the web app settings.')
-            }
-          >
-            <Ionicons name="mail-outline" size={20} color="#6C63FF" style={styles.actionIcon} />
-            <Text style={styles.actionLabel}>Change Email</Text>
-            <Ionicons name="chevron-forward" size={18} color="#444" />
-          </TouchableOpacity>
-          <RowSeparator />
+          {data?.email ? (
+            <>
+              <View style={styles.fieldRow}>
+                <Text style={styles.fieldLabel}>Email</Text>
+                <Text style={styles.fieldValue} numberOfLines={1}>
+                  {data.email}
+                </Text>
+              </View>
+              <RowSeparator />
+            </>
+          ) : null}
           <TouchableOpacity
             style={styles.actionRow}
             onPress={() => router.push('/(auth)/reset-password' as never)}
@@ -289,6 +359,8 @@ export default function SettingsScreen() {
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
 
@@ -315,6 +387,22 @@ const styles = StyleSheet.create({
 
   scrollContent: { paddingHorizontal: 16, paddingTop: 20 },
 
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 10,
+  },
+  avatarCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#6C63FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: { color: '#fff', fontSize: 30, fontWeight: '800' },
+  changePhotoText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
+
   sectionHeader: {
     fontSize: 11,
     fontWeight: '700',
@@ -334,11 +422,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  separator: {
-    height: 1,
-    backgroundColor: '#2a2a2a',
-    marginLeft: 16,
-  },
+  separator: { height: 1, backgroundColor: '#2a2a2a', marginLeft: 16 },
 
   fieldRow: {
     flexDirection: 'row',
@@ -365,6 +449,12 @@ const styles = StyleSheet.create({
     minHeight: 72,
     lineHeight: 22,
   },
+  fieldValue: {
+    flex: 1,
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'right',
+  },
   charCount: {
     fontSize: 11,
     color: '#555',
@@ -374,10 +464,6 @@ const styles = StyleSheet.create({
     marginTop: -8,
   },
 
-  toggleLabelGroup: { flex: 1 },
-  toggleLabel: { fontSize: 15, color: '#fff' },
-  toggleSub: { fontSize: 12, color: '#555', marginTop: 2 },
-
   segmentControl: {
     flexDirection: 'row',
     backgroundColor: '#0a0a0a',
@@ -386,13 +472,38 @@ const styles = StyleSheet.create({
     borderColor: '#2a2a2a',
     overflow: 'hidden',
   },
-  segmentOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-  },
+  segmentOption: { paddingHorizontal: 18, paddingVertical: 7 },
   segmentOptionActive: { backgroundColor: '#6C63FF' },
   segmentText: { fontSize: 13, fontWeight: '600', color: '#666' },
   segmentTextActive: { color: '#fff' },
+
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    minHeight: 52,
+  },
+  toggleLabelGroup: { flex: 1 },
+  toggleLabel: { fontSize: 15, color: '#fff' },
+  toggleSub: { fontSize: 12, color: '#666', marginTop: 2 },
+  togglePill: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#2a2a2a',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+  },
+  togglePillOn: { backgroundColor: '#6C63FF' },
+  toggleThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignSelf: 'flex-start',
+  },
+  toggleThumbOn: { alignSelf: 'flex-end' },
 
   actionRow: {
     flexDirection: 'row',

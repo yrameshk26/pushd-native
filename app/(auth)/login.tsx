@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ActivityIndicator,
@@ -91,15 +92,14 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        {/* Divider */}
-        <View style={styles.divider}>
+        {/* Google Sign-In — hidden in Expo Go due to Google OAuth proxy restriction */}
+        {Constants.appOwnership !== 'expo' && <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>or</Text>
           <View style={styles.dividerLine} />
-        </View>
+        </View>}
 
-        {/* Google Sign-In */}
-        <TouchableOpacity
+        {Constants.appOwnership !== 'expo' && <TouchableOpacity
           style={[styles.googleButton, googleLoading && styles.googleButtonDisabled]}
           onPress={handleGoogleSignIn}
           disabled={googleLoading}
@@ -114,7 +114,7 @@ export default function LoginScreen() {
               <Text style={styles.googleButtonText}>Continue with Google</Text>
             </>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
         <TouchableOpacity
           style={styles.forgotButton}

@@ -71,12 +71,16 @@ function StrengthBar({ strength }: { strength: PasswordStrength }) {
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const displayNameRef = useRef<TextInput>(null);
+  const usernameRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmRef = useRef<TextInput>(null);
 
@@ -101,9 +105,15 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     const trimmedEmail = email.trim().toLowerCase();
+    const trimmedName = displayName.trim();
+    const trimmedUsername = username.trim().toLowerCase();
 
-    if (!trimmedEmail) {
-      Alert.alert('Missing field', 'Please enter your email address.');
+    if (!trimmedEmail || !trimmedName || !trimmedUsername) {
+      Alert.alert('Missing fields', 'Please fill in all fields.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) {
+      Alert.alert('Invalid username', 'Username can only contain letters, numbers and underscores.');
       return;
     }
     if (!allRulesMet) {
@@ -117,7 +127,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const sessionId = await register(trimmedEmail, password);
+      const sessionId = await register(trimmedEmail, password, trimmedUsername, trimmedName);
       router.push({ pathname: '/(auth)/verify-email', params: { email: trimmedEmail, sessionId } });
     } catch (err: unknown) {
       const message =
@@ -156,6 +166,35 @@ export default function RegisterScreen() {
           autoComplete="email"
           value={email}
           onChangeText={setEmail}
+          returnKeyType="next"
+          onSubmitEditing={() => displayNameRef.current?.focus()}
+        />
+
+        {/* Display Name */}
+        <Text style={styles.label}>Display Name</Text>
+        <TextInput
+          ref={displayNameRef}
+          style={styles.input}
+          placeholder="John Doe"
+          placeholderTextColor="#555"
+          autoCapitalize="words"
+          value={displayName}
+          onChangeText={setDisplayName}
+          returnKeyType="next"
+          onSubmitEditing={() => usernameRef.current?.focus()}
+        />
+
+        {/* Username */}
+        <Text style={styles.label}>Username</Text>
+        <TextInput
+          ref={usernameRef}
+          style={styles.input}
+          placeholder="johndoe"
+          placeholderTextColor="#555"
+          autoCapitalize="none"
+          autoCorrect={false}
+          value={username}
+          onChangeText={setUsername}
           returnKeyType="next"
           onSubmitEditing={() => passwordRef.current?.focus()}
         />

@@ -64,7 +64,12 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
       return null;
     }
 
-    const tokenData = await Notifications.getExpoPushTokenAsync();
+    const projectId = (await import('expo-constants')).default.expoConfig?.extra?.eas?.projectId;
+    if (!projectId) {
+      console.log('[notifications] No projectId configured — skipping push token registration');
+      return null;
+    }
+    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
     return tokenData.data;
   } catch (err) {
     console.error('[notifications] Failed to register for push notifications:', err);

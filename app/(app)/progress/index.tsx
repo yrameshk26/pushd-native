@@ -1,9 +1,21 @@
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchProgressSummary, fetchUserStreak } from '../../../src/api/progress';
+import { useState, useCallback } from 'react';
+import {
+  fetchProgressSummary,
+  fetchUserStreak,
+} from '../../../src/api/progress';
 import { StatCard } from '../../../src/components/StatCard';
 import { PRBadge } from '../../../src/components/PRBadge';
 import { MuscleHeatmap } from '../../../src/components/MuscleHeatmap';
@@ -24,43 +36,82 @@ async function fetchMuscleHeatmap(): Promise<Record<string, number>> {
 
 function formatVolume(kg: number): string {
   if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
-  return `${kg.toLocaleString()}kg`;
+  return `${Math.round(kg).toLocaleString()}kg`;
 }
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+function getPRsThisMonth(summary: { recentPRs?: { achievedAt: string }[] } | undefined): number {
+  if (!summary?.recentPRs) return 0;
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  return summary.recentPRs.filter((pr) => new Date(pr.achievedAt) >= startOfMonth).length;
+}
+
 export default function ProgressScreen() {
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data: summary, isLoading: summaryLoading } = useQuery({
+  const {
+    data: summary,
+    isLoading: summaryLoading,
+    refetch: refetchSummary,
+  } = useQuery({
     queryKey: ['progress-summary'],
     queryFn: fetchProgressSummary,
   });
 
-  const { data: streakData, isLoading: streakLoading } = useQuery({
+  const {
+    data: streakData,
+    isLoading: streakLoading,
+    refetch: refetchStreak,
+  } = useQuery({
     queryKey: ['user-streak'],
     queryFn: fetchUserStreak,
   });
 
-  const { data: heatmapData, isLoading: heatmapLoading } = useQuery({
+  const {
+    data: heatmapData,
+    isLoading: heatmapLoading,
+    refetch: refetchHeatmap,
+  } = useQuery({
     queryKey: ['muscle-heatmap'],
     queryFn: fetchMuscleHeatmap,
   });
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchSummary(), refetchStreak(), refetchHeatmap()]);
+    setRefreshing(false);
+  }, [refetchSummary, refetchStreak, refetchHeatmap]);
+
   const isLoading = summaryLoading || streakLoading;
+  const prsThisMonth = getPRsThisMonth(summary);
+  const currentStreak = summary?.currentStreak ?? streakData?.streak ?? 0;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#6C63FF"
+            colors={['#6C63FF']}
+          />
+        }
+      >
         <Text style={styles.heading}>Progress</Text>
 
         {isLoading ? (
           <ActivityIndicator color="#6C63FF" style={{ marginTop: 40 }} />
         ) : (
           <>
-            {/* Summary Stats Grid */}
+            {/* Stats Grid: Total Workouts, Total Volume, PRs This Month, Current Streak */}
             <View style={styles.grid}>
               <StatCard
                 value={summary?.totalWorkouts ?? 0}
@@ -75,14 +126,14 @@ export default function ProgressScreen() {
                 color="#10B981"
               />
               <StatCard
-                value={summary?.totalPRs ?? 0}
-                label="Personal Records"
+                value={prsThisMonth}
+                label="PRs This Month"
                 icon="trophy-outline"
                 color="#F59E0B"
               />
               <StatCard
-                value={`${streakData?.streak ?? 0}🔥`}
-                label="Day Streak"
+                value={`${currentStreak}🔥`}
+                label="Current Streak"
                 icon="flame-outline"
                 color="#EF4444"
               />
@@ -92,16 +143,34 @@ export default function ProgressScreen() {
             <View style={styles.quickLinksRow}>
               <TouchableOpacity
                 style={styles.quickLink}
+                onPress={() => router.push('/(app)/progress/body')}
+              >
+                <Ionicons name="body-outline" size={22} color="#10B981" />
+                <Text style={styles.quickLinkText}>Body Weight</Text>
+                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.quickLink}
+                onPress={() => router.push('/(app)/progress/strength-standards')}
+              >
+                <Ionicons name="stats-chart-outline" size={22} color="#F59E0B" />
+                <Text style={styles.quickLinkText}>Strength Standards</Text>
+                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.quickLink}
                 onPress={() => router.push('/(app)/progress/achievements')}
               >
                 <Ionicons name="medal-outline" size={22} color="#6C63FF" />
                 <Text style={styles.quickLinkText}>Achievements</Text>
                 {(summary?.achievementCount ?? 0) > 0 && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{summary?.achievementCount}</Text>
+                  <View style={styles.countBadge}>
+                    <Text style={styles.countBadgeText}>{summary?.achievementCount}</Text>
                   </View>
                 )}
-                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
+                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -110,34 +179,16 @@ export default function ProgressScreen() {
               >
                 <Ionicons name="bar-chart-outline" size={22} color="#6C63FF" />
                 <Text style={styles.quickLinkText}>Volume Trends</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.quickLink}
-                onPress={() => router.push('/(app)/progress/summary')}
-              >
-                <Ionicons name="document-text-outline" size={22} color="#A78BFA" />
-                <Text style={styles.quickLinkText}>Weekly Summary</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.quickLink}
-                onPress={() => router.push('/(app)/progress/body')}
-              >
-                <Ionicons name="body-outline" size={22} color="#10B981" />
-                <Text style={styles.quickLinkText}>Body Weight</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
+                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.quickLink, styles.quickLinkLast]}
-                onPress={() => router.push('/(app)/progress/strength-standards')}
+                onPress={() => router.push('/(app)/progress/summary')}
               >
-                <Ionicons name="stats-chart-outline" size={22} color="#F59E0B" />
-                <Text style={styles.quickLinkText}>Strength Standards</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
+                <Ionicons name="document-text-outline" size={22} color="#A78BFA" />
+                <Text style={styles.quickLinkText}>Weekly Summary</Text>
+                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
               </TouchableOpacity>
             </View>
 
@@ -161,12 +212,14 @@ export default function ProgressScreen() {
                   <TouchableOpacity
                     key={pr.id}
                     style={styles.prRow}
-                    onPress={() => router.push(`/(app)/progress/${pr.exerciseId}`)}
+                    onPress={() => router.push(`/(app)/progress/${pr.exerciseId}` as any)}
                   >
                     <View style={styles.prLeft}>
                       <PRBadge size="sm" />
-                      <View style={{ marginLeft: 10 }}>
-                        <Text style={styles.prName}>{pr.exerciseName}</Text>
+                      <View style={styles.prTextWrap}>
+                        <Text style={styles.prName} numberOfLines={1}>
+                          {pr.exerciseName}
+                        </Text>
                         <Text style={styles.prMeta}>
                           {pr.weight}kg × {pr.reps} reps
                         </Text>
@@ -189,7 +242,7 @@ export default function ProgressScreen() {
                   <TouchableOpacity
                     key={ex.exerciseId}
                     style={styles.exerciseRow}
-                    onPress={() => router.push(`/(app)/progress/${ex.exerciseId}`)}
+                    onPress={() => router.push(`/(app)/progress/${ex.exerciseId}` as any)}
                   >
                     <View style={styles.rankBadge}>
                       <Text style={styles.rankText}>{index + 1}</Text>
@@ -234,11 +287,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#2a2a2a',
   },
-  quickLinkLast: {
-    borderBottomWidth: 0,
-  },
-  quickLinkText: { color: '#fff', fontSize: 15, fontWeight: '500' },
-  badge: {
+  quickLinkLast: { borderBottomWidth: 0 },
+  quickLinkText: { color: '#fff', fontSize: 15, fontWeight: '500', flex: 1 },
+  chevron: { marginLeft: 'auto' },
+  countBadge: {
     backgroundColor: '#6C63FF',
     borderRadius: 10,
     minWidth: 20,
@@ -247,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 5,
   },
-  badgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  countBadgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
 
   section: { marginBottom: 24 },
   sectionTitle: {
@@ -257,6 +309,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
+  },
+
+  heatmapCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
   },
 
   prRow: {
@@ -271,7 +331,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2a2a2a',
   },
-  prLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  prLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 10 },
+  prTextWrap: { flex: 1 },
   prRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   prName: { color: '#fff', fontSize: 14, fontWeight: '600' },
   prMeta: { color: '#888', fontSize: 12, marginTop: 2 },
@@ -300,12 +361,4 @@ const styles = StyleSheet.create({
   rankText: { color: '#888', fontSize: 13, fontWeight: '700' },
   exerciseName: { color: '#fff', fontSize: 14, fontWeight: '600', flex: 1 },
   exerciseCount: { color: '#6C63FF', fontSize: 13, fontWeight: '500' },
-
-  heatmapCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-  },
 });

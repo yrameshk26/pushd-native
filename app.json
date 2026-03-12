@@ -16,7 +16,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "fit.pushd.app",
       "infoPlist": {
-        "UIBackgroundModes": ["fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -39,7 +42,10 @@
               "scheme": "pushd"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -57,7 +63,8 @@
           "color": "#6C63FF",
           "sounds": []
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

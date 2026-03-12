@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
+  RefreshControl,
 } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -170,9 +171,13 @@ function QuickAction({ icon, label, color, onPress }: {
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
 export default function DashboardScreen() {
+  const queryClient = useQueryClient();
   const startWorkout = useWorkoutStore((s) => s.startWorkout);
+  const startFromRoutine = useWorkoutStore((s) => s.startFromRoutine);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Parallel queries — each silently hides on error
+  // ── Parallel queries — each silently hides on error ──────────────────────
+
   const { data: me, isLoading: meLoading } = useQuery<MeData>({
     queryKey: ['me'],
     queryFn: async () => (await api.get('/api/users/me')).data,
@@ -230,8 +235,8 @@ export default function DashboardScreen() {
   });
 
   const { data: routinesData, isLoading: routinesLoading } = useQuery<{ routines: Routine[] }>({
-    queryKey: ['routines'],
-    queryFn: async () => (await api.get('/api/routines')).data,
+    queryKey: ['routines-suggested'],
+    queryFn: async () => (await api.get('/api/routines', { params: { limit: 1 } })).data,
     retry: 1,
   });
 
@@ -241,6 +246,8 @@ export default function DashboardScreen() {
     retry: 1,
   });
 
+  // ── Derived values ────────────────────────────────────────────────────────
+
   const suggestedRoutine = routinesData?.routines?.[0] ?? null;
   const recentPRs = progressSummary?.recentPRs ?? [];
   const activeDates = streakData?.activeDates ?? [];
@@ -248,11 +255,44 @@ export default function DashboardScreen() {
   const chartData: VolumeWeek[] = volumeData ?? [];
   const recentWorkouts: WorkoutListItem[] = recentWorkoutsData?.workouts ?? [];
 
+  // ── Pull-to-refresh ────────────────────────────────────────────────────────
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries();
+    setRefreshing(false);
+  }, [queryClient]);
+
+  // ── Suggested routine start handler ───────────────────────────────────────
+
+  function handleStartRoutine() {
+    if (!suggestedRoutine) return;
+    const exercises = (suggestedRoutine.exercises ?? []).map((e) => ({
+      exerciseId: e.exerciseId,
+      exerciseName: e.exercise?.name ?? e.exerciseId,
+      order: e.order,
+      sets: [],
+      notes: e.notes,
+    }));
+    startFromRoutine(suggestedRoutine.id, suggestedRoutine.name, exercises);
+    router.push('/(app)/workout/active');
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#6C63FF"
+            colors={['#6C63FF']}
+          />
+        }
       >
         {/* ── Header ──────────────────────────────────────────────── */}
         <View style={styles.headerRow}>
@@ -267,8 +307,8 @@ export default function DashboardScreen() {
             )}
           </View>
 
-          {/* Streak badge */}
-          {streak > 0 && (
+          {/* Streak badge — only shown when streak > 0 */}
+          {!streakLoading && streak > 0 && (
             <View style={styles.streakBadge}>
               <Text style={styles.streakFlame}>🔥</Text>
               <Text style={styles.streakCount}>{streak}</Text>
@@ -295,20 +335,11 @@ export default function DashboardScreen() {
           />
           <QuickAction
             icon="body-outline"
-            label="Body Weight"
+            label="Log Weight"
             color="#F59E0B"
             onPress={() => router.push('/(app)/progress/body')}
           />
         </View>
-
-        {/* ── Deload recommendation ─────────────────────────────────── */}
-        {deloadLoading ? (
-          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 16 }} />
-        ) : deloadData ? (
-          <View style={styles.cardSpacing}>
-            <DeloadRecommendationCard recommendation={deloadData} />
-          </View>
-        ) : null}
 
         {/* ── Recovery widget ───────────────────────────────────────── */}
         {recoveryLoading ? (
@@ -324,6 +355,15 @@ export default function DashboardScreen() {
           </View>
         ) : null}
 
+        {/* ── Deload recommendation ─────────────────────────────────── */}
+        {deloadLoading ? (
+          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 16 }} />
+        ) : deloadData?.shouldDeload ? (
+          <View style={styles.cardSpacing}>
+            <DeloadRecommendationCard recommendation={deloadData} />
+          </View>
+        ) : null}
+
         {/* ── AI weekly review ──────────────────────────────────────── */}
         {reviewLoading ? (
           <Skeleton height={100} borderRadius={16} style={{ marginBottom: 16 }} />
@@ -334,7 +374,9 @@ export default function DashboardScreen() {
         ) : null}
 
         {/* ── Suggested routine ─────────────────────────────────────── */}
-        {!routinesLoading && suggestedRoutine && (
+        {routinesLoading ? (
+          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 24 }} />
+        ) : suggestedRoutine ? (
           <Section title="Suggested Today" icon="flash-outline">
             <View style={styles.routineCard}>
               <View style={styles.routineInfo}>
@@ -356,20 +398,19 @@ export default function DashboardScreen() {
               </View>
               <TouchableOpacity
                 style={styles.startRoutineBtn}
-                onPress={() => router.push(`/(app)/routines/${suggestedRoutine.id}` as never)}
+                onPress={handleStartRoutine}
                 activeOpacity={0.8}
               >
                 <Text style={styles.startRoutineText}>Start</Text>
               </TouchableOpacity>
             </View>
           </Section>
-        )}
-        {routinesLoading && (
-          <Skeleton height={80} borderRadius={14} style={{ marginBottom: 24 }} />
-        )}
+        ) : null}
 
         {/* ── Recent PRs ───────────────────────────────────────────── */}
-        {!progressLoading && recentPRs.length > 0 && (
+        {progressLoading ? (
+          <Skeleton height={90} borderRadius={14} style={{ marginBottom: 24 }} />
+        ) : recentPRs.length > 0 ? (
           <Section title="Recent PRs" icon="trophy-outline">
             {recentPRs.slice(0, 3).map((pr) => (
               <TouchableOpacity
@@ -393,9 +434,28 @@ export default function DashboardScreen() {
               </TouchableOpacity>
             ))}
           </Section>
-        )}
-        {progressLoading && (
-          <Skeleton height={90} borderRadius={14} style={{ marginBottom: 24 }} />
+        ) : null}
+
+        {/* ── Weekly Volume chart ────────────────────────────────────── */}
+        <Section title="Weekly Volume" icon="bar-chart-outline">
+          {volumeLoading ? (
+            <Skeleton height={160} borderRadius={12} />
+          ) : (
+            <View style={styles.chartCard}>
+              <VolumeChart data={chartData} />
+            </View>
+          )}
+        </Section>
+
+        {/* ── Streak / Activity calendar ────────────────────────────── */}
+        {streakLoading ? (
+          <Skeleton height={130} borderRadius={12} style={{ marginBottom: 24 }} />
+        ) : (
+          <Section title="Activity" icon="flame-outline">
+            <View style={styles.calendarCard}>
+              <StreakCalendar activeDates={activeDates} weeks={16} />
+            </View>
+          </Section>
         )}
 
         {/* ── Recent Workouts ───────────────────────────────────────── */}
@@ -415,7 +475,10 @@ export default function DashboardScreen() {
               {recentWorkouts.map((w, index) => (
                 <TouchableOpacity
                   key={w.id}
-                  style={[styles.recentWorkoutRow, index < recentWorkouts.length - 1 && styles.recentWorkoutRowBorder]}
+                  style={[
+                    styles.recentWorkoutRow,
+                    index < recentWorkouts.length - 1 && styles.recentWorkoutRowBorder,
+                  ]}
                   onPress={() => router.push(`/(app)/workout/${w.id}` as never)}
                   activeOpacity={0.7}
                 >
@@ -424,7 +487,9 @@ export default function DashboardScreen() {
                     <Text style={styles.recentWorkoutMeta}>
                       {w.exercises.length} exercise{w.exercises.length !== 1 ? 's' : ''}
                       {'  ·  '}
-                      {w.volume >= 1000 ? `${(w.volume / 1000).toFixed(1)}t` : `${Math.round(w.volume)}kg`}
+                      {w.volume >= 1000
+                        ? `${(w.volume / 1000).toFixed(1)}t`
+                        : `${Math.round(w.volume)}kg`}
                     </Text>
                   </View>
                   <Text style={styles.recentWorkoutDate}>{timeAgo(w.completedAt)}</Text>
@@ -434,28 +499,6 @@ export default function DashboardScreen() {
             </View>
           </Section>
         ) : null}
-
-        {/* ── Volume chart ─────────────────────────────────────────── */}
-        <Section title="Weekly Volume" icon="bar-chart-outline">
-          {volumeLoading ? (
-            <Skeleton height={160} borderRadius={12} />
-          ) : (
-            <View style={styles.chartCard}>
-              <VolumeChart data={chartData} />
-            </View>
-          )}
-        </Section>
-
-        {/* ── Streak calendar ──────────────────────────────────────── */}
-        {streakLoading ? (
-          <Skeleton height={130} borderRadius={12} style={{ marginBottom: 24 }} />
-        ) : (
-          <Section title="Activity" icon="flame-outline">
-            <View style={styles.calendarCard}>
-              <StreakCalendar activeDates={activeDates} weeks={16} />
-            </View>
-          </Section>
-        )}
 
         {/* Bottom padding */}
         <View style={{ height: 32 }} />
@@ -660,6 +703,22 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
 
+  // Charts
+  chartCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+    padding: 16,
+  },
+  calendarCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+    padding: 16,
+  },
+
   // Recent workouts
   recentWorkoutsCard: {
     backgroundColor: '#1a1a1a',
@@ -711,21 +770,5 @@ const styles = StyleSheet.create({
     color: '#555',
     fontSize: 12,
     flexShrink: 0,
-  },
-
-  // Charts
-  chartCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    padding: 16,
-  },
-  calendarCard: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    padding: 16,
   },
 });

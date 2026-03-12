@@ -16,9 +16,9 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchExercises } from '../../../src/api/exercises';
-import { Exercise } from '../../../src/types';
+import type { Exercise } from '../../../src/types';
 
-// ─── Filter constants ─────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const MUSCLE_GROUPS: { label: string; value: string }[] = [
   { label: 'Chest', value: 'CHEST' },
@@ -26,21 +26,13 @@ const MUSCLE_GROUPS: { label: string; value: string }[] = [
   { label: 'Shoulders', value: 'SHOULDERS' },
   { label: 'Biceps', value: 'BICEPS' },
   { label: 'Triceps', value: 'TRICEPS' },
-  { label: 'Legs', value: 'QUADS' },
   { label: 'Core', value: 'CORE' },
-  { label: 'Full Body', value: 'FULL_BODY' },
+  { label: 'Quads', value: 'QUADS' },
+  { label: 'Hamstrings', value: 'HAMSTRINGS' },
+  { label: 'Glutes', value: 'GLUTES' },
+  { label: 'Calves', value: 'CALVES' },
+  { label: 'Cardio', value: 'CARDIO' },
 ];
-
-const EQUIPMENT_TYPES: { label: string; value: string }[] = [
-  { label: 'Barbell', value: 'BARBELL' },
-  { label: 'Dumbbell', value: 'DUMBBELL' },
-  { label: 'Machine', value: 'MACHINE' },
-  { label: 'Bodyweight', value: 'BODYWEIGHT' },
-  { label: 'Cable', value: 'CABLE' },
-  { label: 'Kettlebell', value: 'KETTLEBELL' },
-];
-
-// ─── Muscle group colour map ──────────────────────────────────────────────────
 
 const MUSCLE_COLORS: Record<string, string> = {
   CHEST: '#e74c3c',
@@ -135,15 +127,14 @@ function ExerciseRow({ exercise, onPress }: ExerciseRowProps) {
 export default function ExercisesScreen() {
   const [search, setSearch] = useState('');
   const [activeMuscle, setActiveMuscle] = useState<string | null>(null);
-  const [activeEquipment, setActiveEquipment] = useState<string | null>(null);
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['exercises', search, activeMuscle, activeEquipment],
+    queryKey: ['exercises', search, activeMuscle],
     queryFn: () =>
       fetchExercises({
         search: search || undefined,
         muscle: activeMuscle ?? undefined,
-        equipment: activeEquipment ?? undefined,
+        page: 1,
       }),
     staleTime: 5 * 60 * 1000,
   });
@@ -152,10 +143,6 @@ export default function ExercisesScreen() {
 
   const handleMuscleToggle = useCallback((value: string) => {
     setActiveMuscle((prev) => (prev === value ? null : value));
-  }, []);
-
-  const handleEquipmentToggle = useCallback((value: string) => {
-    setActiveEquipment((prev) => (prev === value ? null : value));
   }, []);
 
   const renderItem = useCallback(
@@ -187,11 +174,16 @@ export default function ExercisesScreen() {
       </View>
 
       {/* Muscle group filters */}
-      <Text style={styles.filterLabel}>Muscle Group</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.chipScroll}
+        contentContainerStyle={styles.chipScrollContent}
+      >
         <FilterChip
           label="All"
           active={activeMuscle === null}
+          color="#6C63FF"
           onPress={() => setActiveMuscle(null)}
         />
         {MUSCLE_GROUPS.map((mg) => (
@@ -204,29 +196,6 @@ export default function ExercisesScreen() {
           />
         ))}
       </ScrollView>
-
-      {/* Equipment filters */}
-      <Text style={styles.filterLabel}>Equipment</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.chipScroll, styles.chipScrollBottom]}>
-        <FilterChip
-          label="All"
-          active={activeEquipment === null}
-          onPress={() => setActiveEquipment(null)}
-        />
-        {EQUIPMENT_TYPES.map((eq) => (
-          <FilterChip
-            key={eq.value}
-            label={eq.label}
-            active={activeEquipment === eq.value}
-            onPress={() => handleEquipmentToggle(eq.value)}
-          />
-        ))}
-      </ScrollView>
-
-      {/* Result count */}
-      {!isLoading && !isError && (
-        <Text style={styles.resultCount}>{exercises.length} exercises</Text>
-      )}
     </>
   );
 
@@ -266,7 +235,7 @@ export default function ExercisesScreen() {
             <View style={styles.emptyState}>
               <Ionicons name="barbell-outline" size={48} color="#333" />
               <Text style={styles.emptyText}>No exercises found</Text>
-              <Text style={styles.emptySubtext}>Try adjusting your filters</Text>
+              <Text style={styles.emptySubtext}>Try adjusting your search or filters</Text>
             </View>
           }
         />
@@ -308,7 +277,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2a2a2a',
     marginHorizontal: 20,
-    marginBottom: 16,
+    marginBottom: 12,
     paddingHorizontal: 12,
     height: 44,
   },
@@ -316,17 +285,8 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, color: '#fff', fontSize: 15 },
 
   // Filters
-  filterLabel: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginLeft: 20,
-    marginBottom: 8,
-  },
-  chipScroll: { paddingLeft: 20 },
-  chipScrollBottom: { marginBottom: 16 },
+  chipScroll: { marginBottom: 12 },
+  chipScrollContent: { paddingLeft: 20, paddingRight: 8 },
 
   chip: {
     borderRadius: 20,
@@ -335,18 +295,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     marginRight: 8,
-    marginBottom: 8,
   },
   chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
   chipTextActive: { color: '#fff' },
-
-  // Result count
-  resultCount: {
-    color: '#555',
-    fontSize: 12,
-    marginLeft: 20,
-    marginBottom: 8,
-  },
 
   // List
   listContent: { paddingBottom: 100 },
