@@ -125,7 +125,16 @@ export default function ExerciseDetailScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{exercise.name}</Text>
-        <View style={{ width: 40 }} />
+        {exercise.isCustom ? (
+          <TouchableOpacity
+            style={styles.editBtn}
+            onPress={() => router.push(`/(app)/exercises/edit?id=${id}`)}
+          >
+            <Ionicons name="pencil-outline" size={18} color="#6C63FF" />
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 40 }} />
+        )}
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -342,4 +351,14 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   addToWorkoutText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+
+  // Edit button
+  editBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#6C63FF22',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

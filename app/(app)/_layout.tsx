@@ -34,12 +34,25 @@ export default function AppLayout() {
       {/* Hidden from tab bar — accessible via push navigation */}
       <Tabs.Screen name="onboarding" options={{ href: null }} />
       <Tabs.Screen name="routines" options={{ href: null }} />
+      <Tabs.Screen name="routines/create" options={{ href: null }} />
+      <Tabs.Screen name="routines/edit" options={{ href: null }} />
       <Tabs.Screen name="exercises" options={{ href: null }} />
+      <Tabs.Screen name="exercises/edit" options={{ href: null }} />
       <Tabs.Screen name="social" options={{ href: null }} />
       <Tabs.Screen name="coach" options={{ href: null }} />
       <Tabs.Screen name="tools" options={{ href: null }} />
       <Tabs.Screen name="programs" options={{ href: null }} />
       <Tabs.Screen name="ai-planner" options={{ href: null }} />
+      <Tabs.Screen name="settings/security" options={{ href: null }} />
+      <Tabs.Screen name="programs/generate" options={{ href: null }} />
+      <Tabs.Screen name="progress/volume" options={{ href: null }} />
+      <Tabs.Screen name="progress/summary" options={{ href: null }} />
+      {/* Nutrition sub-screens */}
+      <Tabs.Screen name="nutrition/supplements" options={{ href: null }} />
+      <Tabs.Screen name="nutrition/templates" options={{ href: null }} />
+      {/* Meals library */}
+      <Tabs.Screen name="meals" options={{ href: null }} />
+      <Tabs.Screen name="meals/new" options={{ href: null }} />
     </Tabs>
   );
 }

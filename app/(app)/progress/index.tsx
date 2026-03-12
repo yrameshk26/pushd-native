@@ -6,6 +6,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchProgressSummary, fetchUserStreak } from '../../../src/api/progress';
 import { StatCard } from '../../../src/components/StatCard';
 import { PRBadge } from '../../../src/components/PRBadge';
+import { MuscleHeatmap } from '../../../src/components/MuscleHeatmap';
+import { api } from '../../../src/api/client';
+
+async function fetchMuscleHeatmap(): Promise<Record<string, number>> {
+  const { data } = await api.get<{ data: Array<{ muscle: string; sets: number }> }>(
+    '/api/progress/muscle-heatmap',
+  );
+  const items = data?.data ?? [];
+  const maxSets = Math.max(...items.map((m) => m.sets), 1);
+  const result: Record<string, number> = {};
+  for (const item of items) {
+    result[item.muscle] = Math.min(1, item.sets / maxSets);
+  }
+  return result;
+}
 
 function formatVolume(kg: number): string {
   if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
@@ -27,6 +42,11 @@ export default function ProgressScreen() {
   const { data: streakData, isLoading: streakLoading } = useQuery({
     queryKey: ['user-streak'],
     queryFn: fetchUserStreak,
+  });
+
+  const { data: heatmapData, isLoading: heatmapLoading } = useQuery({
+    queryKey: ['muscle-heatmap'],
+    queryFn: fetchMuscleHeatmap,
   });
 
   const isLoading = summaryLoading || streakLoading;
@@ -86,6 +106,24 @@ export default function ProgressScreen() {
 
               <TouchableOpacity
                 style={styles.quickLink}
+                onPress={() => router.push('/(app)/progress/volume')}
+              >
+                <Ionicons name="bar-chart-outline" size={22} color="#6C63FF" />
+                <Text style={styles.quickLinkText}>Volume Trends</Text>
+                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.quickLink}
+                onPress={() => router.push('/(app)/progress/summary')}
+              >
+                <Ionicons name="document-text-outline" size={22} color="#A78BFA" />
+                <Text style={styles.quickLinkText}>Weekly Summary</Text>
+                <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.quickLink}
                 onPress={() => router.push('/(app)/progress/body')}
               >
                 <Ionicons name="body-outline" size={22} color="#10B981" />
@@ -94,13 +132,25 @@ export default function ProgressScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.quickLink}
+                style={[styles.quickLink, styles.quickLinkLast]}
                 onPress={() => router.push('/(app)/progress/strength-standards')}
               >
                 <Ionicons name="stats-chart-outline" size={22} color="#F59E0B" />
                 <Text style={styles.quickLinkText}>Strength Standards</Text>
                 <Ionicons name="chevron-forward" size={16} color="#555" style={{ marginLeft: 'auto' }} />
               </TouchableOpacity>
+            </View>
+
+            {/* Muscle Heatmap */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Muscle Activity This Week</Text>
+              <View style={styles.heatmapCard}>
+                {heatmapLoading ? (
+                  <ActivityIndicator color="#6C63FF" style={{ paddingVertical: 24 }} />
+                ) : (
+                  <MuscleHeatmap muscleData={heatmapData ?? {}} />
+                )}
+              </View>
             </View>
 
             {/* Recent PRs */}
@@ -184,6 +234,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#2a2a2a',
   },
+  quickLinkLast: {
+    borderBottomWidth: 0,
+  },
   quickLinkText: { color: '#fff', fontSize: 15, fontWeight: '500' },
   badge: {
     backgroundColor: '#6C63FF',
@@ -247,4 +300,12 @@ const styles = StyleSheet.create({
   rankText: { color: '#888', fontSize: 13, fontWeight: '700' },
   exerciseName: { color: '#fff', fontSize: 14, fontWeight: '600', flex: 1 },
   exerciseCount: { color: '#6C63FF', fontSize: 13, fontWeight: '500' },
+
+  heatmapCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
 });

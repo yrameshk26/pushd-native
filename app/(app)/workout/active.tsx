@@ -11,6 +11,8 @@ import { useWorkoutTimer, formatDuration } from '../../../src/hooks/useWorkoutTi
 import { ExercisePicker } from '../../../src/components/ExercisePicker';
 import { RestTimer } from '../../../src/components/RestTimer';
 import { WorkoutSummaryModal } from '../../../src/components/WorkoutSummaryModal';
+import { ExerciseSubstitutionSheet } from '../../../src/components/ExerciseSubstitutionSheet';
+import { NLWorkoutInput, ParsedExercise } from '../../../src/components/NLWorkoutInput';
 import { Exercise } from '../../../src/types';
 
 const DEFAULT_REST_SECONDS = 90;
@@ -18,6 +20,7 @@ const DEFAULT_REST_SECONDS = 90;
 export default function ActiveWorkoutScreen() {
   const {
     active, elapsedSeconds, addExercise, removeExercise,
+    reorderExercise, replaceExercise,
     addSet, removeSet, updateSet, toggleSetComplete,
     finishWorkout, discardWorkout,
   } = useWorkoutStore();
@@ -25,6 +28,13 @@ export default function ActiveWorkoutScreen() {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [summaryVisible, setSummaryVisible] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Substitution sheet state
+  const [subSheetVisible, setSubSheetVisible] = useState(false);
+  const [subTarget, setSubTarget] = useState<{ localId: string; exerciseId: string; exerciseName: string } | null>(null);
+
+  // NL input modal state
+  const [nlVisible, setNlVisible] = useState(false);
 
   // Rest timer state
   const [restVisible, setRestVisible] = useState(false);
@@ -75,6 +85,45 @@ export default function ActiveWorkoutScreen() {
       }
     },
     [active, toggleSetComplete, startRestTimer, restDuration],
+  );
+
+  const handleOpenSubSheet = useCallback(
+    (localId: string, exerciseId: string, exerciseName: string) => {
+      setSubTarget({ localId, exerciseId, exerciseName });
+      setSubSheetVisible(true);
+    },
+    [],
+  );
+
+  const handleSubSelect = useCallback(
+    (exercise: { exerciseId: string; exerciseName: string }) => {
+      if (!subTarget) return;
+      replaceExercise(subTarget.localId, exercise);
+      setSubSheetVisible(false);
+      setSubTarget(null);
+    },
+    [subTarget, replaceExercise],
+  );
+
+  const handleNLParsed = useCallback(
+    (exercises: ParsedExercise[]) => {
+      if (!active) return;
+      exercises.forEach((parsed, i) => {
+        addExercise({
+          exerciseId: parsed.exerciseName.toLowerCase().replace(/\s+/g, '-'),
+          exerciseName: parsed.exerciseName,
+          order: active.exercises.length + i,
+          sets: Array.from({ length: parsed.sets }, (_, si) => ({
+            order: si,
+            type: 'NORMAL' as const,
+            isCompleted: false,
+            weight: parsed.weight > 0 ? parsed.weight : undefined,
+            reps: parsed.reps > 0 ? parsed.reps : undefined,
+          })),
+        } as Parameters<typeof addExercise>[0]);
+      });
+    },
+    [active, addExercise],
   );
 
   if (!active) {
@@ -162,14 +211,43 @@ export default function ActiveWorkoutScreen() {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {active.exercises.map((exercise) => (
+        {active.exercises.map((exercise, exIndex) => (
           <View key={exercise.localId} style={styles.exerciseCard}>
             {/* Exercise header */}
             <View style={styles.exerciseHeader}>
               <Text style={styles.exerciseName}>{exercise.exerciseName}</Text>
-              <TouchableOpacity onPress={() => removeExercise(exercise.localId)}>
-                <Ionicons name="close-circle" size={20} color="#444" />
-              </TouchableOpacity>
+              <View style={styles.exerciseActions}>
+                {/* Reorder up */}
+                <TouchableOpacity
+                  style={[styles.actionBtn, exIndex === 0 && styles.actionBtnDisabled]}
+                  onPress={() => reorderExercise(exercise.localId, 'up')}
+                  disabled={exIndex === 0}
+                >
+                  <Ionicons name="chevron-up" size={16} color={exIndex === 0 ? '#333' : '#888'} />
+                </TouchableOpacity>
+                {/* Reorder down */}
+                <TouchableOpacity
+                  style={[styles.actionBtn, exIndex === active.exercises.length - 1 && styles.actionBtnDisabled]}
+                  onPress={() => reorderExercise(exercise.localId, 'down')}
+                  disabled={exIndex === active.exercises.length - 1}
+                >
+                  <Ionicons name="chevron-down" size={16} color={exIndex === active.exercises.length - 1 ? '#333' : '#888'} />
+                </TouchableOpacity>
+                {/* Swap / substitute */}
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() => handleOpenSubSheet(exercise.localId, exercise.exerciseId, exercise.exerciseName)}
+                >
+                  <Ionicons name="swap-horizontal-outline" size={16} color="#6C63FF" />
+                </TouchableOpacity>
+                {/* Remove */}
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() => removeExercise(exercise.localId)}
+                >
+                  <Ionicons name="close-circle" size={18} color="#444" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Set headers */}
@@ -217,11 +295,17 @@ export default function ActiveWorkoutScreen() {
           </View>
         ))}
 
-        {/* Add exercise */}
-        <TouchableOpacity style={styles.addExerciseBtn} onPress={() => setPickerVisible(true)}>
-          <Ionicons name="add-circle-outline" size={20} color="#6C63FF" />
-          <Text style={styles.addExerciseText}>Add Exercise</Text>
-        </TouchableOpacity>
+        {/* Add exercise row */}
+        <View style={styles.addExerciseRow}>
+          <TouchableOpacity style={[styles.addExerciseBtn, styles.addExerciseBtnFlex]} onPress={() => setPickerVisible(true)}>
+            <Ionicons name="add-circle-outline" size={20} color="#6C63FF" />
+            <Text style={styles.addExerciseText}>Add Exercise</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.nlBtn} onPress={() => setNlVisible(true)}>
+            <Ionicons name="sparkles-outline" size={16} color="#6C63FF" />
+            <Text style={styles.nlBtnText}>AI Parse</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <ExercisePicker
@@ -246,6 +330,23 @@ export default function ActiveWorkoutScreen() {
         onDiscard={handleDiscard}
         isSaving={isSaving}
       />
+
+      {subTarget && (
+        <ExerciseSubstitutionSheet
+          visible={subSheetVisible}
+          exerciseId={subTarget.exerciseId}
+          exerciseName={subTarget.exerciseName}
+          onSelect={handleSubSelect}
+          onClose={() => { setSubSheetVisible(false); setSubTarget(null); }}
+        />
+      )}
+
+      {nlVisible && (
+        <NLWorkoutInput
+          onParsed={handleNLParsed}
+          onClose={() => setNlVisible(false)}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -283,7 +384,13 @@ const styles = StyleSheet.create({
     marginBottom: 16, borderWidth: 1, borderColor: '#1e1e1e',
   },
   exerciseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  exerciseName: { color: '#fff', fontSize: 16, fontWeight: '700', flex: 1 },
+  exerciseName: { color: '#fff', fontSize: 16, fontWeight: '700', flex: 1, marginRight: 8 },
+  exerciseActions: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  actionBtn: {
+    width: 30, height: 30, borderRadius: 8, backgroundColor: '#1a1a1a',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  actionBtnDisabled: { opacity: 0.4 },
   setHeader: { flexDirection: 'row', marginBottom: 6 },
   setCol: { flex: 1, color: '#555', fontSize: 11, fontWeight: '600', textAlign: 'center', letterSpacing: 0.5 },
   setRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, borderRadius: 8, paddingVertical: 4 },
@@ -300,10 +407,18 @@ const styles = StyleSheet.create({
   checkBtnDone: { backgroundColor: '#22c55e' },
   addSetBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, gap: 6, marginTop: 4 },
   addSetText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  addExerciseRow: { flexDirection: 'row', gap: 10 },
   addExerciseBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 8, paddingVertical: 16, borderRadius: 14, borderWidth: 1,
     borderColor: '#6C63FF', borderStyle: 'dashed',
   },
+  addExerciseBtnFlex: { flex: 1 },
   addExerciseText: { color: '#6C63FF', fontWeight: '600', fontSize: 15 },
+  nlBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 6, paddingHorizontal: 16, paddingVertical: 16, borderRadius: 14,
+    backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50',
+  },
+  nlBtnText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
 });

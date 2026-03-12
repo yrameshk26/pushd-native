@@ -13,6 +13,8 @@ interface WorkoutStore {
   startFromRoutine: (routineId: string, routineName: string, exercises: Omit<WorkoutExercise, 'localId'>[]) => void;
   addExercise: (exercise: Omit<WorkoutExercise, 'localId' | 'sets'>) => void;
   removeExercise: (localId: string) => void;
+  reorderExercise: (localId: string, direction: 'up' | 'down') => void;
+  replaceExercise: (localId: string, newExercise: { exerciseId: string; exerciseName: string }) => void;
   addSet: (localId: string) => void;
   removeSet: (localId: string, setIndex: number) => void;
   updateSet: (localId: string, setIndex: number, patch: Partial<WorkoutSet>) => void;
@@ -78,6 +80,37 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
       active: {
         ...active,
         exercises: active.exercises.filter((e) => e.localId !== localId),
+      },
+    });
+  },
+
+  reorderExercise: (localId, direction) => {
+    const active = get().active;
+    if (!active) return;
+    const exercises = active.exercises;
+    const index = exercises.findIndex((e) => e.localId === localId);
+    if (index === -1) return;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= exercises.length) return;
+    const reordered = exercises.map((e, i) => {
+      if (i === index) return { ...exercises[targetIndex], order: index };
+      if (i === targetIndex) return { ...exercises[index], order: targetIndex };
+      return e;
+    });
+    set({ active: { ...active, exercises: reordered } });
+  },
+
+  replaceExercise: (localId, newExercise) => {
+    const active = get().active;
+    if (!active) return;
+    set({
+      active: {
+        ...active,
+        exercises: active.exercises.map((e) =>
+          e.localId !== localId
+            ? e
+            : { ...e, exerciseId: newExercise.exerciseId, exerciseName: newExercise.exerciseName },
+        ),
       },
     });
   },

@@ -269,6 +269,15 @@ export default function SettingsScreen() {
             <Text style={styles.actionLabel}>Change Password</Text>
             <Ionicons name="chevron-forward" size={18} color="#444" />
           </TouchableOpacity>
+          <RowSeparator />
+          <TouchableOpacity
+            style={styles.actionRow}
+            onPress={() => router.push('/(app)/settings/security' as never)}
+          >
+            <Ionicons name="shield-checkmark-outline" size={20} color="#6C63FF" style={styles.actionIcon} />
+            <Text style={styles.actionLabel}>Security</Text>
+            <Ionicons name="chevron-forward" size={18} color="#444" />
+          </TouchableOpacity>
         </View>
 
         {/* Danger Zone */}

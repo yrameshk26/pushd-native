@@ -163,25 +163,41 @@ export default function ProgramsScreen() {
         </View>
       </View>
 
-      {/* AI Build CTA */}
+      {/* AI Build CTAs */}
+      <TouchableOpacity
+        style={styles.aiCardPrimary}
+        onPress={() => router.push('/(app)/programs/generate' as any)}
+        activeOpacity={0.8}
+      >
+        <View style={styles.aiIcon}>
+          <Ionicons name="sparkles" size={20} color="#6C63FF" />
+        </View>
+        <View style={styles.aiText}>
+          <Text style={styles.aiTitle}>Generate with AI</Text>
+          <Text style={styles.aiDesc}>
+            AI builds a full multi-week program tailored to your goals and schedule
+          </Text>
+        </View>
+        <View style={styles.aiBadge}>
+          <Text style={styles.aiBadgeText}>New</Text>
+          <Ionicons name="arrow-forward" size={13} color="#6C63FF" />
+        </View>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.aiCard}
         onPress={() => router.push('/(app)/ai-planner')}
         activeOpacity={0.8}
       >
-        <View style={styles.aiIcon}>
-          <Ionicons name="sparkles" size={18} color="#6C63FF" />
+        <View style={[styles.aiIcon, styles.aiIconSecondary]}>
+          <Ionicons name="flash-outline" size={18} color="#888" />
         </View>
         <View style={styles.aiText}>
-          <Text style={styles.aiTitle}>Build a custom program</Text>
+          <Text style={styles.aiTitleSecondary}>Single workout planner</Text>
           <Text style={styles.aiDesc}>
-            Get a personalised program based on your goals, schedule and equipment
+            Generate a one-off custom workout for today
           </Text>
         </View>
-        <View style={styles.aiBadge}>
-          <Text style={styles.aiBadgeText}>AI</Text>
-          <Ionicons name="arrow-forward" size={13} color="#6C63FF" />
-        </View>
+        <Ionicons name="arrow-forward" size={13} color="#555" />
       </TouchableOpacity>
 
       {/* Level filters */}
@@ -243,21 +259,31 @@ const styles = StyleSheet.create({
   headerText: { flex: 1 },
   heading: { color: '#fff', fontSize: 24, fontWeight: '800' },
   subheading: { color: '#666', fontSize: 12, marginTop: 2 },
+  aiCardPrimary: {
+    marginHorizontal: 20, marginBottom: 10, padding: 16, borderRadius: 16,
+    borderWidth: 1, borderColor: 'rgba(108,99,255,0.5)',
+    backgroundColor: 'rgba(108,99,255,0.1)',
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+  },
   aiCard: {
-    marginHorizontal: 20, marginBottom: 16, padding: 16, borderRadius: 16,
-    borderWidth: 1, borderColor: 'rgba(108,99,255,0.35)',
-    backgroundColor: 'rgba(108,99,255,0.08)',
+    marginHorizontal: 20, marginBottom: 16, padding: 14, borderRadius: 16,
+    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#1a1a1a',
     flexDirection: 'row', alignItems: 'center', gap: 12,
   },
   aiIcon: {
-    width: 38, height: 38, borderRadius: 10,
+    width: 40, height: 40, borderRadius: 10,
     backgroundColor: 'rgba(108,99,255,0.2)', alignItems: 'center', justifyContent: 'center',
   },
+  aiIconSecondary: {
+    backgroundColor: '#2a2a2a',
+  },
   aiText: { flex: 1 },
-  aiTitle: { color: '#fff', fontSize: 14, fontWeight: '700', marginBottom: 2 },
+  aiTitle: { color: '#fff', fontSize: 15, fontWeight: '700', marginBottom: 2 },
+  aiTitleSecondary: { color: '#aaa', fontSize: 14, fontWeight: '600', marginBottom: 2 },
   aiDesc: { color: '#888', fontSize: 12, lineHeight: 17 },
   aiBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  aiBadgeText: { color: '#6C63FF', fontSize: 12, fontWeight: '700' },
+  aiBadgeText: { color: '#6C63FF', fontSize: 11, fontWeight: '700' },
   filterRow: { paddingHorizontal: 20, paddingBottom: 12, gap: 8 },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,

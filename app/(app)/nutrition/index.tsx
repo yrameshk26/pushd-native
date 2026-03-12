@@ -19,6 +19,7 @@ import {
   logWater,
   deleteFood,
   deleteWater,
+  fetchCalorieBurn,
 } from '../../../src/api/nutrition';
 import { CalorieRing } from '../../../src/components/CalorieRing';
 import { MacroBar } from '../../../src/components/MacroBar';
@@ -75,6 +76,11 @@ export default function NutritionScreen() {
     queryFn: () => fetchWaterLogs(dateStr),
   });
 
+  const calorieBurnQuery = useQuery({
+    queryKey: ['calorie-burn', dateStr],
+    queryFn: () => fetchCalorieBurn(dateStr),
+  });
+
   const logWaterMutation = useMutation({
     mutationFn: (amountMl: number) => logWater(amountMl, dateStr),
     onSuccess: () => {
@@ -97,6 +103,7 @@ export default function NutritionScreen() {
   });
 
   const goals = goalsQuery.data ?? DEFAULT_GOALS;
+  const caloriesBurned = calorieBurnQuery.data?.totalBurned ?? 0;
   const summary = foodQuery.data?.summary ?? {
     totalCalories: 0,
     totalProtein: 0,
@@ -182,6 +189,48 @@ export default function NutritionScreen() {
           {/* Calorie Ring */}
           <View style={styles.card}>
             <CalorieRing consumed={summary.totalCalories} goal={goals.calories} />
+          </View>
+
+          {/* Calorie Burn */}
+          {caloriesBurned > 0 && (
+            <View style={styles.burnCard}>
+              <View style={styles.burnLeft}>
+                <Ionicons name="flame-outline" size={20} color="#F97316" />
+                <View>
+                  <Text style={styles.burnLabel}>Burned Today</Text>
+                  <Text style={styles.burnValue}>{Math.round(caloriesBurned)} kcal</Text>
+                </View>
+              </View>
+              <View style={styles.burnRight}>
+                <Text style={styles.burnNetLabel}>Net</Text>
+                <Text style={[
+                  styles.burnNetValue,
+                  summary.totalCalories - caloriesBurned < 0 && styles.burnNetNegative,
+                ]}>
+                  {Math.round(summary.totalCalories - caloriesBurned)} kcal
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Quick Links */}
+          <View style={styles.quickLinksRow}>
+            <TouchableOpacity
+              style={styles.quickLink}
+              onPress={() => router.push('/(app)/nutrition/supplements' as any)}
+            >
+              <Ionicons name="flask-outline" size={22} color="#6C63FF" />
+              <Text style={styles.quickLinkText}>Supplements</Text>
+              <Ionicons name="chevron-forward" size={14} color="#555" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quickLink}
+              onPress={() => router.push('/(app)/nutrition/templates' as any)}
+            >
+              <Ionicons name="bookmark-outline" size={22} color="#6C63FF" />
+              <Text style={styles.quickLinkText}>Templates</Text>
+              <Ionicons name="chevron-forward" size={14} color="#555" />
+            </TouchableOpacity>
           </View>
 
           {/* Macro Bars */}
@@ -485,4 +534,37 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
+  // Calorie burn
+  burnCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#F9731633',
+  },
+  burnLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  burnLabel: { color: '#888', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8 },
+  burnValue: { color: '#F97316', fontSize: 18, fontWeight: '700', marginTop: 2 },
+  burnRight: { alignItems: 'flex-end' },
+  burnNetLabel: { color: '#888', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8 },
+  burnNetValue: { color: '#fff', fontSize: 18, fontWeight: '700', marginTop: 2 },
+  burnNetNegative: { color: '#3B82F6' },
+  // Quick links
+  quickLinksRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+  quickLink: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  quickLinkText: { flex: 1, color: '#fff', fontSize: 14, fontWeight: '600' },
 });

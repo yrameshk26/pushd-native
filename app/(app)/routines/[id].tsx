@@ -47,7 +47,12 @@ export default function RoutineDetailScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.heading} numberOfLines={1}>{routine?.name ?? '...'}</Text>
-        <View style={{ width: 24 }} />
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => router.push(`/(app)/routines/edit?id=${id}`)}
+        >
+          <Ionicons name="pencil-outline" size={18} color="#6C63FF" />
+        </TouchableOpacity>
       </View>
 
       {isLoading ? (
@@ -114,4 +119,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', flexDirection: 'row', justifyContent: 'center',
   },
   startText: { color: '#fff', fontSize: 17, fontWeight: '700' },
+  editBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#6C63FF22',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

@@ -20,7 +20,7 @@ export default function RoutinesScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.heading}>Routines</Text>
-        <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/(app)/routines/new')}>
+        <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/(app)/routines/create')}>
           <Text style={styles.addBtnText}>+ New</Text>
         </TouchableOpacity>
       </View>

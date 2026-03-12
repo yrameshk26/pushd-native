@@ -150,7 +150,49 @@ export interface SupplementLog {
   id: string;
   name: string;
   dosage?: string;
+  timing?: string;
+  taken: boolean;
   loggedAt: string;
+}
+
+export interface MealTemplate {
+  id: string;
+  name: string;
+  calories: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  servingSize?: string;
+}
+
+export interface MealIngredient {
+  name: string;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  amount?: string;
+  unit?: string;
+}
+
+export interface SavedMeal {
+  id: string;
+  name: string;
+  description?: string;
+  ingredients?: MealIngredient[];
+  createdAt: string;
+}
+
+export interface CalorieBurnEntry {
+  id: string;
+  title: string;
+  duration?: number;
+  estimated: number;
+}
+
+export interface CalorieBurnResponse {
+  entries: CalorieBurnEntry[];
+  totalBurned: number;
 }
 
 export interface BarcodeFood {
