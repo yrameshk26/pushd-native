@@ -20,8 +20,8 @@ export default function AppLayout() {
         options={{ title: 'Workout', tabBarIcon: ({ color, size }) => <Ionicons name="barbell-outline" size={size} color={color} /> }}
       />
       <Tabs.Screen
-        name="routines"
-        options={{ title: 'Routines', tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" size={size} color={color} /> }}
+        name="nutrition"
+        options={{ title: 'Nutrition', tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} /> }}
       />
       <Tabs.Screen
         name="progress"
@@ -31,6 +31,15 @@ export default function AppLayout() {
         name="profile"
         options={{ title: 'Profile', tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} /> }}
       />
+      {/* Hidden from tab bar — accessible via push navigation */}
+      <Tabs.Screen name="onboarding" options={{ href: null }} />
+      <Tabs.Screen name="routines" options={{ href: null }} />
+      <Tabs.Screen name="exercises" options={{ href: null }} />
+      <Tabs.Screen name="social" options={{ href: null }} />
+      <Tabs.Screen name="coach" options={{ href: null }} />
+      <Tabs.Screen name="tools" options={{ href: null }} />
+      <Tabs.Screen name="programs" options={{ href: null }} />
+      <Tabs.Screen name="ai-planner" options={{ href: null }} />
     </Tabs>
   );
 }

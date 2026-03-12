@@ -10,6 +10,8 @@ interface AuthState {
   preAuthToken: string | null;
 
   // Actions
+  register: (email: string, password: string) => Promise<string>; // returns sessionId
+  verifyEmail: (sessionId: string, code: string) => Promise<void>;
   sendOtp: (email: string) => Promise<void>;
   verifyOtp: (code: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -25,6 +27,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   hydrate: async () => {
     const token = await SecureStore.getItemAsync(TOKEN_STORAGE_KEY);
     set({ isAuthenticated: !!token });
+  },
+
+  register: async (email: string, password: string) => {
+    const { data } = await api.post('/api/auth/register', { email, password });
+    // Store sessionId in state so verifyEmail can use it if needed
+    set({ sessionId: data.sessionId });
+    return data.sessionId as string;
+  },
+
+  verifyEmail: async (sessionId: string, code: string) => {
+    // Verify email OTP → get preAuthToken
+    const { data: verifyData } = await api.post('/api/auth/verify-email', { sessionId, code });
+
+    // Exchange preAuthToken → native token pair
+    const { data: tokenData } = await api.post('/api/auth/native/token', {
+      preAuthToken: verifyData.preAuthToken,
+    });
+
+    await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
+    await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
+
+    set({ isAuthenticated: true, sessionId: null });
   },
 
   sendOtp: async (email: string) => {
