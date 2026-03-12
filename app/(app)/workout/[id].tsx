@@ -7,8 +7,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchWorkout, likeWorkout, fetchComments, addComment, deleteWorkout } from '../../../src/api/workouts';
+import { fetchWorkout, likeWorkout, fetchComments, addComment, deleteWorkout, saveAsTemplate } from '../../../src/api/workouts';
 import { SavedWorkoutSet, Comment } from '../../../src/types';
+import { WorkoutPhotoUpload } from '../../../src/components/WorkoutPhotoUpload';
 
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -116,6 +117,42 @@ export default function WorkoutDetailScreen() {
     ]);
   }, [deleteMutation]);
 
+  const handleSaveAsTemplate = useCallback(() => {
+    const defaultName = workout?.title ?? 'My Routine';
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        'Save as Routine',
+        'Enter a name for this routine:',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Save',
+            onPress: (name: string | undefined) => {
+              const trimmed = (name ?? defaultName).trim() || defaultName;
+              saveAsTemplate(id, trimmed)
+                .then(() => Alert.alert('Saved!', 'Saved as routine!'))
+                .catch(() => Alert.alert('Error', 'Failed to save'));
+            },
+          },
+        ],
+        'plain-text',
+        defaultName,
+      );
+    } else {
+      Alert.alert('Save as Routine', `Save "${defaultName}" as a routine?`, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Save',
+          onPress: () => {
+            saveAsTemplate(id, defaultName)
+              .then(() => Alert.alert('Saved!', 'Saved as routine!'))
+              .catch(() => Alert.alert('Error', 'Failed to save'));
+          },
+        },
+      ]);
+    }
+  }, [id, workout?.title]);
+
   const handleSubmitComment = useCallback(() => {
     const trimmed = commentText.trim();
     if (!trimmed) return;
@@ -151,9 +188,14 @@ export default function WorkoutDetailScreen() {
             <Ionicons name="chevron-back" size={22} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle} numberOfLines={1}>{workout.title}</Text>
-          <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-            <Ionicons name="trash-outline" size={18} color="#ff4444" />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.templateBtn} onPress={handleSaveAsTemplate}>
+              <Ionicons name="bookmark-outline" size={18} color="#6C63FF" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
+              <Ionicons name="trash-outline" size={18} color="#ff4444" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -230,6 +272,9 @@ export default function WorkoutDetailScreen() {
             </Text>
           </TouchableOpacity>
 
+          {/* Photos */}
+          <WorkoutPhotoUpload workoutId={workout.id} />
+
           {/* Comments */}
           <Text style={styles.sectionTitle}>Comments</Text>
           {comments.length === 0 ? (
@@ -282,6 +327,14 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#2a2a2a',
   },
   headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700', flex: 1, textAlign: 'center', marginHorizontal: 12 },
+  headerActions: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+  },
+  templateBtn: {
+    width: 38, height: 38, borderRadius: 10,
+    backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center',
+    borderWidth: 1, borderColor: '#2a2a6e',
+  },
   deleteBtn: {
     width: 38, height: 38, borderRadius: 10,
     backgroundColor: '#1a1a1a', justifyContent: 'center', alignItems: 'center',

@@ -13,13 +13,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { fetchMeals, deleteMeal } from '../../../src/api/nutrition';
-import { SavedMeal } from '../../../src/types';
+import { fetchMeals, deleteMeal, fetchMealPlans } from '../../../src/api/nutrition';
+import { SavedMeal, MealPlanListItem } from '../../../src/types';
 
 export default function MealsLibraryScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const mealPlansQuery = useQuery({
+    queryKey: ['meal-plans'],
+    queryFn: fetchMealPlans,
+  });
 
   const mealsQuery = useQuery({
     queryKey: ['saved-meals'],
@@ -66,6 +71,8 @@ export default function MealsLibraryScreen() {
   const isLoading = mealsQuery.isLoading;
   const isError = mealsQuery.isError;
 
+  const plans = mealPlansQuery.data?.plans ?? [];
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -73,7 +80,7 @@ export default function MealsLibraryScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.heading}>Saved Meals</Text>
+        <Text style={styles.heading}>Meals</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -82,7 +89,7 @@ export default function MealsLibraryScreen() {
         <Ionicons name="search-outline" size={18} color="#555" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search meals..."
+          placeholder="Search saved meals..."
           placeholderTextColor="#555"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -91,59 +98,106 @@ export default function MealsLibraryScreen() {
         />
       </View>
 
-      {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
-      ) : isError ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Failed to load meals.</Text>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* ── Meal Plans Section ── */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Meal Plans</Text>
           <TouchableOpacity
-            style={styles.retryBtn}
-            onPress={() => mealsQuery.refetch()}
+            style={styles.createPlanBtn}
+            onPress={() =>
+              Alert.alert('Coming Soon', 'Meal plan creation will be available soon.')
+            }
           >
-            <Text style={styles.retryText}>Retry</Text>
+            <Ionicons name="add" size={14} color="#6C63FF" />
+            <Text style={styles.createPlanBtnText}>Create Plan</Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {filteredMeals.length === 0 && searchQuery.trim().length > 0 ? (
-            <View style={styles.emptyCard}>
-              <Ionicons name="search-outline" size={36} color="#333" />
-              <Text style={styles.emptyText}>No meals match "{searchQuery}"</Text>
-            </View>
-          ) : filteredMeals.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Ionicons name="restaurant-outline" size={40} color="#333" />
-              <Text style={styles.emptyText}>No saved meals yet</Text>
-              <Text style={styles.emptySubText}>
-                Create your first meal to build your personal food library
-              </Text>
-            </View>
-          ) : (
-            <>
-              <Text style={styles.countLabel}>
-                {filteredMeals.length} meal{filteredMeals.length !== 1 ? 's' : ''}
-              </Text>
-              {filteredMeals.map((meal) => (
-                <MealCard
-                  key={meal.id}
-                  meal={meal}
-                  onDelete={() => handleDelete(meal.id, meal.name)}
-                  isDeleting={
-                    deleteMealMutation.isPending &&
-                    deleteMealMutation.variables === meal.id
-                  }
-                />
-              ))}
-            </>
-          )}
 
-          <View style={{ height: 100 }} />
-        </ScrollView>
-      )}
+        {mealPlansQuery.isLoading ? (
+          <ActivityIndicator color="#6C63FF" style={{ marginVertical: 20 }} />
+        ) : mealPlansQuery.isError ? (
+          <View style={styles.sectionError}>
+            <Text style={styles.sectionErrorText}>Failed to load meal plans.</Text>
+            <TouchableOpacity onPress={() => mealPlansQuery.refetch()}>
+              <Text style={styles.sectionRetryText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        ) : plans.length === 0 ? (
+          <View style={styles.emptyPlans}>
+            <Ionicons name="calendar-outline" size={32} color="#333" />
+            <Text style={styles.emptyPlansText}>No meal plans yet</Text>
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.plansCarousel}
+          >
+            {plans.map((plan) => (
+              <MealPlanCard
+                key={plan.id}
+                plan={plan}
+                onPress={() => router.push(`/(app)/meals/${plan.id}` as any)}
+              />
+            ))}
+          </ScrollView>
+        )}
+
+        {/* ── Saved Meals Section ── */}
+        <View style={[styles.sectionHeader, { marginTop: 24 }]}>
+          <Text style={styles.sectionTitle}>Saved Meals</Text>
+        </View>
+
+        {isLoading ? (
+          <ActivityIndicator color="#6C63FF" style={{ marginVertical: 20 }} />
+        ) : isError ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Failed to load meals.</Text>
+            <TouchableOpacity
+              style={styles.retryBtn}
+              onPress={() => mealsQuery.refetch()}
+            >
+              <Text style={styles.retryText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        ) : filteredMeals.length === 0 && searchQuery.trim().length > 0 ? (
+          <View style={styles.emptyCard}>
+            <Ionicons name="search-outline" size={36} color="#333" />
+            <Text style={styles.emptyText}>No meals match "{searchQuery}"</Text>
+          </View>
+        ) : filteredMeals.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <Ionicons name="restaurant-outline" size={40} color="#333" />
+            <Text style={styles.emptyText}>No saved meals yet</Text>
+            <Text style={styles.emptySubText}>
+              Create your first meal to build your personal food library
+            </Text>
+          </View>
+        ) : (
+          <>
+            <Text style={styles.countLabel}>
+              {filteredMeals.length} meal{filteredMeals.length !== 1 ? 's' : ''}
+            </Text>
+            {filteredMeals.map((meal) => (
+              <MealCard
+                key={meal.id}
+                meal={meal}
+                onDelete={() => handleDelete(meal.id, meal.name)}
+                isDeleting={
+                  deleteMealMutation.isPending &&
+                  deleteMealMutation.variables === meal.id
+                }
+              />
+            ))}
+          </>
+        )}
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
 
       {/* FAB */}
       <TouchableOpacity
@@ -153,6 +207,47 @@ export default function MealsLibraryScreen() {
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
+  );
+}
+
+function MealPlanCard({
+  plan,
+  onPress,
+}: {
+  plan: MealPlanListItem;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity style={styles.planCard} onPress={onPress} activeOpacity={0.8}>
+      <View style={styles.planCardTop}>
+        <View style={styles.planIconWrap}>
+          <Ionicons name="calendar-outline" size={18} color="#6C63FF" />
+        </View>
+        <Ionicons name="chevron-forward" size={16} color="#444" />
+      </View>
+      <Text style={styles.planCardName} numberOfLines={2}>
+        {plan.name}
+      </Text>
+      {plan.description ? (
+        <Text style={styles.planCardDesc} numberOfLines={1}>
+          {plan.description}
+        </Text>
+      ) : null}
+      <View style={styles.planCardMeta}>
+        <View style={styles.planMetaChip}>
+          <Ionicons name="calendar-outline" size={11} color="#888" />
+          <Text style={styles.planMetaText}>
+            {plan.totalDays} day{plan.totalDays !== 1 ? 's' : ''}
+          </Text>
+        </View>
+        <View style={[styles.planMetaChip, styles.planMetaChipAccent]}>
+          <Ionicons name="flame-outline" size={11} color="#6C63FF" />
+          <Text style={[styles.planMetaText, { color: '#6C63FF' }]}>
+            {plan.calorieTarget} kcal
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -253,6 +348,101 @@ const styles = StyleSheet.create({
   },
   backBtn: { padding: 4 },
   heading: { fontSize: 20, fontWeight: '700', color: '#fff' },
+
+  // Section header
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
+  },
+  createPlanBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#6C63FF22',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  createPlanBtnText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+
+  // Section error
+  sectionError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
+  },
+  sectionErrorText: { color: '#888', fontSize: 13 },
+  sectionRetryText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+
+  // Empty plans
+  emptyPlans: {
+    alignItems: 'center',
+    paddingVertical: 28,
+    gap: 10,
+  },
+  emptyPlansText: { color: '#555', fontSize: 14 },
+
+  // Plans carousel
+  plansCarousel: {
+    paddingRight: 16,
+    gap: 12,
+  },
+
+  // Plan card
+  planCard: {
+    width: 168,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+    gap: 8,
+  },
+  planCardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  planIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#6C63FF22',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  planCardName: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  planCardDesc: {
+    color: '#666',
+    fontSize: 12,
+  },
+  planCardMeta: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  planMetaChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#111',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  planMetaChipAccent: { borderColor: '#6C63FF33', backgroundColor: '#6C63FF11' },
+  planMetaText: { color: '#888', fontSize: 11, fontWeight: '500' },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',

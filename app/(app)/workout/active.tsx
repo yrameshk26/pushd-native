@@ -13,6 +13,7 @@ import { RestTimer } from '../../../src/components/RestTimer';
 import { WorkoutSummaryModal } from '../../../src/components/WorkoutSummaryModal';
 import { ExerciseSubstitutionSheet } from '../../../src/components/ExerciseSubstitutionSheet';
 import { NLWorkoutInput, ParsedExercise } from '../../../src/components/NLWorkoutInput';
+import { FormAnalysisSheet } from '../../../src/components/FormAnalysisSheet';
 import { Exercise } from '../../../src/types';
 
 const DEFAULT_REST_SECONDS = 90;
@@ -35,6 +36,9 @@ export default function ActiveWorkoutScreen() {
 
   // NL input modal state
   const [nlVisible, setNlVisible] = useState(false);
+
+  // Form analysis sheet state
+  const [formCheckVisible, setFormCheckVisible] = useState(false);
 
   // Rest timer state
   const [restVisible, setRestVisible] = useState(false);
@@ -136,7 +140,6 @@ export default function ActiveWorkoutScreen() {
       exerciseId: ex.id,
       exerciseName: ex.name,
       order: active.exercises.length,
-      sets: [],
     });
   };
 
@@ -305,6 +308,12 @@ export default function ActiveWorkoutScreen() {
             <Ionicons name="sparkles-outline" size={16} color="#6C63FF" />
             <Text style={styles.nlBtnText}>AI Parse</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.formCheckBtn}
+            onPress={() => setFormCheckVisible(true)}
+          >
+            <Ionicons name="camera-outline" size={16} color="#6C63FF" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -347,6 +356,16 @@ export default function ActiveWorkoutScreen() {
           onClose={() => setNlVisible(false)}
         />
       )}
+
+      <FormAnalysisSheet
+        visible={formCheckVisible}
+        exerciseName={
+          active.exercises.length > 0
+            ? active.exercises[active.exercises.length - 1].exerciseName
+            : 'Exercise'
+        }
+        onClose={() => setFormCheckVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -421,4 +440,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50',
   },
   nlBtnText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  formCheckBtn: {
+    justifyContent: 'center', alignItems: 'center',
+    paddingHorizontal: 14, paddingVertical: 16, borderRadius: 14,
+    backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50',
+  },
 });

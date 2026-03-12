@@ -11,6 +11,9 @@ import {
   SavedMeal,
   MealIngredient,
   CalorieBurnResponse,
+  MealPlan,
+  MealPlanListItem,
+  GroceryList,
 } from '../types';
 
 export interface FoodLogsResponse {
@@ -183,5 +186,35 @@ export async function deleteMeal(id: string): Promise<void> {
 
 export async function lookupBarcode(barcode: string): Promise<BarcodeFood | null> {
   const { data } = await api.get('/api/nutrition/barcode', { params: { barcode } });
+  return data;
+}
+
+// ─── Meal Plan API ────────────────────────────────────────────────────────────
+
+export interface MealPlansResponse {
+  plans: MealPlanListItem[];
+}
+
+export async function fetchMealPlans(): Promise<MealPlansResponse> {
+  const { data } = await api.get('/api/meal-plans');
+  return data;
+}
+
+export async function fetchMealPlan(planId: string): Promise<MealPlan> {
+  const { data } = await api.get(`/api/meal-plans/${planId}`);
+  return data;
+}
+
+export async function logMealFromPlan(planId: string, mealId: string): Promise<FoodLog> {
+  const { data } = await api.post(`/api/meal-plans/${planId}/meals/${mealId}/log`);
+  return data;
+}
+
+export async function deleteMealPlan(planId: string): Promise<void> {
+  await api.delete(`/api/meal-plans/${planId}`);
+}
+
+export async function fetchGroceryList(planId: string): Promise<GroceryList> {
+  const { data } = await api.get(`/api/meal-plans/${planId}/grocery-list`);
   return data;
 }

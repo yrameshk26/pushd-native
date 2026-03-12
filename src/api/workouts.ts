@@ -40,3 +40,7 @@ export async function addComment(workoutId: string, content: string): Promise<Co
   const { data } = await api.post(`/api/workouts/${workoutId}/comments`, { content });
   return data;
 }
+
+export async function saveAsTemplate(id: string, name: string): Promise<void> {
+  await api.post(`/api/workouts/${id}/save-as-template`, { name });
+}

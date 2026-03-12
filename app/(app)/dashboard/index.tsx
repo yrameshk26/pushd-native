@@ -18,7 +18,7 @@ import { StreakCalendar } from '../../../src/components/StreakCalendar';
 import { RecoveryWidget } from '../../../src/components/RecoveryWidget';
 import { DeloadRecommendationCard } from '../../../src/components/DeloadRecommendationCard';
 import { WeeklyReviewCard } from '../../../src/components/WeeklyReviewCard';
-import type { Routine } from '../../../src/types/index';
+import type { Routine, WorkoutListItem } from '../../../src/types/index';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -79,6 +79,19 @@ function getGreeting(): string {
   if (hour < 12) return 'Good morning';
   if (hour < 17) return 'Good afternoon';
   return 'Good evening';
+}
+
+// ─── Relative date ───────────────────────────────────────────────────────────
+
+function timeAgo(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks === 1) return '1 week ago';
+  return `${weeks} weeks ago`;
 }
 
 // ─── Skeleton placeholder ────────────────────────────────────────────────────
@@ -222,11 +235,18 @@ export default function DashboardScreen() {
     retry: 1,
   });
 
+  const { data: recentWorkoutsData, isLoading: recentWorkoutsLoading } = useQuery<{ workouts: WorkoutListItem[] }>({
+    queryKey: ['recent-workouts'],
+    queryFn: async () => (await api.get('/api/workouts', { params: { limit: 3 } })).data,
+    retry: 1,
+  });
+
   const suggestedRoutine = routinesData?.routines?.[0] ?? null;
   const recentPRs = progressSummary?.recentPRs ?? [];
   const activeDates = streakData?.activeDates ?? [];
   const streak = streakData?.streak ?? 0;
   const chartData: VolumeWeek[] = volumeData ?? [];
+  const recentWorkouts: WorkoutListItem[] = recentWorkoutsData?.workouts ?? [];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -377,6 +397,43 @@ export default function DashboardScreen() {
         {progressLoading && (
           <Skeleton height={90} borderRadius={14} style={{ marginBottom: 24 }} />
         )}
+
+        {/* ── Recent Workouts ───────────────────────────────────────── */}
+        {recentWorkoutsLoading ? (
+          <Skeleton height={150} borderRadius={14} style={{ marginBottom: 24 }} />
+        ) : recentWorkouts.length > 0 ? (
+          <Section title="Recent Workouts" icon="time-outline">
+            <View style={styles.recentWorkoutsCard}>
+              <TouchableOpacity
+                style={styles.recentWorkoutsSeeAll}
+                onPress={() => router.push('/(app)/workout/history' as never)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.recentWorkoutsSeeAllText}>See all</Text>
+                <Ionicons name="chevron-forward" size={13} color="#6C63FF" />
+              </TouchableOpacity>
+              {recentWorkouts.map((w, index) => (
+                <TouchableOpacity
+                  key={w.id}
+                  style={[styles.recentWorkoutRow, index < recentWorkouts.length - 1 && styles.recentWorkoutRowBorder]}
+                  onPress={() => router.push(`/(app)/workout/${w.id}` as never)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.recentWorkoutInfo}>
+                    <Text style={styles.recentWorkoutTitle} numberOfLines={1}>{w.title}</Text>
+                    <Text style={styles.recentWorkoutMeta}>
+                      {w.exercises.length} exercise{w.exercises.length !== 1 ? 's' : ''}
+                      {'  ·  '}
+                      {w.volume >= 1000 ? `${(w.volume / 1000).toFixed(1)}t` : `${Math.round(w.volume)}kg`}
+                    </Text>
+                  </View>
+                  <Text style={styles.recentWorkoutDate}>{timeAgo(w.completedAt)}</Text>
+                  <Ionicons name="chevron-forward" size={14} color="#444" style={{ marginLeft: 6 }} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Section>
+        ) : null}
 
         {/* ── Volume chart ─────────────────────────────────────────── */}
         <Section title="Weekly Volume" icon="bar-chart-outline">
@@ -598,6 +655,59 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   prDate: {
+    color: '#555',
+    fontSize: 12,
+    flexShrink: 0,
+  },
+
+  // Recent workouts
+  recentWorkoutsCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+    overflow: 'hidden',
+  },
+  recentWorkoutsSeeAll: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 4,
+    gap: 2,
+  },
+  recentWorkoutsSeeAllText: {
+    color: '#6C63FF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  recentWorkoutRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  recentWorkoutRowBorder: {
+    borderTopWidth: 1,
+    borderTopColor: '#222',
+  },
+  recentWorkoutInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  recentWorkoutTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  recentWorkoutMeta: {
+    color: '#666',
+    fontSize: 12,
+  },
+  recentWorkoutDate: {
     color: '#555',
     fontSize: 12,
     flexShrink: 0,

@@ -53,6 +53,8 @@ export default function AppLayout() {
       {/* Meals library */}
       <Tabs.Screen name="meals" options={{ href: null }} />
       <Tabs.Screen name="meals/new" options={{ href: null }} />
+      <Tabs.Screen name="meals/[planId]" options={{ href: null }} />
+      <Tabs.Screen name="meals/grocery-list" options={{ href: null }} />
     </Tabs>
   );
 }

@@ -203,3 +203,57 @@ export interface BarcodeFood {
   fat: number;
   servingSize?: string;
 }
+
+// ─── Meal Plan Types ─────────────────────────────────────────────────────────
+
+export interface MealPlanMeal {
+  id: string;
+  name: string;
+  mealType: 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description?: string;
+}
+
+export interface MealPlanDay {
+  dayNumber: number;
+  label: string; // e.g. "Day 1", "Monday"
+  meals: MealPlanMeal[];
+}
+
+export interface MealPlan {
+  id: string;
+  name: string;
+  description?: string;
+  totalDays: number;
+  calorieTarget: number;
+  proteinTarget?: number;
+  carbsTarget?: number;
+  fatTarget?: number;
+  days: MealPlanDay[];
+  createdAt: string;
+}
+
+export interface MealPlanListItem {
+  id: string;
+  name: string;
+  description?: string;
+  totalDays: number;
+  calorieTarget: number;
+  createdAt: string;
+}
+
+export interface GroceryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category: 'PRODUCE' | 'PROTEINS' | 'DAIRY' | 'GRAINS' | 'OTHER';
+}
+
+export interface GroceryList {
+  planId: string;
+  items: GroceryItem[];
+}

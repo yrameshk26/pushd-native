@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +15,7 @@ import { router } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
 import { useAuthStore } from '../../../src/store/auth';
+import NotificationSettings from '../../../src/components/NotificationSettings';
 
 interface UserProfile {
   displayName: string;
@@ -23,7 +23,6 @@ interface UserProfile {
   bio: string;
   email: string;
   weightUnit: 'KG' | 'LBS';
-  workoutReminderEnabled: boolean;
 }
 
 function useProfile() {
@@ -50,7 +49,6 @@ export default function SettingsScreen() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [weightUnit, setWeightUnit] = useState<'KG' | 'LBS'>('KG');
-  const [reminderEnabled, setReminderEnabled] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
   if (data && !initialized) {
@@ -58,7 +56,6 @@ export default function SettingsScreen() {
     setUsername(data.username ?? '');
     setBio(data.bio ?? '');
     setWeightUnit(data.weightUnit ?? 'KG');
-    setReminderEnabled(data.workoutReminderEnabled ?? false);
     setInitialized(true);
   }
 
@@ -69,7 +66,6 @@ export default function SettingsScreen() {
         username: username.trim() || undefined,
         bio: bio.trim() || undefined,
         weightUnit,
-        workoutReminderEnabled: reminderEnabled,
       });
       return res.data;
     },
@@ -233,18 +229,7 @@ export default function SettingsScreen() {
             </View>
           </View>
           <RowSeparator />
-          <View style={styles.fieldRow}>
-            <View style={styles.toggleLabelGroup}>
-              <Text style={styles.toggleLabel}>Workout Reminder</Text>
-              <Text style={styles.toggleSub}>Daily reminder to stay consistent</Text>
-            </View>
-            <Switch
-              value={reminderEnabled}
-              onValueChange={setReminderEnabled}
-              trackColor={{ false: '#2a2a2a', true: '#6C63FF' }}
-              thumbColor="#fff"
-            />
-          </View>
+          <NotificationSettings />
         </View>
 
         {/* Account Section */}
