@@ -21,7 +21,7 @@ export default function AppLayout() {
       />
       <Tabs.Screen
         name="nutrition"
-        options={{ title: 'Nutrition', tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} /> }}
+        options={{ title: 'Log', tabBarIcon: ({ color, size }) => <Ionicons name="restaurant-outline" size={size} color={color} /> }}
       />
       <Tabs.Screen
         name="progress"
