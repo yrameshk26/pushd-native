@@ -24,7 +24,7 @@ interface AuthState {
   // Actions
   register: (email: string, password: string, username: string, displayName: string) => Promise<string>; // returns sessionId
   verifyEmail: (sessionId: string, code: string) => Promise<void>;
-  sendOtp: (email: string, password: string) => Promise<void>;
+  sendOtp: (email: string, password: string) => Promise<{ next: 'otp' | 'dashboard' | 'verify-email'; sessionId?: string }>;
   verifyOtp: (code: string) => Promise<void>;
   logout: () => Promise<void>;
   hydrate: () => Promise<void>;
@@ -75,7 +75,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   sendOtp: async (email: string, password: string) => {
     const { data } = await api.post('/api/auth/pre-login', { email, password });
+
+    // Email not verified — need to verify email first
+    if (data.emailNotVerified) {
+      set({ sessionId: data.sessionId });
+      return { next: 'verify-email' as const, sessionId: data.sessionId };
+    }
+
+    // OTP skipped — backend issued preAuthToken directly, exchange immediately
+    if (data.preAuthToken) {
+      const { data: tokenData } = await api.post('/api/auth/native/token', {
+        preAuthToken: data.preAuthToken,
+      });
+      await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
+      await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
+      set({ isAuthenticated: true, sessionId: null });
+      return { next: 'dashboard' as const };
+    }
+
+    // OTP required — store sessionId for verifyOtp
     set({ sessionId: data.sessionId });
+    return { next: 'otp' as const, sessionId: data.sessionId };
   },
 
   verifyOtp: async (code: string) => {

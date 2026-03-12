@@ -21,10 +21,17 @@ export default function LoginScreen() {
     if (!trimmed || !password) return;
     setLoading(true);
     try {
-      await sendOtp(trimmed, password);
-      router.push('/(auth)/verify-otp');
-    } catch {
-      Alert.alert('Error', 'Invalid email or password. Please try again.');
+      const result = await sendOtp(trimmed, password);
+      if (result.next === 'dashboard') {
+        router.replace('/(app)/dashboard');
+      } else if (result.next === 'verify-email') {
+        router.push(`/(auth)/verify-email?email=${encodeURIComponent(trimmed)}&sessionId=${result.sessionId}`);
+      } else {
+        router.push('/(auth)/verify-otp');
+      }
+    } catch (e: any) {
+      const msg = e?.response?.data?.error ?? 'Invalid email or password. Please try again.';
+      Alert.alert('Error', msg);
     } finally {
       setLoading(false);
     }
