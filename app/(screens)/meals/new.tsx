@@ -68,9 +68,13 @@ export default function NewMealPlanScreen() {
 
   const generateMutation = useMutation({
     mutationFn: generateMealPlan,
-    onSuccess: () => {
+    onSuccess: (plan) => {
       queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
-      router.back();
+      if (plan?.id) {
+        router.replace(`/(screens)/meals/${plan.id}` as any);
+      } else {
+        router.back();
+      }
     },
     onError: (err: any) => {
       const status = err?.response?.status;

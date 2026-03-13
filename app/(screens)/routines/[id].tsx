@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
+import { confirmAction } from '../../../src/utils/confirm';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -135,17 +136,10 @@ export default function RoutineDetailScreen() {
   });
 
   function handleDelete() {
-    Alert.alert(
+    confirmAction(
       'Delete Routine',
       `Are you sure you want to delete "${routine?.name ?? 'this routine'}"? This cannot be undone.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => deleteMutation.mutate(),
-        },
-      ],
+      () => deleteMutation.mutate(),
     );
   }
 

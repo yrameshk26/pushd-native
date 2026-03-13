@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Share,
 } from 'react-native';
+import { confirmAction } from '../../../src/utils/confirm';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -166,10 +167,7 @@ export default function WorkoutDetailScreen() {
   });
 
   const handleDelete = useCallback(() => {
-    Alert.alert('Delete Workout', 'This cannot be undone. Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteMutation.mutate() },
-    ]);
+    confirmAction('Delete Workout', 'This cannot be undone. Are you sure?', () => deleteMutation.mutate());
   }, [deleteMutation]);
 
   const handleShare = useCallback(async () => {
