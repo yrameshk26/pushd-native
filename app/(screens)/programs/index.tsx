@@ -18,6 +18,17 @@ import { api } from '../../../src/api/client';
 
 type ProgramLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 type LevelFilter = ProgramLevel | 'all';
+type CategoryFilter =
+  | 'all'
+  | 'push'
+  | 'pull'
+  | 'legs'
+  | 'upper'
+  | 'lower'
+  | 'full_body'
+  | 'chest_back'
+  | 'arms'
+  | 'bodyweight';
 
 interface ProgramListItem {
   id: string;
@@ -34,10 +45,23 @@ interface ProgramListItem {
 // ─── Constants ─────────────────────────────────────────────────────────────
 
 const LEVEL_FILTERS: { value: LevelFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
+  { value: 'all', label: 'All Levels' },
   { value: 'BEGINNER', label: 'Beginner' },
   { value: 'INTERMEDIATE', label: 'Intermediate' },
   { value: 'ADVANCED', label: 'Advanced' },
+];
+
+const CATEGORY_FILTERS: { value: CategoryFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'push', label: 'Push' },
+  { value: 'pull', label: 'Pull' },
+  { value: 'legs', label: 'Legs' },
+  { value: 'upper', label: 'Upper Body' },
+  { value: 'lower', label: 'Lower Body' },
+  { value: 'full_body', label: 'Full Body' },
+  { value: 'chest_back', label: 'Chest & Back' },
+  { value: 'arms', label: 'Arms' },
+  { value: 'bodyweight', label: 'Bodyweight' },
 ];
 
 const LEVEL_BADGE: Record<ProgramLevel, { bg: string; text: string; label: string }> = {
@@ -58,18 +82,66 @@ const EQUIPMENT_LABELS: Record<string, string> = {
 
 // ─── Hook ──────────────────────────────────────────────────────────────────
 
-function usePrograms(level: LevelFilter) {
+function usePrograms(level: LevelFilter, category: CategoryFilter) {
   return useQuery<ProgramListItem[]>({
-    queryKey: ['programs', level],
+    queryKey: ['programs', level, category],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (level !== 'all') params.set('level', level);
+      if (category !== 'all') params.set('category', category);
       const { data } = await api.get(`/api/programs?${params.toString()}`);
       return data?.data ?? data ?? [];
     },
     staleTime: 5 * 60 * 1000,
   });
 }
+
+// ─── AI Banner ────────────────────────────────────────────────────────────
+
+function AiBanner() {
+  return (
+    <TouchableOpacity
+      style={bannerStyles.container}
+      onPress={() => router.push('/(screens)/ai-planner' as any)}
+      activeOpacity={0.8}
+    >
+      <View style={bannerStyles.left}>
+        <Ionicons name="sparkles" size={20} color="#6C63FF" />
+        <View style={bannerStyles.textWrap}>
+          <Text style={bannerStyles.title}>Build a custom program</Text>
+          <Text style={bannerStyles.sub}>
+            Let AI design the perfect program for your goals
+          </Text>
+        </View>
+      </View>
+      <View style={bannerStyles.cta}>
+        <Text style={bannerStyles.ctaText}>Build with AI</Text>
+        <Ionicons name="arrow-forward" size={14} color="#6C63FF" />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const bannerStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#6C63FF',
+    backgroundColor: 'rgba(108,99,255,0.08)',
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  left: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  textWrap: { flex: 1 },
+  title: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  sub: { color: '#888', fontSize: 12, marginTop: 2 },
+  cta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  ctaText: { color: '#6C63FF', fontSize: 13, fontWeight: '700' },
+});
 
 // ─── Program card ─────────────────────────────────────────────────────────
 
@@ -148,7 +220,8 @@ const cardStyles = StyleSheet.create({
 
 export default function ProgramsScreen() {
   const [levelFilter, setLevelFilter] = useState<LevelFilter>('all');
-  const { data: programs, isLoading, isError, refetch } = usePrograms(levelFilter);
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const { data: programs, isLoading, isError, refetch } = usePrograms(levelFilter, categoryFilter);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -162,6 +235,9 @@ export default function ProgramsScreen() {
           <Text style={styles.subheading}>Pre-built routines you can add in one tap</Text>
         </View>
       </View>
+
+      {/* AI Banner */}
+      <AiBanner />
 
       {/* Level filters */}
       <ScrollView
@@ -177,6 +253,26 @@ export default function ProgramsScreen() {
             activeOpacity={0.7}
           >
             <Text style={[styles.filterText, levelFilter === value && styles.filterTextActive]}>
+              {label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Category (focus area) filters */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterRow}
+      >
+        {CATEGORY_FILTERS.map(({ value, label }) => (
+          <TouchableOpacity
+            key={value}
+            style={[styles.filterChip, categoryFilter === value && styles.filterChipActive]}
+            onPress={() => setCategoryFilter(value)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.filterText, categoryFilter === value && styles.filterTextActive]}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -222,7 +318,7 @@ const styles = StyleSheet.create({
   headerText: { flex: 1 },
   heading: { color: '#fff', fontSize: 24, fontWeight: '800' },
   subheading: { color: '#666', fontSize: 12, marginTop: 2 },
-  filterRow: { paddingHorizontal: 20, paddingBottom: 12, gap: 8 },
+  filterRow: { paddingHorizontal: 20, paddingBottom: 10, gap: 8 },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
     borderWidth: 1, borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
