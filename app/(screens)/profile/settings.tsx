@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Modal,
   ActivityIndicator,
   Platform,
   Image,
@@ -18,6 +19,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { api } from '../../../src/api/client';
 import { useWorkoutPrefsStore } from '../../../src/store/workout-prefs';
+import { useAuthStore } from '../../../src/store/auth';
 import NotificationSettings from '../../../src/components/NotificationSettings';
 import { storage } from '../../../src/utils/storage';
 import { TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
@@ -116,6 +118,9 @@ export default function SettingsScreen() {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const webFileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -230,12 +235,35 @@ export default function SettingsScreen() {
     },
   });
 
+  const logout = useAuthStore((s) => s.logout);
+
   const handleDeleteAccount = () => {
     Alert.alert(
       'Delete Account',
-      'To delete your account, please visit pushd.fit/profile/settings in your browser.',
-      [{ text: 'OK' }],
+      'This permanently deletes all your workouts, routines, progress, and personal data. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Continue', style: 'destructive', onPress: () => { setDeleteConfirmText(''); setShowDeleteModal(true); } },
+      ],
     );
+  };
+
+  const confirmDelete = async () => {
+    if (deleteConfirmText.trim() !== 'DELETE') {
+      Alert.alert('Incorrect', 'You must type DELETE exactly to confirm.');
+      return;
+    }
+    setDeleting(true);
+    try {
+      await api.delete('/api/users/me');
+      await logout();
+      router.replace('/(auth)/login' as never);
+    } catch (e: any) {
+      Alert.alert('Error', e?.message ?? 'Could not delete account. Please try again.');
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
+    }
   };
 
   if (isLoading) {
@@ -383,6 +411,45 @@ export default function SettingsScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* Delete account confirmation modal */}
+      <Modal visible={showDeleteModal} transparent animationType="fade" onRequestClose={() => setShowDeleteModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Final Confirmation</Text>
+            <Text style={styles.modalBody}>
+              Type <Text style={{ color: '#fff', fontWeight: '700' }}>DELETE</Text> to permanently delete your account and all data.
+            </Text>
+            <TextInput
+              style={styles.modalInput}
+              value={deleteConfirmText}
+              onChangeText={setDeleteConfirmText}
+              placeholder="Type DELETE"
+              placeholderTextColor="#555"
+              autoCapitalize="characters"
+              autoFocus
+            />
+            <View style={styles.modalBtns}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnCancel]}
+                onPress={() => setShowDeleteModal(false)}
+                disabled={deleting}
+              >
+                <Text style={styles.modalBtnCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalBtnDelete, (deleteConfirmText !== 'DELETE' || deleting) && styles.modalBtnDisabled]}
+                onPress={confirmDelete}
+                disabled={deleteConfirmText !== 'DELETE' || deleting}
+              >
+                {deleting
+                  ? <ActivityIndicator color="#fff" size="small" />
+                  : <Text style={styles.modalBtnDeleteText}>Delete Forever</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -452,4 +519,17 @@ const styles = StyleSheet.create({
   infoValue: { fontSize: 15, color: '#666', maxWidth: '60%', textAlign: 'right' },
 
   dangerLabel: { flex: 1, fontSize: 15, color: '#ef4444' },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  modalBox: { backgroundColor: '#1a1a1a', borderRadius: 16, padding: 24, width: '100%', borderWidth: 1, borderColor: '#2a2a2a' },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginBottom: 10 },
+  modalBody: { fontSize: 14, color: '#888', lineHeight: 20, marginBottom: 16 },
+  modalInput: { backgroundColor: '#0a0a0a', borderRadius: 10, borderWidth: 1, borderColor: '#ef4444', paddingHorizontal: 14, paddingVertical: 12, color: '#fff', fontSize: 16, letterSpacing: 2, marginBottom: 16 },
+  modalBtns: { flexDirection: 'row', gap: 10 },
+  modalBtn: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  modalBtnCancel: { backgroundColor: '#2a2a2a' },
+  modalBtnCancelText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  modalBtnDelete: { backgroundColor: '#ef4444' },
+  modalBtnDeleteText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  modalBtnDisabled: { opacity: 0.4 },
 });
