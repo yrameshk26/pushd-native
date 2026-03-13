@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
-  StyleSheet, Alert, ActivityIndicator, Platform, KeyboardAvoidingView,
+  StyleSheet, Alert, ActivityIndicator, Platform, KeyboardAvoidingView, Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import { WorkoutSummaryModal } from '../../../src/components/WorkoutSummaryModal
 import { ExerciseSubstitutionSheet } from '../../../src/components/ExerciseSubstitutionSheet';
 import { NLWorkoutInput, ParsedExercise } from '../../../src/components/NLWorkoutInput';
 import { FormAnalysisSheet } from '../../../src/components/FormAnalysisSheet';
+import { ExerciseDetailSheet } from '../../../src/components/ExerciseDetailSheet';
 import { Exercise } from '../../../src/types';
 
 const DEFAULT_REST_SECONDS = 90;
@@ -41,6 +42,9 @@ export default function ActiveWorkoutScreen() {
 
   // Form analysis sheet state
   const [formCheckVisible, setFormCheckVisible] = useState(false);
+
+  // Exercise detail sheet state
+  const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null);
 
   // Rest timer state
   const [restVisible, setRestVisible] = useState(false);
@@ -122,9 +126,11 @@ export default function ActiveWorkoutScreen() {
       if (!active) return;
       exercises.forEach((parsed, i) => {
         addExercise({
-          exerciseId: parsed.exerciseName.toLowerCase().replace(/\s+/g, '-'),
+          exerciseId: parsed.exerciseId ?? parsed.exerciseName.toLowerCase().replace(/\s+/g, '-'),
           exerciseName: parsed.exerciseName,
           order: active.exercises.length + i,
+          thumbnailUrl: parsed.thumbnailUrl ?? null,
+          gifUrl: parsed.gifUrl ?? null,
           sets: Array.from({ length: parsed.sets }, (_, si) => ({
             order: si,
             type: 'NORMAL' as const,
@@ -145,6 +151,8 @@ export default function ActiveWorkoutScreen() {
       exerciseId: ex.id,
       exerciseName: ex.name,
       order: active.exercises.length,
+      thumbnailUrl: ex.thumbnailUrl ?? null,
+      gifUrl: ex.gifUrl ?? null,
     });
   };
 
@@ -241,8 +249,29 @@ export default function ActiveWorkoutScreen() {
             <View key={exercise.localId} style={styles.exerciseCard}>
               {/* Exercise header */}
               <View style={styles.exerciseHeader}>
-                <Text style={styles.exerciseName}>{exercise.exerciseName}</Text>
+                {/* Thumbnail */}
+                {(exercise.thumbnailUrl ?? exercise.gifUrl) ? (
+                  <Image
+                    source={{ uri: (exercise.thumbnailUrl ?? exercise.gifUrl)! }}
+                    style={styles.exerciseThumb}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.exerciseThumbFallback}>
+                    <Ionicons name="barbell-outline" size={18} color="#6C63FF" />
+                  </View>
+                )}
+                <Text style={styles.exerciseName} numberOfLines={1}>{exercise.exerciseName}</Text>
                 <View style={styles.exerciseActions}>
+                  {/* Info */}
+                  {exercise.exerciseId && !exercise.exerciseId.startsWith('local-') && (
+                    <TouchableOpacity
+                      style={styles.actionBtn}
+                      onPress={() => setDetailExerciseId(exercise.exerciseId)}
+                    >
+                      <Ionicons name="information-circle-outline" size={16} color="#888" />
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
                     style={[styles.actionBtn, exIndex === 0 && styles.actionBtnDisabled]}
                     onPress={() => reorderExercise(exercise.localId, 'up')}
@@ -386,6 +415,11 @@ export default function ActiveWorkoutScreen() {
         }
         onClose={() => setFormCheckVisible(false)}
       />
+
+      <ExerciseDetailSheet
+        exerciseId={detailExerciseId}
+        onClose={() => setDetailExerciseId(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -446,8 +480,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#111', borderRadius: 14, padding: 16,
     marginBottom: 16, borderWidth: 1, borderColor: '#1e1e1e',
   },
-  exerciseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  exerciseName: { color: '#fff', fontSize: 16, fontWeight: '700', flex: 1, marginRight: 8 },
+  exerciseHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 },
+  exerciseThumb: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#1a1a1a', flexShrink: 0 },
+  exerciseThumbFallback: {
+    width: 40, height: 40, borderRadius: 8, backgroundColor: '#1a1a2e',
+    justifyContent: 'center', alignItems: 'center', flexShrink: 0,
+  },
+  exerciseName: { color: '#fff', fontSize: 15, fontWeight: '700', flex: 1 },
   exerciseActions: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   actionBtn: {
     width: 30, height: 30, borderRadius: 8, backgroundColor: '#1a1a1a',

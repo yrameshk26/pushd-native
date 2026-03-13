@@ -24,6 +24,8 @@ export interface WorkoutExercise {
   order: number;
   sets: WorkoutSet[];
   notes?: string;
+  thumbnailUrl?: string | null;
+  gifUrl?: string | null;
 }
 
 export interface ActiveWorkout {

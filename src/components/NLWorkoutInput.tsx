@@ -8,9 +8,12 @@ import { api } from '../api/client';
 
 export interface ParsedExercise {
   exerciseName: string;
+  exerciseId?: string | null;
   sets: number;
   reps: number;
   weight: number;
+  thumbnailUrl?: string | null;
+  gifUrl?: string | null;
 }
 
 interface Props {
