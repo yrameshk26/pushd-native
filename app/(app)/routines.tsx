@@ -122,16 +122,6 @@ export default function RoutinesScreen() {
     <RoutineCard routine={item} />
   );
 
-  const ListHeader = (
-    <>
-      <AIPlannerCard />
-      <ProgramsCard />
-      {routines.length > 0 && (
-        <Text style={styles.sectionLabel}>MY ROUTINES</Text>
-      )}
-    </>
-  );
-
   const EmptyComponent = (
     <View style={styles.emptyState}>
       <Ionicons name="book-outline" size={56} color="#2a2a2a" />
@@ -159,6 +149,12 @@ export default function RoutinesScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* CTA cards always visible regardless of loading/error state */}
+      <View style={styles.ctaSection}>
+        <AIPlannerCard />
+        <ProgramsCard />
+      </View>
+
       {isLoading ? (
         <View style={styles.centeredState}>
           <ActivityIndicator color="#6C63FF" size="large" />
@@ -176,7 +172,7 @@ export default function RoutinesScreen() {
           data={routines}
           keyExtractor={(r) => r.id}
           renderItem={renderItem}
-          ListHeaderComponent={ListHeader}
+          ListHeaderComponent={routines.length > 0 ? <Text style={styles.sectionLabel}>MY ROUTINES</Text> : null}
           ListEmptyComponent={EmptyComponent}
           contentContainerStyle={styles.listContent}
         />
@@ -210,6 +206,7 @@ const styles = StyleSheet.create({
   },
 
   // List
+  ctaSection: { paddingHorizontal: 20, paddingTop: 8 },
   listContent: { paddingHorizontal: 20, paddingBottom: 100 },
 
   // CTA cards

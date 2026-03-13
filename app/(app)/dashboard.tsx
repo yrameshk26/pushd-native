@@ -166,7 +166,12 @@ function StartWorkoutSheet({
         {/* Drag indicator */}
         <View style={styles.sheetHandle} />
 
-        <Text style={styles.sheetTitle}>Start Workout</Text>
+        <View style={styles.sheetTitleRow}>
+          <Text style={styles.sheetTitle}>Start Workout</Text>
+          <Pressable onPress={onClose} style={styles.sheetCloseBtn} accessibilityLabel="Close">
+            <Ionicons name="close" size={20} color="#888" />
+          </Pressable>
+        </View>
 
         <FlatList
           data={items}
@@ -795,11 +800,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 16,
   },
+  sheetTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   sheetTitle: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 16,
+  },
+  sheetCloseBtn: {
+    padding: 4,
   },
   sheetList: {
     flexGrow: 0,

@@ -14,7 +14,12 @@ web-build/
 android/
 ios/
 
-# Playwright
-e2e/
+# Playwright artifacts (spec files are tracked; results/screenshots/videos are not)
 playwright-report/
 test-results/
+e2e/test-results/
+e2e/**/*.png
+e2e/**/*.jpg
+e2e/**/*.webm
+e2e/**/*.mp4
+e2e/**/*.zip
