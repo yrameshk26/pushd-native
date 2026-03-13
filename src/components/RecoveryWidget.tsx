@@ -74,7 +74,7 @@ export function RecoveryWidget({ data }: RecoveryWidgetProps) {
           <Text style={styles.recoveryLabel}>RECOVERY</Text>
         </View>
         <TouchableOpacity
-          onPress={() => router.push('/(app)/coach')}
+          onPress={() => router.push('/(screens)/coach')}
           hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
           style={styles.coachLink}
         >

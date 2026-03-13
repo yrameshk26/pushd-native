@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
-import * as SecureStore from 'expo-secure-store';
 import { API_BASE_URL, TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from '../constants/config';
+import { storage } from '../utils/storage';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,7 +10,7 @@ export const api = axios.create({
 
 // Attach Bearer token to every request
 api.interceptors.request.use(async (config) => {
-  const token = await SecureStore.getItemAsync(TOKEN_STORAGE_KEY);
+  const token = await storage.getItemAsync(TOKEN_STORAGE_KEY);
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -45,15 +45,15 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
+      const refreshToken = await storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
       if (!refreshToken) throw new Error('No refresh token');
 
       const { data } = await axios.post(`${API_BASE_URL}/api/auth/native/refresh`, {
         refresh_token: refreshToken,
       });
 
-      await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, data.access_token);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, data.refresh_token);
+      await storage.setItemAsync(TOKEN_STORAGE_KEY, data.access_token);
+      await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, data.refresh_token);
 
       api.defaults.headers.common.Authorization = `Bearer ${data.access_token}`;
       processQueue(null, data.access_token);
@@ -62,8 +62,8 @@ api.interceptors.response.use(
     } catch (err) {
       processQueue(err, null);
       // Clear tokens — user needs to log in again
-      await SecureStore.deleteItemAsync(TOKEN_STORAGE_KEY);
-      await SecureStore.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY);
+      await storage.deleteItemAsync(TOKEN_STORAGE_KEY);
+      await storage.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY);
       return Promise.reject(err);
     } finally {
       isRefreshing = false;

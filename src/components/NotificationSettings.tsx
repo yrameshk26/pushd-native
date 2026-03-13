@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import { storage as SecureStore } from '../utils/storage';
 
 import {
   cancelWorkoutReminders,

@@ -31,7 +31,11 @@ export default function LoginScreen() {
       }
     } catch (e: any) {
       const msg = e?.response?.data?.error ?? 'Invalid email or password. Please try again.';
-      Alert.alert('Error', msg);
+      if (Platform.OS === 'web') {
+        alert(msg);
+      } else {
+        Alert.alert('Error', msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#333', marginBottom: 16,
   },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
   },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
@@ -181,5 +185,5 @@ const styles = StyleSheet.create({
   forgotText: { color: '#888', fontSize: 15 },
   registerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 16 },
   registerText: { color: '#888', fontSize: 15 },
-  registerLink: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },
+  registerLink: { color: '#3B82F6', fontSize: 15, fontWeight: '600' },
 });

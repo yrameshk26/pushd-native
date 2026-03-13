@@ -13,3 +13,8 @@ web-build/
 .env.local
 android/
 ios/
+
+# Playwright
+e2e/
+playwright-report/
+test-results/

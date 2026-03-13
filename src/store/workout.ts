@@ -188,6 +188,7 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
     await api.post('/api/workouts', {
       title: active.title,
       startTime: active.startTime.toISOString(),
+      isCompleted: true,
       exercises: active.exercises.map((e, ei) => ({
         exerciseId: e.exerciseId,
         order: ei,

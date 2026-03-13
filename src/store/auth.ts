@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
 import { api } from '../api/client';
 import { TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from '../constants/config';
+import { storage } from '../utils/storage';
 
 export interface GoogleUserProfile {
   id: string;
@@ -13,6 +13,7 @@ export interface GoogleUserProfile {
 
 interface AuthState {
   isAuthenticated: boolean;
+  hydrated: boolean;
   userId: string | null;
   email: string | null;
   displayName: string | null;
@@ -38,6 +39,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
+  hydrated: false,
   userId: null,
   email: null,
   displayName: null,
@@ -47,8 +49,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   preAuthToken: null,
 
   hydrate: async () => {
-    const token = await SecureStore.getItemAsync(TOKEN_STORAGE_KEY);
-    set({ isAuthenticated: !!token });
+    const token = await storage.getItemAsync(TOKEN_STORAGE_KEY);
+    set({ isAuthenticated: !!token, hydrated: true });
   },
 
   register: async (email: string, password: string, username: string, displayName: string) => {
@@ -67,8 +69,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       preAuthToken: verifyData.preAuthToken,
     });
 
-    await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
+    await storage.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
+    await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
 
     set({ isAuthenticated: true, sessionId: null });
   },
@@ -87,8 +89,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data: tokenData } = await api.post('/api/auth/native/token', {
         preAuthToken: data.preAuthToken,
       });
-      await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
+      await storage.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
+      await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
       set({ isAuthenticated: true, sessionId: null });
       return { next: 'dashboard' as const };
     }
@@ -110,19 +112,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       preAuthToken: otpData.preAuthToken,
     });
 
-    await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
+    await storage.setItemAsync(TOKEN_STORAGE_KEY, tokenData.access_token);
+    await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, tokenData.refresh_token);
 
     set({ isAuthenticated: true, sessionId: null });
   },
 
   logout: async () => {
-    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
+    const refreshToken = await storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
     if (refreshToken) {
       await api.post('/api/auth/native/revoke', { refresh_token: refreshToken }).catch(() => {});
     }
-    await SecureStore.deleteItemAsync(TOKEN_STORAGE_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY);
+    await storage.deleteItemAsync(TOKEN_STORAGE_KEY);
+    await storage.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY);
     set({
       isAuthenticated: false,
       userId: null,
@@ -138,8 +140,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     accessToken: string,
     refreshToken: string,
   ) => {
-    await SecureStore.setItemAsync(TOKEN_STORAGE_KEY, accessToken);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, refreshToken);
+    await storage.setItemAsync(TOKEN_STORAGE_KEY, accessToken);
+    await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, refreshToken);
     set({
       isAuthenticated: true,
       userId: user.id,

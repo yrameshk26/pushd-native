@@ -23,6 +23,8 @@ export function setupNotificationHandler(): void {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
       shouldPlaySound: true,
       shouldSetBadge: false,
     }),
@@ -126,7 +128,7 @@ export async function scheduleWorkoutReminder(
  * Cancels all scheduled workout reminder notifications.
  */
 export async function cancelWorkoutReminders(): Promise<void> {
-  if (!Notifications) return;
+  if (!Notifications || Platform.OS === 'web') return;
 
   try {
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();

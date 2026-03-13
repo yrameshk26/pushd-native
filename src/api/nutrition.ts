@@ -202,7 +202,8 @@ export async function fetchMealPlans(): Promise<MealPlansResponse> {
 
 export async function fetchMealPlan(planId: string): Promise<MealPlan> {
   const { data } = await api.get(`/api/meal-plans/${planId}`);
-  return data;
+  // API returns { data: {...} } envelope
+  return data?.data ?? data;
 }
 
 export async function logMealFromPlan(planId: string, mealId: string): Promise<FoodLog> {

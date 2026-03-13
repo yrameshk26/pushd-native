@@ -21,9 +21,15 @@ interface WeeklyReviewCardProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function WeeklyReviewCard({ review }: WeeklyReviewCardProps) {
-  const weekDate = new Date(review.weekStart);
-  const weekLabel = weekDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const volumeTonnes = Math.round(review.totalVolume / 1000);
+  const weekDate = review.weekStart ? new Date(review.weekStart.replace(' ', 'T')) : null;
+  const weekLabel = weekDate && !isNaN(weekDate.getTime())
+    ? weekDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : null;
+  const totalVolume = review.totalVolume ?? 0;
+  const volumeKg = Math.round(totalVolume);
+  const volumeDisplay = totalVolume >= 1000 ? `${(totalVolume / 1000).toFixed(1)}t` : `${volumeKg}kg`;
+  const workoutCount = review.workoutCount ?? 0;
+  const prCount = review.prCount ?? 0;
 
   return (
     <View style={styles.container}>
@@ -33,24 +39,24 @@ export function WeeklyReviewCard({ review }: WeeklyReviewCardProps) {
           <Ionicons name="sparkles" size={16} color="#c084fc" />
           <Text style={styles.headerTitle}>Weekly Review</Text>
         </View>
-        <Text style={styles.weekLabel}>Week of {weekLabel}</Text>
+        {weekLabel ? <Text style={styles.weekLabel}>Week of {weekLabel}</Text> : null}
       </View>
 
       {/* 3 stat boxes */}
       <View style={styles.statsRow}>
         <View style={styles.statBox}>
           <Ionicons name="barbell-outline" size={14} color="#60a5fa" style={styles.statIcon} />
-          <Text style={styles.statNumber}>{review.workoutCount}</Text>
+          <Text style={styles.statNumber}>{workoutCount}</Text>
           <Text style={styles.statLabel}>Workouts</Text>
         </View>
         <View style={styles.statBox}>
           <Ionicons name="trending-up-outline" size={14} color="#34d399" style={styles.statIcon} />
-          <Text style={styles.statNumber}>{volumeTonnes}t</Text>
+          <Text style={styles.statNumber}>{volumeDisplay}</Text>
           <Text style={styles.statLabel}>Volume</Text>
         </View>
         <View style={styles.statBox}>
           <Ionicons name="trophy-outline" size={14} color="#fbbf24" style={styles.statIcon} />
-          <Text style={styles.statNumber}>{review.prCount}</Text>
+          <Text style={styles.statNumber}>{prCount}</Text>
           <Text style={styles.statLabel}>PRs</Text>
         </View>
       </View>

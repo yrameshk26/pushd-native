@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { Stack, router } from 'expo-router';
+import { Stack, router, usePathname } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useAuthStore } from '../src/store/auth';
+import TabBar from '../src/components/TabBar';
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';
 import { api } from '../src/api/client';
 
@@ -16,7 +17,10 @@ try {
 }
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 1000 * 60 } },
+  defaultOptions: {
+    queries: { retry: 1, staleTime: 1000 * 60 },
+    mutations: { throwOnError: false },
+  },
 });
 
 // Set up foreground notification handler immediately at module load time so it
@@ -26,6 +30,9 @@ setupNotificationHandler();
 export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const pathname = usePathname();
+  const isAuthRoute = pathname.startsWith('/(auth)') || pathname === '/';
+  const showTabBar = isAuthenticated && !isAuthRoute;
 
   // Hold a reference to the notification-response subscription so we can
   // remove it on unmount.
@@ -66,7 +73,7 @@ export default function RootLayout() {
 
         if (type === 'workout-reminder') {
           // Navigate to the workouts tab when the user taps a workout reminder.
-          router.push('/(app)/workouts');
+          router.push('/(screens)/workout');
         }
       });
 
@@ -77,7 +84,10 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }} />
+        {showTabBar && <TabBar />}
+      </View>
     </QueryClientProvider>
   );
 }

@@ -53,7 +53,7 @@ export default function VerifyEmailScreen() {
     setLoading(true);
     try {
       await verifyEmail(sessionId as string, codeToVerify);
-      router.replace('/(app)/onboarding');
+      router.replace('/(screens)/onboarding');
     } catch {
       Alert.alert('Invalid code', 'The code entered is incorrect or has expired. Please try again.');
       setCode('');
