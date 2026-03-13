@@ -12,8 +12,9 @@ export async function fetchExercises(params: {
   equipment?: string;
   page?: number;
 }): Promise<ExerciseListResponse> {
-  const { data } = await api.get('/api/exercises', { params: { pageSize: 30, ...params } });
-  return data;
+  const { data } = await api.get('/api/exercises', { params: { pageSize: 500, ...params } });
+  // API returns { data: Exercise[], total: number }
+  return { exercises: data.data ?? [], total: data.total ?? 0 };
 }
 
 export interface ExerciseDetail extends Exercise {

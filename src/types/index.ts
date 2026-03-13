@@ -4,6 +4,7 @@ export interface Exercise {
   primaryMuscle: string;
   equipment: string;
   gifUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export interface WorkoutSet {
