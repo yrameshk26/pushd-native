@@ -185,10 +185,9 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
     const { active } = get();
     if (!active) return;
 
-    await api.post('/api/workouts', {
+    const createRes = await api.post('/api/workouts', {
       title: active.title,
       startTime: active.startTime.toISOString(),
-      isCompleted: true,
       exercises: active.exercises.map((e, ei) => ({
         exerciseId: e.exerciseId,
         order: ei,
@@ -202,6 +201,14 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
         })),
       })),
     });
+
+    const workout = createRes.data?.data ?? createRes.data;
+    if (workout?.id) {
+      // Trigger PR detection, volume/duration computation, and achievements
+      await api.post(`/api/workouts/${workout.id}/complete`).catch(() => {
+        // Best-effort — workout is still saved even if this fails
+      });
+    }
 
     set({ active: null, elapsedSeconds: 0 });
   },

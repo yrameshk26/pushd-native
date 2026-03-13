@@ -7,7 +7,6 @@ import {
   TextInput,
   ActivityIndicator,
   StyleSheet,
-  Alert,
   Animated,
   Easing,
 } from 'react-native';
@@ -49,13 +48,9 @@ interface GenerateForm {
   notes: string;
 }
 
-interface GeneratedProgram {
-  id?: string;
-  name: string;
-  durationWeeks: number;
-  daysPerWeek: number;
-  description?: string;
-  weeklySchedule?: { day: string; focus: string }[];
+interface GenerateResult {
+  programName: string;
+  routines: { id: string; name: string }[];
 }
 
 // ─── Constants ─────────────────────────────────────────────────────────────
@@ -433,17 +428,7 @@ const genStyles = StyleSheet.create({
 
 // ─── Success screen ────────────────────────────────────────────────────────
 
-function SuccessScreen({
-  program,
-  onSave,
-  isSaving,
-  isSaved,
-}: {
-  program: GeneratedProgram;
-  onSave: () => void;
-  isSaving: boolean;
-  isSaved: boolean;
-}) {
+function SuccessScreen({ result }: { result: GenerateResult }) {
   return (
     <ScrollView
       contentContainerStyle={successStyles.container}
@@ -453,61 +438,41 @@ function SuccessScreen({
         <Ionicons name="checkmark-circle" size={52} color="#22c55e" />
       </View>
 
-      <Text style={successStyles.programName}>{program.name}</Text>
-      {program.description ? (
-        <Text style={successStyles.programDesc}>{program.description}</Text>
-      ) : null}
+      <Text style={successStyles.programName}>{result.programName}</Text>
+      <Text style={successStyles.programDesc}>
+        {result.routines.length} routine{result.routines.length !== 1 ? 's' : ''} created and saved to your library
+      </Text>
 
-      {/* Summary chips */}
-      <View style={successStyles.summaryRow}>
-        <View style={successStyles.summaryChip}>
-          <Ionicons name="layers-outline" size={14} color="#6C63FF" />
-          <Text style={successStyles.summaryChipText}>{program.durationWeeks} weeks</Text>
-        </View>
-        <View style={successStyles.summaryChip}>
-          <Ionicons name="calendar-outline" size={14} color="#6C63FF" />
-          <Text style={successStyles.summaryChipText}>{program.daysPerWeek} days/week</Text>
-        </View>
+      {/* Routines list */}
+      <View style={successStyles.scheduleCard}>
+        <Text style={successStyles.scheduleTitle}>Created Routines</Text>
+        {result.routines.map((r, i) => (
+          <View key={r.id} style={successStyles.scheduleRow}>
+            <View style={successStyles.routineNum}>
+              <Text style={successStyles.routineNumText}>{i + 1}</Text>
+            </View>
+            <Text style={[successStyles.scheduleDay, { flex: 1 }]}>{r.name}</Text>
+            <Ionicons name="checkmark" size={16} color="#22c55e" />
+          </View>
+        ))}
       </View>
 
-      {/* Weekly schedule preview */}
-      {program.weeklySchedule && program.weeklySchedule.length > 0 && (
-        <View style={successStyles.scheduleCard}>
-          <Text style={successStyles.scheduleTitle}>Weekly Breakdown</Text>
-          {program.weeklySchedule.map((item, i) => (
-            <View key={i} style={successStyles.scheduleRow}>
-              <Text style={successStyles.scheduleDay}>{item.day}</Text>
-              <Text style={successStyles.scheduleFocus}>{item.focus}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+      <TouchableOpacity
+        style={successStyles.saveBtn}
+        onPress={() => router.replace('/(app)/routines' as any)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="list-outline" size={18} color="#fff" />
+        <Text style={successStyles.saveBtnText}>View My Routines</Text>
+      </TouchableOpacity>
 
-      {isSaved ? (
-        <View style={successStyles.savedBadge}>
-          <Ionicons name="checkmark" size={16} color="#22c55e" />
-          <Text style={successStyles.savedText}>Saved to your programs!</Text>
-        </View>
-      ) : (
-        <TouchableOpacity
-          style={[successStyles.saveBtn, isSaving && successStyles.saveBtnDisabled]}
-          onPress={onSave}
-          disabled={isSaving}
-          activeOpacity={0.8}
-        >
-          {isSaving ? (
-            <>
-              <ActivityIndicator size="small" color="#fff" />
-              <Text style={successStyles.saveBtnText}>Saving...</Text>
-            </>
-          ) : (
-            <>
-              <Ionicons name="bookmark-outline" size={18} color="#fff" />
-              <Text style={successStyles.saveBtnText}>Save Program</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={successStyles.secondaryBtn}
+        onPress={() => router.replace('/(screens)/programs/generate' as any)}
+        activeOpacity={0.8}
+      >
+        <Text style={successStyles.secondaryBtnText}>Generate Another Program</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -516,38 +481,30 @@ const successStyles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40, alignItems: 'center' },
   iconWrap: { marginBottom: 16 },
   programName: { color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 8 },
-  programDesc: { color: '#888', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 16 },
-  summaryRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
-  summaryChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(108,99,255,0.1)',
-    borderWidth: 1, borderColor: 'rgba(108,99,255,0.25)',
-    paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20,
-  },
-  summaryChipText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  programDesc: { color: '#888', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 20 },
   scheduleCard: {
     width: '100%', backgroundColor: '#1a1a1a', borderRadius: 14,
-    borderWidth: 1, borderColor: '#2a2a2a', padding: 16, marginBottom: 24,
+    borderWidth: 1, borderColor: '#2a2a2a', padding: 16, marginBottom: 20,
   },
   scheduleTitle: { color: '#888', fontSize: 11, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 },
   scheduleRow: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#2a2a2a',
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#2a2a2a',
   },
   scheduleDay: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  scheduleFocus: { color: '#888', fontSize: 13 },
-  savedBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: 'rgba(34,197,94,0.1)', borderWidth: 1, borderColor: 'rgba(34,197,94,0.25)',
-    borderRadius: 14, paddingVertical: 16, paddingHorizontal: 24, width: '100%', justifyContent: 'center',
+  routineNum: {
+    width: 24, height: 24, borderRadius: 12,
+    backgroundColor: 'rgba(108,99,255,0.2)', alignItems: 'center', justifyContent: 'center',
   },
-  savedText: { color: '#22c55e', fontSize: 15, fontWeight: '700' },
+  routineNumText: { color: '#6C63FF', fontSize: 12, fontWeight: '700' },
   saveBtn: {
     width: '100%', backgroundColor: '#6C63FF', borderRadius: 14,
     paddingVertical: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    marginBottom: 12,
   },
-  saveBtnDisabled: { opacity: 0.6 },
   saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  secondaryBtn: { paddingVertical: 12 },
+  secondaryBtnText: { color: '#666', fontSize: 14, textDecorationLine: 'underline' },
 });
 
 // ─── Shared step styles ────────────────────────────────────────────────────
@@ -604,10 +561,7 @@ export default function GenerateProgramScreen() {
   const [form, setForm] = useState<GenerateForm>(DEFAULT_FORM);
   const [generating, setGenerating] = useState(false);
   const [tipIdx, setTipIdx] = useState(0);
-  const [generatedProgram, setGeneratedProgram] = useState<GeneratedProgram | null>(null);
-  const [generatedId, setGeneratedId] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [generateResult, setGenerateResult] = useState<GenerateResult | null>(null);
   const [error, setError] = useState('');
 
   function update(partial: Partial<GenerateForm>) {
@@ -631,50 +585,23 @@ export default function GenerateProgramScreen() {
         durationWeeks: form.durationWeeks,
         daysPerWeek: form.daysPerWeek,
         equipment: form.equipment,
+        focusAreas: form.notes.trim() ? [form.notes.trim()] : undefined,
       });
-      return (data?.data ?? data) as GeneratedProgram & { id?: string };
+      return (data?.data ?? data) as { routines: { id: string; name: string }[]; programName: string };
     },
     onSuccess: (data) => {
-      setGeneratedProgram(data);
-      if (data.id) setGeneratedId(data.id);
+      setGenerateResult({ programName: data.programName, routines: data.routines ?? [] });
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
       setGenerating(false);
     },
     onError: (err: any) => {
       const status = err?.response?.status;
       const message =
-        status === 429 ? 'Rate limit reached. You can generate up to 3 programs per day. Try again tomorrow.' :
+        status === 429 ? 'Rate limit reached. You can generate up to 100 programs per day. Try again tomorrow.' :
         status === 401 ? 'Your session has expired. Please log in again.' :
         (err?.response?.data?.error ?? 'Failed to generate program. Please try again.');
       setError(message);
       setGenerating(false);
-    },
-  });
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!generatedProgram) throw new Error('No program to save');
-      const { data } = await api.post('/api/programs', {
-        name: generatedProgram.name,
-        description: generatedProgram.description,
-        durationWeeks: generatedProgram.durationWeeks,
-        daysPerWeek: generatedProgram.daysPerWeek,
-        generatedId,
-      });
-      return data?.data ?? data;
-    },
-    onSuccess: (data) => {
-      setIsSaving(false);
-      setIsSaved(true);
-      queryClient.invalidateQueries({ queryKey: ['programs'] });
-      const newId = data?.id ?? generatedId;
-      if (newId) {
-        setTimeout(() => router.push(`/(screens)/programs/${newId}` as any), 800);
-      }
-    },
-    onError: (err: any) => {
-      setIsSaving(false);
-      const message = err?.response?.data?.error ?? 'Failed to save program. Please try again.';
-      Alert.alert('Error', message);
     },
   });
 
@@ -703,13 +630,8 @@ export default function GenerateProgramScreen() {
     }
   }
 
-  function handleSave() {
-    setIsSaving(true);
-    saveMutation.mutate();
-  }
-
   // ── Generated program success view
-  if (generatedProgram) {
+  if (generateResult) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -717,12 +639,7 @@ export default function GenerateProgramScreen() {
           <Text style={styles.headerTitle}>Program Ready</Text>
           <View style={{ width: 40 }} />
         </View>
-        <SuccessScreen
-          program={generatedProgram}
-          onSave={handleSave}
-          isSaving={isSaving}
-          isSaved={isSaved}
-        />
+        <SuccessScreen result={generateResult} />
       </SafeAreaView>
     );
   }
