@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: '800',
     letterSpacing: 0.5,
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   textSm: {
     fontSize: 10,

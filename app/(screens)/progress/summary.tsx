@@ -141,7 +141,7 @@ const changeStyles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: 'transparent',
   },
-  text: { fontSize: 10, fontWeight: '700' },
+  text: { fontSize: 10, fontFamily: 'DMSans-Bold' },
 });
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
@@ -169,13 +169,13 @@ export default function SummaryScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {isLoading && (
           <View style={styles.centered}>
-            <ActivityIndicator color="#6C63FF" size="large" />
+            <ActivityIndicator color="#3B82F6" size="large" />
           </View>
         )}
 
         {isError && !isLoading && (
           <View style={styles.centered}>
-            <Ionicons name="cloud-offline-outline" size={40} color="#555" />
+            <Ionicons name="cloud-offline-outline" size={40} color="#4A6080" />
             <Text style={styles.errorText}>Failed to load summary</Text>
             <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
               <Text style={styles.retryText}>Retry</Text>
@@ -185,7 +185,7 @@ export default function SummaryScreen() {
 
         {isEmpty && (
           <View style={styles.centered}>
-            <Ionicons name="barbell-outline" size={40} color="#333" />
+            <Ionicons name="barbell-outline" size={40} color="#162540" />
             <Text style={styles.emptyTitle}>No Workouts This Week</Text>
             <Text style={styles.emptyText}>Complete your first workout to see your summary.</Text>
           </View>
@@ -209,7 +209,7 @@ export default function SummaryScreen() {
                 {data.comparison && <ChangeIndicator pct={data.comparison.workoutsChange} />}
               </View>
               <View style={styles.statCard}>
-                <Ionicons name="list-outline" size={18} color="#6C63FF" style={styles.statIcon} />
+                <Ionicons name="list-outline" size={18} color="#3B82F6" style={styles.statIcon} />
                 <Text style={styles.statValue}>{data.totalSets.toLocaleString()}</Text>
                 <Text style={styles.statLabel}>Total Sets</Text>
                 {data.comparison && <ChangeIndicator pct={data.comparison.setsChange} />}
@@ -259,7 +259,7 @@ export default function SummaryScreen() {
             {data.topExercises.length > 0 && (
               <View style={styles.card}>
                 <View style={styles.cardHeaderRow}>
-                  <Ionicons name="barbell-outline" size={16} color="#6C63FF" />
+                  <Ionicons name="barbell-outline" size={16} color="#3B82F6" />
                   <Text style={styles.cardTitle}>Top Exercises</Text>
                 </View>
                 {data.topExercises.map((ex, idx) => (
@@ -322,7 +322,7 @@ export default function SummaryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -331,10 +331,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { padding: 4 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#fff', flex: 1 },
+  headerTitle: { fontSize: 18, fontFamily: 'BarlowCondensed-Bold', color: '#fff', flex: 1 },
 
   content: { padding: 20, paddingBottom: 48 },
 
@@ -343,25 +343,25 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
     gap: 12,
   },
-  errorText: { color: '#555', fontSize: 14 },
+  errorText: { color: '#4A6080', fontSize: 14, fontFamily: 'DMSans-Regular' },
   retryBtn: {
     marginTop: 4,
     paddingHorizontal: 24,
     paddingVertical: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
+  retryText: { color: '#3B82F6', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 
-  emptyTitle: { color: '#ccc', fontSize: 16, fontWeight: '600' },
-  emptyText: { color: '#555', fontSize: 13, textAlign: 'center', maxWidth: 260 },
+  emptyTitle: { color: '#A8BDD4', fontSize: 16, fontFamily: 'DMSans-SemiBold' },
+  emptyText: { color: '#4A6080', fontSize: 13, textAlign: 'center', maxWidth: 260, fontFamily: 'DMSans-Regular' },
 
   dateRange: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -375,24 +375,24 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '44%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignItems: 'flex-start',
     gap: 4,
   },
   statIcon: { marginBottom: 2 },
-  statValue: { fontSize: 22, fontWeight: '800', color: '#fff' },
-  statLabel: { color: '#666', fontSize: 11, fontWeight: '500' },
+  statValue: { fontSize: 22, fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
+  statLabel: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Medium' },
 
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 14,
   },
   aiCard: {
@@ -405,9 +405,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     flex: 1,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 2,
   },
-  countBadgeText: { color: '#F59E0B', fontSize: 11, fontWeight: '700' },
+  countBadgeText: { color: '#F59E0B', fontSize: 11, fontFamily: 'DMSans-Bold' },
 
   prRow: {
     flexDirection: 'row',
@@ -426,11 +426,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#222',
+    borderBottomColor: '#162540',
   },
-  prName: { color: '#ccc', fontSize: 14, flex: 1 },
-  prValue: { color: '#6C63FF', fontSize: 13, fontWeight: '700' },
-  moreText: { color: '#555', fontSize: 12, marginTop: 8 },
+  prName: { color: '#A8BDD4', fontSize: 14, flex: 1, fontFamily: 'DMSans-Regular' },
+  prValue: { color: '#3B82F6', fontSize: 13, fontFamily: 'DMSans-Bold' },
+  moreText: { color: '#4A6080', fontSize: 12, marginTop: 8, fontFamily: 'DMSans-Regular' },
 
   exerciseRow: {
     flexDirection: 'row',
@@ -438,19 +438,19 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#222',
+    borderBottomColor: '#162540',
   },
   rankBadge: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rankText: { color: '#888', fontSize: 11, fontWeight: '700' },
-  exerciseName: { color: '#ccc', fontSize: 14, flex: 1 },
-  exerciseSets: { color: '#6C63FF', fontSize: 12, fontWeight: '500' },
+  rankText: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Bold' },
+  exerciseName: { color: '#A8BDD4', fontSize: 14, flex: 1, fontFamily: 'DMSans-Regular' },
+  exerciseSets: { color: '#3B82F6', fontSize: 12, fontFamily: 'DMSans-Medium' },
 
   muscleChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   muscleChip: {
@@ -464,8 +464,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#10B98130',
   },
-  muscleChipText: { color: '#10B981', fontSize: 12, fontWeight: '500' },
-  muscleChipCount: { color: '#10B98199', fontSize: 11, fontWeight: '600' },
+  muscleChipText: { color: '#10B981', fontSize: 12, fontFamily: 'DMSans-Medium' },
+  muscleChipCount: { color: '#10B98199', fontSize: 11, fontFamily: 'DMSans-SemiBold' },
 
   bulletRow: {
     flexDirection: 'row',
@@ -481,5 +481,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
     flexShrink: 0,
   },
-  bulletText: { color: '#ccc', fontSize: 13, lineHeight: 20, flex: 1 },
+  bulletText: { color: '#A8BDD4', fontSize: 13, lineHeight: 20, flex: 1, fontFamily: 'DMSans-Regular' },
 });

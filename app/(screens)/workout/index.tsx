@@ -47,7 +47,7 @@ export default function WorkoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
   },
   content: {
     paddingHorizontal: 16,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 24,
-    fontWeight: '800',
+    fontFamily: 'BarlowCondensed-Bold',
     color: '#fff',
   },
   card: {
@@ -84,10 +84,11 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: '#fff',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   cardSub: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
+    fontFamily: 'DMSans-Regular',
   },
 });

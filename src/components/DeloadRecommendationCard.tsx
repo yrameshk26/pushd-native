@@ -39,7 +39,7 @@ export function DeloadRecommendationCard({ data }: DeloadRecommendationCardProps
             style={styles.dismissBtn}
             hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
           >
-            <Ionicons name="close" size={14} color="#888" />
+            <Ionicons name="close" size={14} color="#718FAF" />
           </TouchableOpacity>
         </View>
         <Text style={styles.reason}>{data.reason}</Text>
@@ -86,20 +86,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     flex: 1,
+    fontFamily: 'DMSans-SemiBold',
   },
   dismissBtn: {
     padding: 2,
     flexShrink: 0,
   },
   reason: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
     lineHeight: 17,
     marginBottom: 6,
+    fontFamily: 'DMSans-Regular',
   },
   recommendation: {
     color: '#fbbf2480',
     fontSize: 12,
     lineHeight: 17,
+    fontFamily: 'DMSans-Regular',
   },
 });

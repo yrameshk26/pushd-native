@@ -94,7 +94,7 @@ export function NLWorkoutInput({ onParsed, onClose }: Props) {
             <TextInput
               style={styles.textInput}
               placeholder={'e.g. 3x8 bench press 80kg, 4x10 squats 100kg'}
-              placeholderTextColor="#444"
+              placeholderTextColor="#4A6080"
               value={text}
               onChangeText={(v) => {
                 setText(v);
@@ -146,7 +146,7 @@ export function NLWorkoutInput({ onParsed, onClose }: Props) {
                 renderItem={({ item }) => (
                   <View style={styles.previewRow}>
                     <View style={styles.previewIcon}>
-                      <Ionicons name="barbell-outline" size={15} color="#6C63FF" />
+                      <Ionicons name="barbell-outline" size={15} color="#3B82F6" />
                     </View>
                     <View style={styles.previewInfo}>
                       <Text style={styles.previewName}>{item.exerciseName}</Text>
@@ -184,7 +184,7 @@ export function NLWorkoutInput({ onParsed, onClose }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -192,24 +192,24 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
-  title: { fontSize: 20, fontWeight: '700', color: '#fff' },
-  subtitle: { fontSize: 13, color: '#666', marginTop: 3 },
+  title: { fontSize: 20, fontWeight: '700', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
+  subtitle: { fontSize: 13, color: '#718FAF', marginTop: 3, fontFamily: 'DMSans-Regular' },
   closeBtn: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
   },
   body: { flex: 1, padding: 16, gap: 14 },
   inputWrapper: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 14,
     minHeight: 100,
   },
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     minHeight: 80,
     textAlignVertical: 'top',
+    fontFamily: 'DMSans-Regular',
   },
   errorBox: {
     flexDirection: 'row',
@@ -230,9 +231,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ff4444',
   },
-  errorText: { color: '#ff6666', fontSize: 13, flex: 1 },
+  errorText: { color: '#ff6666', fontSize: 13, flex: 1, fontFamily: 'DMSans-Regular' },
   parseBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 14,
     flexDirection: 'row',
@@ -241,33 +242,33 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   parseBtnDisabled: { opacity: 0.5 },
-  parseBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  parseBtnText: { color: '#fff', fontWeight: '700', fontSize: 15, fontFamily: 'DMSans-Bold' },
   previewSection: { gap: 12 },
-  previewLabel: { color: '#888', fontSize: 12, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
+  previewLabel: { color: '#718FAF', fontSize: 12, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase', fontFamily: 'BarlowCondensed-SemiBold' },
   previewList: { gap: 8 },
   previewRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   previewIcon: {
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#111D36',
     borderWidth: 1,
-    borderColor: '#2a2a50',
+    borderColor: '#111D36',
     justifyContent: 'center',
     alignItems: 'center',
   },
   previewInfo: { flex: 1 },
-  previewName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  previewMeta: { color: '#888', fontSize: 12, marginTop: 2 },
+  previewName: { color: '#fff', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  previewMeta: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
   previewActions: { flexDirection: 'row', gap: 10 },
   retryBtn: {
     flex: 1,
@@ -275,14 +276,14 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryBtnText: { color: '#aaa', fontWeight: '600', fontSize: 14 },
+  retryBtnText: { color: '#A8BDD4', fontWeight: '600', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
   confirmBtn: {
     flex: 2,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 13,
     flexDirection: 'row',
@@ -290,5 +291,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  confirmBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  confirmBtnText: { color: '#fff', fontWeight: '700', fontSize: 14, fontFamily: 'DMSans-Bold' },
 });

@@ -61,7 +61,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
                       styles.bar,
                       {
                         height: barHeight,
-                        backgroundColor: item.volume > 0 ? '#3B82F6' : '#2a2a2a',
+                        backgroundColor: item.volume > 0 ? '#3B82F6' : '#162540',
                         opacity: item.volume > 0 ? (index === maxIndex ? 1 : 0.7) : 1,
                       },
                     ]}
@@ -91,8 +91,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   emptyText: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 14,
+    fontFamily: 'DMSans-Regular',
   },
   scrollContent: {
     paddingHorizontal: 4,
@@ -116,6 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 4,
     textAlign: 'center',
+    fontFamily: 'DMSans-Bold',
   },
   labelPlaceholder: {
     height: 18,
@@ -132,14 +134,15 @@ const styles = StyleSheet.create({
     minHeight: 0,
   },
   weekLabel: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 10,
     marginTop: 6,
     textAlign: 'center',
+    fontFamily: 'DMSans-Regular',
   },
   baseline: {
     height: 1,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     marginTop: 0,
   },
 });

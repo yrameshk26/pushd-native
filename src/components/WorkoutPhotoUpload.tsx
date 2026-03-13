@@ -223,7 +223,7 @@ export function WorkoutPhotoUpload({ workoutId, onUploaded }: WorkoutPhotoUpload
           onPress={handleAddPhoto}
           disabled={isUploading}
         >
-          <Ionicons name="camera-outline" size={16} color="#6C63FF" />
+          <Ionicons name="camera-outline" size={16} color="#3B82F6" />
           <Text style={styles.addBtnText}>Add Photo</Text>
         </TouchableOpacity>
       </View>
@@ -231,7 +231,7 @@ export function WorkoutPhotoUpload({ workoutId, onUploaded }: WorkoutPhotoUpload
       {/* Upload progress */}
       {isUploading && (
         <View style={styles.uploadProgress}>
-          <ActivityIndicator size="small" color="#6C63FF" />
+          <ActivityIndicator size="small" color="#3B82F6" />
           <Text style={styles.uploadProgressText}>
             Uploading{uploadProgress > 0 ? ` ${uploadProgress}%` : '...'}
           </Text>
@@ -244,7 +244,7 @@ export function WorkoutPhotoUpload({ workoutId, onUploaded }: WorkoutPhotoUpload
       {/* Loading state */}
       {isLoadingPhotos && (
         <View style={styles.centeredRow}>
-          <ActivityIndicator size="small" color="#6C63FF" />
+          <ActivityIndicator size="small" color="#3B82F6" />
         </View>
       )}
 
@@ -259,7 +259,7 @@ export function WorkoutPhotoUpload({ workoutId, onUploaded }: WorkoutPhotoUpload
       {/* Empty state */}
       {!isLoadingPhotos && !fetchError && photos.length === 0 && !isUploading && (
         <TouchableOpacity style={styles.emptyState} onPress={handleAddPhoto}>
-          <Ionicons name="images-outline" size={32} color="#444" />
+          <Ionicons name="images-outline" size={32} color="#162540" />
           <Text style={styles.emptyStateText}>Tap to add workout photos</Text>
         </TouchableOpacity>
       )}
@@ -299,12 +299,12 @@ export function WorkoutPhotoUpload({ workoutId, onUploaded }: WorkoutPhotoUpload
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   headerRow: {
     flexDirection: 'row',
@@ -313,11 +313,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
   addBtn: {
     flexDirection: 'row',
@@ -325,15 +326,16 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#111D36',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a50',
+    borderColor: '#111D36',
   },
   addBtnText: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   uploadProgress: {
     alignItems: 'center',
@@ -341,19 +343,20 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   uploadProgressText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
   progressBarTrack: {
     width: '100%',
     height: 3,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 2,
   },
   centeredRow: {
@@ -370,6 +373,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#ff4444',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
   emptyState: {
     alignItems: 'center',
@@ -377,8 +381,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   emptyStateText: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
   photoRow: {
     gap: 10,
@@ -391,7 +396,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
-    backgroundColor: '#111',
+    backgroundColor: '#060C1B',
   },
   deleteOverlay: {
     position: 'absolute',

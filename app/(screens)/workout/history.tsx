@@ -64,14 +64,14 @@ export default function WorkoutHistoryScreen() {
 
   const renderFooter = useCallback(() => {
     if (!isFetchingNextPage) return null;
-    return <ActivityIndicator color="#6C63FF" style={styles.footerSpinner} />;
+    return <ActivityIndicator color="#3B82F6" style={styles.footerSpinner} />;
   }, [isFetchingNextPage]);
 
   const renderEmpty = useCallback(() => {
     if (isLoading) return null;
     return (
       <View style={styles.emptyState}>
-        <Ionicons name="barbell-outline" size={56} color="#333" />
+        <Ionicons name="barbell-outline" size={56} color="#162540" />
         <Text style={styles.emptyTitle}>No workouts yet</Text>
         <Text style={styles.emptySubtitle}>
           Complete your first workout to see your history here.
@@ -98,7 +98,7 @@ export default function WorkoutHistoryScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={styles.loadingSpinner} />
+        <ActivityIndicator color="#3B82F6" style={styles.loadingSpinner} />
       ) : (
         <FlatList
           data={allWorkouts}
@@ -120,7 +120,7 @@ export default function WorkoutHistoryScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={refetch}
-              tintColor="#6C63FF"
+              tintColor="#3B82F6"
             />
           }
         />
@@ -134,7 +134,7 @@ export default function WorkoutHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
   },
 
   // Header
@@ -145,21 +145,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: {
     width: 38,
     height: 38,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   heading: {
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
     color: '#fff',
   },
   headerSpacer: {
@@ -175,12 +175,12 @@ const styles = StyleSheet.create({
   statsBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   statItem: {
     flex: 1,
@@ -189,18 +189,18 @@ const styles = StyleSheet.create({
   statValue: {
     color: '#fff',
     fontSize: 22,
-    fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
     marginBottom: 2,
   },
   statLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
-    fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
   },
   statDivider: {
     width: 1,
     height: 36,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     marginHorizontal: 16,
   },
 
@@ -225,19 +225,20 @@ const styles = StyleSheet.create({
   emptyTitle: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
     marginTop: 20,
     marginBottom: 8,
   },
   emptySubtitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 15,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 28,
+    fontFamily: 'DMSans-Regular',
   },
   startBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingHorizontal: 28,
     paddingVertical: 14,
@@ -245,6 +246,6 @@ const styles = StyleSheet.create({
   startBtnText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
 });

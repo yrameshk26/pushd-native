@@ -153,16 +153,18 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   recoveryLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
   coachLink: {},
   coachLinkText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Score row
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: '800',
     lineHeight: 52,
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   scoreMeta: {
     marginBottom: 4,
@@ -185,18 +188,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 2,
+    fontFamily: 'DMSans-Bold',
   },
   scoreSub: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Insight
   insight: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     lineHeight: 16,
     marginBottom: 12,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Muscle bars
@@ -210,10 +216,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   muscleLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     width: 72,
     flexShrink: 0,
+    fontFamily: 'DMSans-Regular',
   },
   barTrack: {
     flex: 1,
@@ -227,11 +234,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   musclePct: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     width: 32,
     textAlign: 'right',
     flexShrink: 0,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Fresh muscles
@@ -239,5 +247,6 @@ const styles = StyleSheet.create({
     color: '#86efac', // green-300
     fontSize: 11,
     marginTop: 4,
+    fontFamily: 'DMSans-Regular',
   },
 });

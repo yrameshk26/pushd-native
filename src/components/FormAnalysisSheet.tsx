@@ -96,10 +96,10 @@ const scoreRingStyles = StyleSheet.create({
     borderWidth: 4,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
   },
-  number: { fontSize: 32, fontWeight: '800' },
-  label: { color: '#666', fontSize: 12, fontWeight: '600' },
+  number: { fontSize: 32, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold' },
+  label: { color: '#718FAF', fontSize: 12, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
 });
 
 // ---------------------------------------------------------------------------
@@ -245,7 +245,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
               style={styles.secondaryBtn}
               onPress={() => setShowUrlFallback(true)}
             >
-              <Ionicons name="link-outline" size={18} color="#6C63FF" />
+              <Ionicons name="link-outline" size={18} color="#3B82F6" />
               <Text style={styles.secondaryBtnText}>Paste Media URL instead</Text>
             </TouchableOpacity>
           )}
@@ -256,7 +256,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
           <TextInput
             style={styles.urlInput}
             placeholder="https://..."
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             value={urlInput}
             onChangeText={setUrlInput}
             autoCapitalize="none"
@@ -289,7 +289,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
 
   const renderAnalyzingStep = () => (
     <View style={[styles.stepContainer, styles.centeredStep]}>
-      <ActivityIndicator size="large" color="#6C63FF" />
+      <ActivityIndicator size="large" color="#3B82F6" />
       <Text style={styles.analyzingText}>Analyzing your form...</Text>
       <Text style={styles.analyzingSubtext}>This usually takes 5-10 seconds</Text>
     </View>
@@ -337,7 +337,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
             <Text style={styles.cardTitle}>Coaching Cues</Text>
             {result.cues.map((cue, idx) => (
               <View key={idx} style={styles.cueRow}>
-                <Ionicons name="bulb-outline" size={16} color="#6C63FF" />
+                <Ionicons name="bulb-outline" size={16} color="#3B82F6" />
                 <Text style={styles.cueText}>{cue}</Text>
               </View>
             ))}
@@ -349,7 +349,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
           style={styles.secondaryBtn}
           onPress={() => { setStep('pick'); setResult(null); setShowUrlFallback(false); }}
         >
-          <Ionicons name="refresh-outline" size={18} color="#6C63FF" />
+          <Ionicons name="refresh-outline" size={18} color="#3B82F6" />
           <Text style={styles.secondaryBtnText}>Analyze Another</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -392,7 +392,7 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
             <Text style={styles.sheetSubtitle}>{exerciseName}</Text>
           </View>
           <TouchableOpacity style={styles.closeBtn} onPress={handleClose}>
-            <Ionicons name="close" size={20} color="#888" />
+            <Ionicons name="close" size={20} color="#718FAF" />
           </TouchableOpacity>
         </View>
 
@@ -415,13 +415,13 @@ export function FormAnalysisSheet({ visible, exerciseName, onClose }: FormAnalys
 const styles = StyleSheet.create({
   sheet: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
   },
   handle: {
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#333',
+    backgroundColor: '#162540',
     alignSelf: 'center',
     marginTop: 12,
     marginBottom: 8,
@@ -433,24 +433,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   sheetTitle: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
   },
   sheetSubtitle: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 13,
     fontWeight: '500',
     marginTop: 2,
+    fontFamily: 'DMSans-Medium',
   },
   closeBtn: {
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -468,18 +470,19 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   subtitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
     marginBottom: 8,
+    fontFamily: 'DMSans-Regular',
   },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -488,6 +491,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
   secondaryBtn: {
     flexDirection: 'row',
@@ -498,37 +502,41 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderWidth: 1,
-    borderColor: '#2a2a50',
-    backgroundColor: '#1a1a2e',
+    borderColor: '#111D36',
+    backgroundColor: '#111D36',
   },
   secondaryBtnText: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   tip: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 12,
     textAlign: 'center',
     marginTop: 4,
+    fontFamily: 'DMSans-Regular',
   },
   urlFallback: {
     gap: 12,
   },
   urlFallbackLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   urlInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: '#fff',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
+    fontFamily: 'DMSans-Regular',
   },
   urlActions: {
     flexDirection: 'row',
@@ -540,8 +548,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   urlCancelText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 14,
+    fontFamily: 'DMSans-Regular',
   },
   urlSubmitBtn: {
     flex: 1,
@@ -551,10 +560,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginTop: 8,
+    fontFamily: 'BarlowCondensed-Bold',
   },
   analyzingSubtext: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
   resultScroll: {
     gap: 16,
@@ -564,56 +575,60 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   scoreMeta: {
     flex: 1,
     gap: 4,
   },
   scoreLabel: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
   scoreGrade: {
     fontSize: 22,
     fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   scoreSummary: {
-    color: '#aaa',
+    color: '#A8BDD4',
     fontSize: 13,
     lineHeight: 18,
     marginTop: 4,
+    fontFamily: 'DMSans-Regular',
   },
   feedbackCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   cuesCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#111D36',
     borderRadius: 14,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: '#2a2a50',
+    borderColor: '#111D36',
   },
   cardTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 4,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
   feedbackRow: {
     flexDirection: 'row',
@@ -622,9 +637,10 @@ const styles = StyleSheet.create({
   },
   feedbackText: {
     flex: 1,
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: 'DMSans-Regular',
   },
   cueRow: {
     flexDirection: 'row',
@@ -633,21 +649,24 @@ const styles = StyleSheet.create({
   },
   cueText: {
     flex: 1,
-    color: '#aac',
+    color: '#A8BDD4',
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: 'DMSans-Regular',
   },
   errorTitle: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
     marginTop: 8,
+    fontFamily: 'BarlowCondensed-Bold',
   },
   errorMessage: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 8,
+    fontFamily: 'DMSans-Regular',
   },
 });

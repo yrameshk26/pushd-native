@@ -149,7 +149,7 @@ const pickerStyles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 40,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     borderRadius: 8,
     zIndex: 0,
   },
@@ -159,12 +159,14 @@ const pickerStyles = StyleSheet.create({
   },
   itemText: {
     fontSize: 20,
-    color: '#555',
+    color: '#4A6080',
     fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
   },
   itemTextSelected: {
     color: '#fff',
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
 });
 
@@ -304,7 +306,7 @@ export default function NotificationSettings() {
         <Switch
           value={enabled}
           onValueChange={handleToggle}
-          trackColor={{ false: '#2a2a2a', true: '#6C63FF' }}
+          trackColor={{ false: '#162540', true: '#3B82F6' }}
           thumbColor="#fff"
           disabled={permissionUnavailable}
         />
@@ -354,9 +356,9 @@ const styles = StyleSheet.create({
   },
 
   permissionBanner: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#3a3a3a',
+    borderColor: '#162540',
     borderRadius: 10,
     padding: 12,
     marginHorizontal: 16,
@@ -365,12 +367,13 @@ const styles = StyleSheet.create({
   },
   permissionText: {
     fontSize: 13,
-    color: '#aaa',
+    color: '#A8BDD4',
     lineHeight: 18,
+    fontFamily: 'DMSans-Regular',
   },
   permissionBtn: {
     alignSelf: 'flex-start',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 8,
@@ -379,6 +382,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
 
   row: {
@@ -389,23 +393,24 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   labelGroup: { flex: 1 },
-  label: { fontSize: 15, color: '#fff' },
-  sublabel: { fontSize: 12, color: '#555', marginTop: 2 },
+  label: { fontSize: 15, color: '#fff', fontFamily: 'DMSans-Regular' },
+  sublabel: { fontSize: 12, color: '#4A6080', marginTop: 2, fontFamily: 'DMSans-Regular' },
 
   config: {
     paddingHorizontal: 16,
     paddingBottom: 16,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
   },
   configLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#555',
+    color: '#4A6080',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
     marginTop: 16,
     marginBottom: 8,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
 
   timePicker: {
@@ -419,6 +424,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     marginBottom: 4,
+    fontFamily: 'BarlowCondensed-Bold',
   },
 
   dayChips: {
@@ -430,17 +436,18 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     justifyContent: 'center',
     alignItems: 'center',
   },
   chipActive: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
   },
   chipText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#555',
+    color: '#4A6080',
+    fontFamily: 'DMSans-Bold',
   },
   chipTextActive: {
     color: '#fff',
@@ -450,5 +457,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#ff6b6b',
     marginTop: 8,
+    fontFamily: 'DMSans-Regular',
   },
 });

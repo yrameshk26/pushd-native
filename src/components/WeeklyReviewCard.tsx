@@ -36,7 +36,7 @@ export function WeeklyReviewCard({ review }: WeeklyReviewCardProps) {
       {/* Header */}
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
-          <Ionicons name="sparkles" size={16} color="#c084fc" />
+          <Ionicons name="sparkles" size={16} color="#3B82F6" />
           <Text style={styles.headerTitle}>Weekly Review</Text>
         </View>
         {weekLabel ? <Text style={styles.weekLabel}>Week of {weekLabel}</Text> : null}
@@ -73,10 +73,10 @@ export function WeeklyReviewCard({ review }: WeeklyReviewCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1a0533',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#7c3aed40',
+    borderColor: '#1E3A5F',
     padding: 16,
   },
 
@@ -93,13 +93,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   headerTitle: {
-    color: '#c084fc',
+    color: '#3B82F6',
     fontSize: 14,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
   weekLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Stats
@@ -123,16 +125,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 2,
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   statLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 10,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Narrative
   narrative: {
-    color: '#aaa',
+    color: '#A8BDD4',
     fontSize: 13,
     lineHeight: 19,
+    fontFamily: 'DMSans-Regular',
   },
 });

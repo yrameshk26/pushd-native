@@ -56,7 +56,7 @@ function getMuscleColor(muscle: string): string {
     lats: '#3b82f6',
   };
   const key = muscle.toLowerCase().split(' ')[0];
-  return map[key] ?? '#6C63FF';
+  return map[key] ?? '#3B82F6';
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -64,7 +64,7 @@ function getMuscleColor(muscle: string): string {
 function SetTypeBadge({ type }: { type: string }) {
   if (type === 'NORMAL') return null;
   const config: Record<string, { label: string; color: string; bg: string }> = {
-    WARMUP: { label: 'W', color: '#aaa', bg: '#2a2a2a' },
+    WARMUP: { label: 'W', color: '#A8BDD4', bg: '#162540' },
     DROP:   { label: 'D', color: '#f97316', bg: '#2a1400' },
     FAILURE: { label: 'F', color: '#ef4444', bg: '#2a0000' },
   };
@@ -234,7 +234,7 @@ export default function WorkoutDetailScreen() {
             <Ionicons name="chevron-back" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       </SafeAreaView>
     );
   }
@@ -272,12 +272,12 @@ export default function WorkoutDetailScreen() {
           <View style={styles.headerActions}>
             {/* Share */}
             <TouchableOpacity style={styles.iconBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={18} color="#6C63FF" />
+              <Ionicons name="share-outline" size={18} color="#3B82F6" />
             </TouchableOpacity>
 
             {/* Save as template / bookmark */}
             <TouchableOpacity style={styles.iconBtn} onPress={handleSaveAsTemplate}>
-              <Ionicons name="bookmark-outline" size={18} color="#6C63FF" />
+              <Ionicons name="bookmark-outline" size={18} color="#3B82F6" />
             </TouchableOpacity>
 
             {/* Delete */}
@@ -320,19 +320,19 @@ export default function WorkoutDetailScreen() {
           {/* Stats row */}
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
-              <Ionicons name="time-outline" size={20} color="#6C63FF" />
+              <Ionicons name="time-outline" size={20} color="#3B82F6" />
               <Text style={styles.statValue}>{formatDuration(workout.duration)}</Text>
               <Text style={styles.statLabel}>Duration</Text>
             </View>
 
             <View style={styles.statCard}>
-              <Ionicons name="barbell-outline" size={20} color="#6C63FF" />
+              <Ionicons name="barbell-outline" size={20} color="#3B82F6" />
               <Text style={styles.statValue}>{formatVolume(workout.volume)}</Text>
               <Text style={styles.statLabel}>Volume</Text>
             </View>
 
             <View style={styles.statCard}>
-              <Ionicons name="layers-outline" size={20} color="#6C63FF" />
+              <Ionicons name="layers-outline" size={20} color="#3B82F6" />
               <Text style={styles.statValue}>{totalSets}</Text>
               <Text style={styles.statLabel}>Sets</Text>
             </View>
@@ -398,7 +398,7 @@ export default function WorkoutDetailScreen() {
             <Ionicons
               name={workout.isLiked ? 'heart' : 'heart-outline'}
               size={22}
-              color={workout.isLiked ? '#ef4444' : '#888'}
+              color={workout.isLiked ? '#ef4444' : '#718FAF'}
             />
             <Text style={[styles.likeBtnText, workout.isLiked && styles.likeBtnTextActive]}>
               {workout.likesCount} {workout.likesCount === 1 ? 'like' : 'likes'}
@@ -425,7 +425,7 @@ export default function WorkoutDetailScreen() {
           <TextInput
             style={styles.commentInput}
             placeholder="Add a comment..."
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             value={commentText}
             onChangeText={setCommentText}
             returnKeyType="send"
@@ -454,7 +454,7 @@ export default function WorkoutDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
   },
   flex: {
     flex: 1,
@@ -472,22 +472,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: {
     width: 38,
     height: 38,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   headerTitle: {
     color: '#fff',
     fontSize: 17,
-    fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
     flex: 1,
     textAlign: 'center',
     marginHorizontal: 10,
@@ -501,17 +501,17 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a6e',
+    borderColor: '#162540',
   },
   iconBtnDanger: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -524,9 +524,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   workoutDate: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 14,
     marginBottom: 16,
+    fontFamily: 'DMSans-Regular',
   },
 
   // PR Banner
@@ -547,29 +548,30 @@ const styles = StyleSheet.create({
   prBannerTitle: {
     color: '#FFD700',
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
     marginBottom: 2,
   },
   prBannerSub: {
     color: '#a89030',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Workout tag badge
   tagBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#111D36',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a50',
+    borderColor: '#162540',
     paddingHorizontal: 10,
     paddingVertical: 4,
     marginBottom: 14,
   },
   tagBadgeText: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -582,12 +584,12 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 4,
   },
   statCardPR: {
@@ -596,16 +598,17 @@ const styles = StyleSheet.create({
   statValue: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   statValuePR: {
     color: '#FFD700',
   },
   statLabel: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 10,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontFamily: 'DMSans-Regular',
   },
   statLabelPR: {
     color: '#a89030',
@@ -613,32 +616,33 @@ const styles = StyleSheet.create({
 
   // Notes
   notesCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   notesLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 6,
   },
   notesText: {
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Section title
   sectionTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -646,12 +650,12 @@ const styles = StyleSheet.create({
 
   // Exercise card
   exerciseCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   exerciseNameRow: {
     flexDirection: 'row',
@@ -668,14 +672,15 @@ const styles = StyleSheet.create({
   exerciseName: {
     color: '#fff',
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
     flex: 1,
   },
   exerciseNotes: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 13,
     marginBottom: 10,
     marginTop: 2,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Set table
@@ -686,9 +691,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   setHeaderText: {
-    color: '#444',
+    color: '#4A6080',
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     letterSpacing: 0.5,
   },
   setWeightHeader: {
@@ -702,7 +707,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderTopWidth: 1,
-    borderTopColor: '#222',
+    borderTopColor: '#162540',
     gap: 4,
   },
   setRowSkipped: {
@@ -713,9 +718,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   setNum: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   typeBadge: {
     borderRadius: 4,
@@ -726,24 +731,25 @@ const styles = StyleSheet.create({
   },
   typeBadgeText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
   setWeight: {
     flex: 1,
     color: '#fff',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   setX: {
-    color: '#444',
+    color: '#4A6080',
     fontSize: 14,
     marginHorizontal: 4,
+    fontFamily: 'DMSans-Regular',
   },
   setReps: {
     flex: 1,
     color: '#fff',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   checkIcon: {
     marginLeft: 4,
@@ -757,15 +763,15 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
     marginBottom: 16,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   likeBtnText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   likeBtnTextActive: {
     color: '#ef4444',
@@ -773,10 +779,11 @@ const styles = StyleSheet.create({
 
   // Comments
   noComments: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 14,
     textAlign: 'center',
     paddingVertical: 20,
+    fontFamily: 'DMSans-Regular',
   },
   commentItem: {
     flexDirection: 'row',
@@ -787,7 +794,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -795,7 +802,7 @@ const styles = StyleSheet.create({
   commentAvatarText: {
     color: '#fff',
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
   commentBody: {
     flex: 1,
@@ -803,18 +810,20 @@ const styles = StyleSheet.create({
   commentUser: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     marginBottom: 3,
   },
   commentContent: {
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 14,
     lineHeight: 20,
+    fontFamily: 'DMSans-Regular',
   },
   commentDate: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 12,
     marginTop: 4,
+    fontFamily: 'DMSans-Regular',
   },
 
   // Bottom padding
@@ -829,30 +838,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
-    backgroundColor: '#0a0a0a',
+    borderTopColor: '#0B1326',
+    backgroundColor: '#060C1B',
     gap: 10,
   },
   commentInput: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 22,
     paddingHorizontal: 16,
     paddingVertical: 10,
     color: '#fff',
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
+    fontFamily: 'DMSans-Regular',
   },
   sendBtn: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   sendBtnDisabled: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
   },
 });

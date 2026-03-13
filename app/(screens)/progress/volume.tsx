@@ -151,18 +151,19 @@ const chartStyles = StyleSheet.create({
   },
   bar: {
     width: '85%',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 4,
     minHeight: 4,
   },
   barEmpty: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
   },
   barLabel: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 8,
     marginTop: 4,
     textAlign: 'center',
+    fontFamily: 'DMSans-Regular',
   },
 });
 
@@ -219,13 +220,13 @@ export default function VolumeScreen() {
 
         {isLoading && (
           <View style={styles.centered}>
-            <ActivityIndicator color="#6C63FF" size="large" />
+            <ActivityIndicator color="#3B82F6" size="large" />
           </View>
         )}
 
         {isError && !isLoading && (
           <View style={styles.centered}>
-            <Ionicons name="cloud-offline-outline" size={40} color="#555" />
+            <Ionicons name="cloud-offline-outline" size={40} color="#4A6080" />
             <Text style={styles.errorText}>Failed to load volume data</Text>
             <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
               <Text style={styles.retryText}>Retry</Text>
@@ -265,7 +266,7 @@ export default function VolumeScreen() {
               <Text style={styles.cardTitle}>Weekly Volume</Text>
               {buckets.length === 0 ? (
                 <View style={styles.emptyState}>
-                  <Ionicons name="barbell-outline" size={32} color="#333" />
+                  <Ionicons name="barbell-outline" size={32} color="#162540" />
                   <Text style={styles.emptyText}>No workouts yet. Start training!</Text>
                 </View>
               ) : (
@@ -306,7 +307,7 @@ export default function VolumeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -315,10 +316,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { padding: 4 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#fff', flex: 1 },
+  headerTitle: { fontSize: 18, fontFamily: 'BarlowCondensed-Bold', color: '#fff', flex: 1 },
 
   content: { padding: 20, paddingBottom: 48 },
 
@@ -327,67 +328,67 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   chipActive: {
-    backgroundColor: '#6C63FF22',
-    borderColor: '#6C63FF',
+    backgroundColor: '#3B82F622',
+    borderColor: '#3B82F6',
   },
-  chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
-  chipTextActive: { color: '#6C63FF', fontWeight: '700' },
+  chipText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Medium' },
+  chipTextActive: { color: '#3B82F6', fontFamily: 'DMSans-Bold' },
 
   centered: {
     alignItems: 'center',
     paddingVertical: 60,
     gap: 12,
   },
-  errorText: { color: '#555', fontSize: 14, marginTop: 8 },
+  errorText: { color: '#4A6080', fontSize: 14, marginTop: 8, fontFamily: 'DMSans-Regular' },
   retryBtn: {
     marginTop: 4,
     paddingHorizontal: 24,
     paddingVertical: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
+  retryText: { color: '#3B82F6', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   statCard: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignItems: 'center',
   },
-  statValue: { fontSize: 18, fontWeight: '800', color: '#fff', marginBottom: 4 },
-  statLabel: { color: '#666', fontSize: 11, fontWeight: '500', textAlign: 'center' },
+  statValue: { fontSize: 18, fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff', marginBottom: 4 },
+  statLabel: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Medium', textAlign: 'center' },
   trendRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
 
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 16,
   },
   cardTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 16,
   },
 
   emptyState: { alignItems: 'center', paddingVertical: 24, gap: 10 },
-  emptyText: { color: '#555', fontSize: 13 },
+  emptyText: { color: '#4A6080', fontSize: 13, fontFamily: 'DMSans-Regular' },
 
   muscleRow: {
     flexDirection: 'row',
@@ -395,18 +396,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     gap: 10,
   },
-  muscleLabel: { color: '#ccc', fontSize: 13, width: 90 },
+  muscleLabel: { color: '#A8BDD4', fontSize: 13, width: 90, fontFamily: 'DMSans-Regular' },
   muscleBarTrack: {
     flex: 1,
     height: 8,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 4,
     overflow: 'hidden',
   },
   muscleBar: {
     height: '100%',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 4,
   },
-  musclePct: { color: '#666', fontSize: 12, width: 34, textAlign: 'right' },
+  musclePct: { color: '#718FAF', fontSize: 12, width: 34, textAlign: 'right', fontFamily: 'DMSans-Regular' },
 });
