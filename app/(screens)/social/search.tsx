@@ -21,7 +21,7 @@ export default function SearchScreen() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['user-search'] }),
   });
 
-  const users: any[] = data?.users ?? [];
+  const users: any[] = data?.data ?? data?.users ?? [];
 
   return (
     <SafeAreaView style={styles.container}>
