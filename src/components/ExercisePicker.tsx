@@ -83,30 +83,32 @@ export function ExercisePicker({ visible, onSelect, onClose }: Props) {
         </View>
 
         {/* Muscle filter pills */}
-        <FlatList
-          data={MUSCLES}
-          horizontal
-          keyExtractor={(m) => m || 'all'}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterRow}
-          renderItem={({ item }) => {
-            const isActive = muscle === item;
-            const color = item ? getMuscleColor(item) : '#3b82f6';
-            return (
-              <TouchableOpacity
-                style={[
-                  styles.chip,
-                  isActive && { backgroundColor: color, borderColor: color },
-                ]}
-                onPress={() => setMuscle(muscle === item ? '' : item)}
-              >
-                <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
-                  {MUSCLE_LABELS[item]}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
+        <View style={styles.filterWrapper}>
+          <FlatList
+            data={MUSCLES}
+            horizontal
+            keyExtractor={(m) => m || 'all'}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterRow}
+            renderItem={({ item }) => {
+              const isActive = muscle === item;
+              const color = item ? getMuscleColor(item) : '#3b82f6';
+              return (
+                <TouchableOpacity
+                  style={[
+                    styles.chip,
+                    isActive && { backgroundColor: color, borderColor: color },
+                  ]}
+                  onPress={() => setMuscle(muscle === item ? '' : item)}
+                >
+                  <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
+                    {MUSCLE_LABELS[item]}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
 
         {/* Exercise list */}
         {isLoading ? (
@@ -115,6 +117,7 @@ export function ExercisePicker({ visible, onSelect, onClose }: Props) {
           <FlatList
             data={exercises}
             keyExtractor={(e) => e.id}
+            style={styles.exerciseList}
             contentContainerStyle={styles.listContent}
             keyboardShouldPersistTaps="handled"
             renderItem={({ item }) => {
@@ -203,10 +206,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 0,
   },
+  filterWrapper: {
+    height: 52,
+  },
   filterRow: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     gap: 8,
+    alignItems: 'center',
+  },
+  exerciseList: {
+    flex: 1,
   },
   chip: {
     paddingHorizontal: 14,

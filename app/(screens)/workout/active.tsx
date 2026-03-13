@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
-  StyleSheet, Alert, ActivityIndicator, Platform,
+  StyleSheet, Alert, ActivityIndicator, Platform, KeyboardAvoidingView,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -228,108 +228,114 @@ export default function ActiveWorkoutScreen() {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {active.exercises.map((exercise, exIndex) => (
-          <View key={exercise.localId} style={styles.exerciseCard}>
-            {/* Exercise header */}
-            <View style={styles.exerciseHeader}>
-              <Text style={styles.exerciseName}>{exercise.exerciseName}</Text>
-              <View style={styles.exerciseActions}>
-                {/* Reorder up */}
-                <TouchableOpacity
-                  style={[styles.actionBtn, exIndex === 0 && styles.actionBtnDisabled]}
-                  onPress={() => reorderExercise(exercise.localId, 'up')}
-                  disabled={exIndex === 0}
-                >
-                  <Ionicons name="chevron-up" size={16} color={exIndex === 0 ? '#333' : '#888'} />
-                </TouchableOpacity>
-                {/* Reorder down */}
-                <TouchableOpacity
-                  style={[styles.actionBtn, exIndex === active.exercises.length - 1 && styles.actionBtnDisabled]}
-                  onPress={() => reorderExercise(exercise.localId, 'down')}
-                  disabled={exIndex === active.exercises.length - 1}
-                >
-                  <Ionicons name="chevron-down" size={16} color={exIndex === active.exercises.length - 1 ? '#333' : '#888'} />
-                </TouchableOpacity>
-                {/* Swap / substitute */}
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => handleOpenSubSheet(exercise.localId, exercise.exerciseId, exercise.exerciseName)}
-                >
-                  <Ionicons name="swap-horizontal-outline" size={16} color="#6C63FF" />
-                </TouchableOpacity>
-                {/* Remove */}
-                <TouchableOpacity
-                  style={styles.actionBtn}
-                  onPress={() => removeExercise(exercise.localId)}
-                >
-                  <Ionicons name="close-circle" size={18} color="#444" />
-                </TouchableOpacity>
-              </View>
+        {active.exercises.length === 0 ? (
+          <View style={styles.emptyState}>
+            <View style={styles.emptyIcon}>
+              <Ionicons name="barbell-outline" size={36} color="#4a5568" />
             </View>
-
-            {/* Set headers */}
-            <View style={styles.setHeader}>
-              <Text style={[styles.setCol, { flex: 0.5 }]}>SET</Text>
-              <Text style={styles.setCol}>KG</Text>
-              <Text style={styles.setCol}>REPS</Text>
-              <Text style={[styles.setCol, { flex: 0.5 }]}></Text>
-            </View>
-
-            {/* Sets */}
-            {exercise.sets.map((s, i) => (
-              <View key={i} style={[styles.setRow, s.isCompleted && styles.setRowDone]}>
-                <Text style={[styles.setCol, { flex: 0.5, color: '#666' }]}>{i + 1}</Text>
-                <TextInput
-                  style={styles.setInput}
-                  keyboardType="numeric"
-                  placeholder="–"
-                  placeholderTextColor="#444"
-                  value={s.weight !== undefined ? String(s.weight) : ''}
-                  onChangeText={(v) => updateSet(exercise.localId, i, { weight: v ? parseFloat(v) : undefined })}
-                />
-                <TextInput
-                  style={styles.setInput}
-                  keyboardType="numeric"
-                  placeholder="–"
-                  placeholderTextColor="#444"
-                  value={s.reps !== undefined ? String(s.reps) : ''}
-                  onChangeText={(v) => updateSet(exercise.localId, i, { reps: v ? parseInt(v) : undefined })}
-                />
-                <TouchableOpacity
-                  style={[styles.checkBtn, s.isCompleted && styles.checkBtnDone]}
-                  onPress={() => handleToggleSetComplete(exercise.localId, i)}
-                >
-                  <Ionicons name="checkmark" size={16} color={s.isCompleted ? '#fff' : '#444'} />
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            {/* Add set */}
-            <TouchableOpacity style={styles.addSetBtn} onPress={() => addSet(exercise.localId)}>
-              <Ionicons name="add" size={16} color="#6C63FF" />
-              <Text style={styles.addSetText}>Add Set</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyTitle}>No exercises yet</Text>
+            <Text style={styles.emptySubtitle}>Tap "Add Exercise" to get started</Text>
           </View>
-        ))}
+        ) : (
+          active.exercises.map((exercise, exIndex) => (
+            <View key={exercise.localId} style={styles.exerciseCard}>
+              {/* Exercise header */}
+              <View style={styles.exerciseHeader}>
+                <Text style={styles.exerciseName}>{exercise.exerciseName}</Text>
+                <View style={styles.exerciseActions}>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, exIndex === 0 && styles.actionBtnDisabled]}
+                    onPress={() => reorderExercise(exercise.localId, 'up')}
+                    disabled={exIndex === 0}
+                  >
+                    <Ionicons name="chevron-up" size={16} color={exIndex === 0 ? '#333' : '#888'} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, exIndex === active.exercises.length - 1 && styles.actionBtnDisabled]}
+                    onPress={() => reorderExercise(exercise.localId, 'down')}
+                    disabled={exIndex === active.exercises.length - 1}
+                  >
+                    <Ionicons name="chevron-down" size={16} color={exIndex === active.exercises.length - 1 ? '#333' : '#888'} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => handleOpenSubSheet(exercise.localId, exercise.exerciseId, exercise.exerciseName)}
+                  >
+                    <Ionicons name="swap-horizontal-outline" size={16} color="#6C63FF" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => removeExercise(exercise.localId)}
+                  >
+                    <Ionicons name="close-circle" size={18} color="#444" />
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-        {/* Add exercise row */}
-        <View style={styles.addExerciseRow}>
-          <TouchableOpacity style={[styles.addExerciseBtn, styles.addExerciseBtnFlex]} onPress={() => setPickerVisible(true)}>
-            <Ionicons name="add-circle-outline" size={20} color="#6C63FF" />
-            <Text style={styles.addExerciseText}>Add Exercise</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.nlBtn} onPress={() => setNlVisible(true)}>
-            <Ionicons name="sparkles-outline" size={16} color="#6C63FF" />
-            <Text style={styles.nlBtnText}>AI Parse</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.formCheckBtn}
-            onPress={() => setFormCheckVisible(true)}
-          >
-            <Ionicons name="camera-outline" size={16} color="#6C63FF" />
-          </TouchableOpacity>
-        </View>
+              {/* Set headers */}
+              <View style={styles.setHeader}>
+                <Text style={[styles.setCol, { flex: 0.5 }]}>SET</Text>
+                <Text style={styles.setCol}>KG</Text>
+                <Text style={styles.setCol}>REPS</Text>
+                <Text style={[styles.setCol, { flex: 0.5 }]}></Text>
+              </View>
+
+              {/* Sets */}
+              {exercise.sets.map((s, i) => (
+                <View key={i} style={[styles.setRow, s.isCompleted && styles.setRowDone]}>
+                  <Text style={[styles.setCol, { flex: 0.5, color: '#666' }]}>{i + 1}</Text>
+                  <TextInput
+                    style={styles.setInput}
+                    keyboardType="numeric"
+                    placeholder="–"
+                    placeholderTextColor="#444"
+                    value={s.weight !== undefined ? String(s.weight) : ''}
+                    onChangeText={(v) => updateSet(exercise.localId, i, { weight: v ? parseFloat(v) : undefined })}
+                  />
+                  <TextInput
+                    style={styles.setInput}
+                    keyboardType="numeric"
+                    placeholder="–"
+                    placeholderTextColor="#444"
+                    value={s.reps !== undefined ? String(s.reps) : ''}
+                    onChangeText={(v) => updateSet(exercise.localId, i, { reps: v ? parseInt(v) : undefined })}
+                  />
+                  <TouchableOpacity
+                    style={[styles.checkBtn, s.isCompleted && styles.checkBtnDone]}
+                    onPress={() => handleToggleSetComplete(exercise.localId, i)}
+                  >
+                    <Ionicons name="checkmark" size={16} color={s.isCompleted ? '#fff' : '#444'} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              {/* Add set */}
+              <TouchableOpacity style={styles.addSetBtn} onPress={() => addSet(exercise.localId)}>
+                <Ionicons name="add" size={16} color="#6C63FF" />
+                <Text style={styles.addSetText}>Add Set</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
       </ScrollView>
+
+      {/* Bottom action area — always visible */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.bottomBar}
+      >
+        {/* AI parse input */}
+        <TouchableOpacity style={styles.nlInputRow} onPress={() => setNlVisible(true)} activeOpacity={0.7}>
+          <Ionicons name="flash-outline" size={16} color="#6C63FF" />
+          <Text style={styles.nlInputPlaceholder}>e.g. 3×10 bench at 80kg</Text>
+        </TouchableOpacity>
+
+        {/* Add Exercise */}
+        <TouchableOpacity style={styles.addExerciseBtn} onPress={() => setPickerVisible(true)} activeOpacity={0.8}>
+          <Ionicons name="add" size={20} color="#fff" />
+          <Text style={styles.addExerciseText}>Add Exercise</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
 
       <ExercisePicker
         visible={pickerVisible}
@@ -411,7 +417,31 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   restBadgeText: { color: '#6C63FF', fontSize: 12, fontWeight: '600' },
-  content: { padding: 16, paddingBottom: 40 },
+  content: { padding: 16, paddingBottom: 16, flexGrow: 1 },
+  emptyState: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 60, gap: 12,
+  },
+  emptyIcon: {
+    width: 80, height: 80, borderRadius: 40,
+    backgroundColor: '#161b22',
+    justifyContent: 'center', alignItems: 'center',
+    marginBottom: 4,
+  },
+  emptyTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
+  emptySubtitle: { color: '#6b7280', fontSize: 14, textAlign: 'center' },
+  bottomBar: {
+    paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24,
+    borderTopWidth: 1, borderTopColor: '#1a1a1a',
+    backgroundColor: '#0a0a0a', gap: 10,
+  },
+  nlInputRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: '#111827', borderRadius: 14,
+    paddingHorizontal: 16, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#1e2a3a',
+  },
+  nlInputPlaceholder: { color: '#4b5563', fontSize: 14, flex: 1 },
   exerciseCard: {
     backgroundColor: '#111', borderRadius: 14, padding: 16,
     marginBottom: 16, borderWidth: 1, borderColor: '#1e1e1e',
@@ -440,23 +470,10 @@ const styles = StyleSheet.create({
   checkBtnDone: { backgroundColor: '#22c55e' },
   addSetBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, gap: 6, marginTop: 4 },
   addSetText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
-  addExerciseRow: { flexDirection: 'row', gap: 10 },
   addExerciseBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, paddingVertical: 16, borderRadius: 14, borderWidth: 1,
-    borderColor: '#6C63FF', borderStyle: 'dashed',
+    gap: 8, paddingVertical: 16, borderRadius: 14,
+    backgroundColor: '#111827', borderWidth: 1, borderColor: '#1e2a3a',
   },
-  addExerciseBtnFlex: { flex: 1 },
-  addExerciseText: { color: '#6C63FF', fontWeight: '600', fontSize: 15 },
-  nlBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 6, paddingHorizontal: 16, paddingVertical: 16, borderRadius: 14,
-    backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50',
-  },
-  nlBtnText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
-  formCheckBtn: {
-    justifyContent: 'center', alignItems: 'center',
-    paddingHorizontal: 14, paddingVertical: 16, borderRadius: 14,
-    backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50',
-  },
+  addExerciseText: { color: '#fff', fontWeight: '600', fontSize: 15 },
 });
