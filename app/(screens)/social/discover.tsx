@@ -20,9 +20,13 @@ const PAGE_SIZE = 20;
 interface DiscoverWorkout {
   id: string;
   title: string;
-  exerciseCount: number;
   totalVolume: number;
-  likeCount: number;
+  // Rich format from /api/social/feed
+  exercises?: { exercise: { name: string }; sets: unknown[] }[];
+  _count?: { likes?: number; comments?: number };
+  // Legacy lightweight fields (kept for backwards compat)
+  exerciseCount?: number;
+  likeCount?: number;
   user: {
     username: string;
     displayName: string | null;
@@ -50,6 +54,9 @@ function formatVolume(kg: number): string {
 }
 
 function WorkoutFeedCard({ item }: { item: DiscoverWorkout }) {
+  const exerciseCount = item.exercises?.length ?? item.exerciseCount ?? 0;
+  const likeCount = item._count?.likes ?? item.likeCount ?? 0;
+
   return (
     <TouchableOpacity
       style={styles.card}
@@ -78,7 +85,7 @@ function WorkoutFeedCard({ item }: { item: DiscoverWorkout }) {
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
           <Ionicons name="barbell-outline" size={14} color="#6C63FF" />
-          <Text style={styles.statText}>{item.exerciseCount} exercises</Text>
+          <Text style={styles.statText}>{exerciseCount} exercises</Text>
         </View>
         <View style={styles.statItem}>
           <Ionicons name="stats-chart-outline" size={14} color="#6C63FF" />
@@ -86,7 +93,7 @@ function WorkoutFeedCard({ item }: { item: DiscoverWorkout }) {
         </View>
         <View style={styles.statItem}>
           <Ionicons name="heart-outline" size={14} color="#ff6b6b" />
-          <Text style={styles.statText}>{item.likeCount}</Text>
+          <Text style={styles.statText}>{likeCount}</Text>
         </View>
       </View>
     </TouchableOpacity>
