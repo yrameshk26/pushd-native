@@ -249,8 +249,8 @@ export default function SettingsScreen() {
   };
 
   const confirmDelete = async () => {
-    if (deleteConfirmText.trim() !== 'DELETE') {
-      Alert.alert('Incorrect', 'You must type DELETE exactly to confirm.');
+    if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') {
+      Alert.alert('Incorrect', 'You must type DELETE to confirm.');
       return;
     }
     setDeleting(true);
@@ -441,9 +441,9 @@ export default function SettingsScreen() {
                 <Text style={styles.modalBtnCancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnDelete, (deleteConfirmText !== 'DELETE' || deleting) && styles.modalBtnDisabled]}
+                style={[styles.modalBtn, styles.modalBtnDelete, (deleteConfirmText.trim().toUpperCase() !== 'DELETE' || deleting) && styles.modalBtnDisabled]}
                 onPress={confirmDelete}
-                disabled={deleteConfirmText !== 'DELETE' || deleting}
+                disabled={deleteConfirmText.trim().toUpperCase() !== 'DELETE' || deleting}
               >
                 {deleting
                   ? <ActivityIndicator color="#fff" size="small" />
