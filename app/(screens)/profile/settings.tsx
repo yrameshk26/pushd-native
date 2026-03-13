@@ -256,14 +256,17 @@ export default function SettingsScreen() {
     setDeleting(true);
     try {
       await api.delete('/api/users/me');
-      await logout();
-      router.replace('/(auth)/login' as never);
     } catch (e: any) {
-      Alert.alert('Error', e?.message ?? 'Could not delete account. Please try again.');
-    } finally {
+      Alert.alert('Error', e?.response?.data?.error ?? e?.message ?? 'Could not delete account. Please try again.');
       setDeleting(false);
       setShowDeleteModal(false);
+      return;
     }
+    // Account deleted — clear local tokens regardless of revoke success
+    try { await logout(); } catch { /* ignore */ }
+    setDeleting(false);
+    setShowDeleteModal(false);
+    router.replace('/(auth)/login' as never);
   };
 
   if (isLoading) {
