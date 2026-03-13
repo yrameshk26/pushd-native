@@ -129,12 +129,12 @@ export default function TemplatesScreen() {
           style={styles.saveNewBtn}
           onPress={() => setShowSaveModal(true)}
         >
-          <Ionicons name="add" size={24} color="#6C63FF" />
+          <Ionicons name="add" size={24} color="#3B82F6" />
         </TouchableOpacity>
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Failed to load templates.</Text>
@@ -155,14 +155,14 @@ export default function TemplatesScreen() {
             style={styles.saveBanner}
             onPress={() => setShowSaveModal(true)}
           >
-            <Ionicons name="bookmark-outline" size={20} color="#6C63FF" />
+            <Ionicons name="bookmark-outline" size={20} color="#3B82F6" />
             <View style={styles.saveBannerText}>
               <Text style={styles.saveBannerTitle}>Save Current Meal as Template</Text>
               <Text style={styles.saveBannerSub}>
                 Quickly re-log a meal you eat regularly
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color="#555" />
+            <Ionicons name="chevron-forward" size={16} color="#718FAF" />
           </TouchableOpacity>
 
           {/* Templates list */}
@@ -172,7 +172,7 @@ export default function TemplatesScreen() {
 
           {templates.length === 0 ? (
             <View style={styles.emptyCard}>
-              <Ionicons name="bookmark-outline" size={40} color="#333" />
+              <Ionicons name="bookmark-outline" size={40} color="#162540" />
               <Text style={styles.emptyText}>No templates saved yet</Text>
               <Text style={styles.emptySubText}>
                 Save a frequently eaten meal to quickly log it in the future
@@ -212,7 +212,7 @@ export default function TemplatesScreen() {
                   setTemplateName('');
                 }}
               >
-                <Ionicons name="close" size={24} color="#888" />
+                <Ionicons name="close" size={24} color="#718FAF" />
               </TouchableOpacity>
             </View>
 
@@ -220,7 +220,7 @@ export default function TemplatesScreen() {
             <TextInput
               style={styles.input}
               placeholder="e.g. Post-Workout Meal"
-              placeholderTextColor="#555"
+              placeholderTextColor="#718FAF"
               value={templateName}
               onChangeText={setTemplateName}
               returnKeyType="done"
@@ -299,7 +299,7 @@ function TemplateCard({
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.deleteBtn}
         >
-          <Ionicons name="trash-outline" size={18} color="#555" />
+          <Ionicons name="trash-outline" size={18} color="#718FAF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -307,7 +307,7 @@ function TemplateCard({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -316,51 +316,54 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  heading: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 20, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   saveNewBtn: { padding: 4 },
   content: { paddingHorizontal: 16, paddingTop: 8 },
   saveBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#6C63FF15',
+    backgroundColor: '#3B82F615',
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#6C63FF44',
+    borderColor: '#3B82F644',
     marginBottom: 20,
   },
   saveBannerText: { flex: 1 },
-  saveBannerTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  saveBannerSub: { color: '#888', fontSize: 12, marginTop: 2 },
+  saveBannerTitle: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  saveBannerSub: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   sectionTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1.2,
     marginBottom: 12,
   },
   emptyCard: {
     alignItems: 'center',
     paddingVertical: 48,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
-  emptyText: { color: '#555', fontSize: 15, fontWeight: '600' },
+  emptyText: { color: '#718FAF', fontSize: 15, fontWeight: '600' },
   emptySubText: {
-    color: '#444',
+    color: '#4A6080',
     fontSize: 13,
     textAlign: 'center',
     paddingHorizontal: 24,
   },
   errorContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15 },
   retryBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -369,32 +372,34 @@ const styles = StyleSheet.create({
   templateCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 12,
   },
   templateInfo: { flex: 1 },
-  templateName: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 6 },
+  templateName: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 6 },
   templateMacros: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  templateCalories: { color: '#6C63FF', fontSize: 13, fontWeight: '700' },
-  macroChip: { color: '#666', fontSize: 12 },
+  templateCalories: { color: '#3B82F6', fontSize: 13, fontWeight: '700' },
+  macroChip: { color: '#718FAF', fontSize: 12 },
   templateActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   logBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
     minWidth: 64,
     justifyContent: 'center',
   },
-  logBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  logBtnText: { color: '#fff', fontSize: 13, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   deleteBtn: { padding: 4 },
   // Modal
   modalOverlay: {
@@ -403,7 +408,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalSheet: {
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -416,32 +421,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  modalTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  modalTitle: { color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold' },
   label: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     color: '#fff',
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 24,
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });

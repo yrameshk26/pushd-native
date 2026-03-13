@@ -243,14 +243,14 @@ function CustomChallengeCard({
 
       <View style={styles.cardFooter}>
         <View style={styles.metaItem}>
-          <Ionicons name="people-outline" size={12} color="#666" />
+          <Ionicons name="people-outline" size={12} color="#718FAF" />
           <Text style={styles.metaText}>
             {challenge.participantCount}{' '}
             {challenge.participantCount !== 1 ? 'participants' : 'participant'}
           </Text>
         </View>
         <View style={styles.metaItem}>
-          <Ionicons name="time-outline" size={12} color="#666" />
+          <Ionicons name="time-outline" size={12} color="#718FAF" />
           <Text style={styles.metaText}>{formatTimeRemaining(challenge.endsAt)}</Text>
         </View>
       </View>
@@ -354,7 +354,7 @@ function CreateChallengeModal({
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Create Challenge</Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={22} color="#888" />
+              <Ionicons name="close" size={22} color="#718FAF" />
             </TouchableOpacity>
           </View>
 
@@ -369,7 +369,7 @@ function CreateChallengeModal({
               value={title}
               onChangeText={setTitle}
               placeholder="30-day strength challenge"
-              placeholderTextColor="#555"
+              placeholderTextColor="#718FAF"
               maxLength={100}
             />
             <Text style={styles.charCount}>{title.length}/100</Text>
@@ -381,7 +381,7 @@ function CreateChallengeModal({
               value={description}
               onChangeText={setDescription}
               placeholder="What's the challenge about?"
-              placeholderTextColor="#555"
+              placeholderTextColor="#718FAF"
               multiline
               numberOfLines={3}
               textAlignVertical="top"
@@ -420,7 +420,7 @@ function CreateChallengeModal({
                 value={targetValue}
                 onChangeText={setTargetValue}
                 placeholder={selectedMetric.placeholder}
-                placeholderTextColor="#555"
+                placeholderTextColor="#718FAF"
                 keyboardType="number-pad"
               />
               <Text style={styles.unitLabel}>{selectedMetric.unit}</Text>
@@ -532,7 +532,7 @@ export default function ChallengesScreen() {
       >
         {/* Weekly Challenges Section */}
         <View style={styles.sectionHeader}>
-          <Ionicons name="trophy-outline" size={18} color="#6C63FF" />
+          <Ionicons name="trophy-outline" size={18} color="#3B82F6" />
           <Text style={styles.sectionTitle}>Weekly Challenges</Text>
           {weeklyData?.weekNumber != null && (
             <View style={styles.weekBadge}>
@@ -542,7 +542,7 @@ export default function ChallengesScreen() {
         </View>
 
         {wLoading ? (
-          <ActivityIndicator color="#6C63FF" style={{ marginVertical: 20 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginVertical: 20 }} />
         ) : weeklyChallenges.length === 0 ? (
           <Text style={styles.emptyText}>No weekly challenges right now</Text>
         ) : (
@@ -553,19 +553,19 @@ export default function ChallengesScreen() {
 
         {/* Custom Challenges Section */}
         <View style={[styles.sectionHeader, { marginTop: 24 }]}>
-          <Ionicons name="add-circle-outline" size={18} color="#6C63FF" />
+          <Ionicons name="add-circle-outline" size={18} color="#3B82F6" />
           <Text style={styles.sectionTitle}>Custom Challenges</Text>
           <TouchableOpacity
             style={styles.createBtn}
             onPress={() => setCreateOpen(true)}
           >
-            <Ionicons name="add" size={14} color="#6C63FF" />
+            <Ionicons name="add" size={14} color="#3B82F6" />
             <Text style={styles.createBtnText}>Create</Text>
           </TouchableOpacity>
         </View>
 
         {cLoading ? (
-          <ActivityIndicator color="#6C63FF" style={{ marginVertical: 20 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginVertical: 20 }} />
         ) : customChallenges.length === 0 ? (
           <Text style={styles.emptyText}>
             No active custom challenges. Be the first to create one!
@@ -595,7 +595,7 @@ export default function ChallengesScreen() {
 // ─── Styles ────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -604,9 +604,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
 
   scrollContent: { paddingHorizontal: 16, paddingTop: 16 },
 
@@ -619,34 +620,34 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#fff', flex: 1 },
 
   weekBadge: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  weekBadgeText: { color: '#666', fontSize: 11, fontWeight: '600' },
+  weekBadgeText: { color: '#718FAF', fontSize: 11, fontWeight: '600' },
 
   createBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: '#3B82F6',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  createBtnText: { color: '#6C63FF', fontSize: 12, fontWeight: '600' },
+  createBtnText: { color: '#3B82F6', fontSize: 12, fontWeight: '600' },
 
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
   cardCompleted: {
@@ -663,8 +664,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginBottom: 4,
   },
-  cardTitle: { color: '#fff', fontSize: 15, fontWeight: '700', flexShrink: 1 },
-  cardDesc: { color: '#888', fontSize: 13, lineHeight: 18 },
+  cardTitle: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', flexShrink: 1 },
+  cardDesc: { color: '#718FAF', fontSize: 13, lineHeight: 18 },
 
   completedBadge: {
     backgroundColor: 'rgba(34,197,94,0.2)',
@@ -675,22 +677,22 @@ const styles = StyleSheet.create({
   completedBadgeText: { color: '#22c55e', fontSize: 11, fontWeight: '600' },
 
   creatorBadge: {
-    backgroundColor: 'rgba(108,99,255,0.2)',
+    backgroundColor: 'rgba(59, 130, 246,0.2)',
     borderRadius: 20,
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
-  creatorBadgeText: { color: '#6C63FF', fontSize: 11, fontWeight: '600' },
+  creatorBadgeText: { color: '#3B82F6', fontSize: 11, fontWeight: '600' },
 
   progressTrack: {
     height: 6,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 3,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 3,
   },
   progressFillComplete: { backgroundColor: '#22c55e' },
@@ -703,22 +705,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { color: '#666', fontSize: 12 },
+  metaText: { color: '#718FAF', fontSize: 12 },
 
   joinBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 6,
     alignSelf: 'flex-start',
     flexShrink: 0,
   },
-  joinBtnLeave: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#2a2a2a' },
+  joinBtnLeave: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#162540' },
   joinBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  joinBtnTextLeave: { color: '#888' },
+  joinBtnTextLeave: { color: '#718FAF' },
 
   emptyText: {
-    color: '#555',
+    color: '#718FAF',
     textAlign: 'center',
     marginVertical: 20,
     fontSize: 13,
@@ -734,12 +736,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalSheet: {
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '90%',
     borderTopWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -748,24 +750,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
-  modalTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  modalTitle: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   modalContent: { paddingHorizontal: 20, paddingBottom: 40, paddingTop: 16 },
 
   fieldLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 0.6,
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 15,
     paddingHorizontal: 14,
@@ -773,48 +777,49 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   textArea: { minHeight: 72, textAlignVertical: 'top', lineHeight: 22 },
-  charCount: { color: '#555', fontSize: 11, textAlign: 'right', marginTop: -12, marginBottom: 12 },
+  charCount: { color: '#718FAF', fontSize: 11, textAlign: 'right', marginTop: -12, marginBottom: 12 },
 
   metricGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   metricOption: {
     width: '48%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 12,
   },
   metricOptionActive: {
-    borderColor: '#6C63FF',
-    backgroundColor: 'rgba(108,99,255,0.12)',
+    borderColor: '#3B82F6',
+    backgroundColor: 'rgba(59, 130, 246,0.12)',
   },
-  metricLabel: { color: '#888', fontSize: 13, fontWeight: '600' },
-  metricLabelActive: { color: '#6C63FF' },
-  metricUnit: { color: '#555', fontSize: 11, marginTop: 3 },
+  metricLabel: { color: '#718FAF', fontSize: 13, fontWeight: '600' },
+  metricLabelActive: { color: '#3B82F6' },
+  metricUnit: { color: '#718FAF', fontSize: 11, marginTop: 3 },
 
   targetRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 },
-  unitLabel: { color: '#888', fontSize: 14, fontWeight: '500', minWidth: 60 },
+  unitLabel: { color: '#718FAF', fontSize: 14, fontWeight: '500', minWidth: 60 },
 
   toggleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
     marginBottom: 16,
     gap: 12,
   },
-  toggleTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  toggleSub: { color: '#666', fontSize: 12, marginTop: 2 },
+  toggleTitle: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  toggleSub: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   toggle: {
     width: 44,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     justifyContent: 'center',
     paddingHorizontal: 2,
   },
-  toggleOn: { backgroundColor: '#6C63FF' },
+  toggleOn: { backgroundColor: '#3B82F6' },
   toggleThumb: {
     width: 20,
     height: 20,
@@ -835,7 +840,7 @@ const styles = StyleSheet.create({
   errorText: { color: '#ef4444', fontSize: 13 },
 
   submitBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',

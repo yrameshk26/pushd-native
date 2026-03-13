@@ -128,7 +128,7 @@ export default function NewMealPlanScreen() {
           <TextInput
             style={styles.input}
             placeholder="e.g. My Summer Plan"
-            placeholderTextColor="#555"
+            placeholderTextColor="#718FAF"
             value={planName}
             onChangeText={setPlanName}
             returnKeyType="done"
@@ -146,7 +146,7 @@ export default function NewMealPlanScreen() {
                   onPress={() => setGoal(g.value)}
                   activeOpacity={0.8}
                 >
-                  <Ionicons name={g.icon as any} size={22} color={active ? g.color : '#555'} />
+                  <Ionicons name={g.icon as any} size={22} color={active ? g.color : '#718FAF'} />
                   <Text style={[styles.goalCardLabel, active && { color: g.color }]}>{g.label}</Text>
                   <Text style={styles.goalCardDesc}>{g.desc}</Text>
                   {active && (
@@ -244,37 +244,40 @@ export default function NewMealPlanScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   content: { paddingHorizontal: 20, paddingTop: 8 },
 
   sectionLabel: {
-    color: '#888', fontSize: 11, fontWeight: '700',
-    textTransform: 'uppercase', letterSpacing: 1,
+    color: '#718FAF', fontSize: 11, fontWeight: '700',
+    textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold', letterSpacing: 1,
     marginBottom: 10, marginTop: 24,
   },
 
   input: {
-    backgroundColor: '#1a1a1a', borderRadius: 12,
+    backgroundColor: '#0B1326', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14,
     color: '#fff', fontSize: 15,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
 
   goalCards: { flexDirection: 'row', gap: 10 },
   goalCard: {
     flex: 1, alignItems: 'center', gap: 6,
-    backgroundColor: '#1a1a1a', borderRadius: 14,
-    borderWidth: 1.5, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 14,
+    borderWidth: 1.5, borderColor: '#162540',
     padding: 14, position: 'relative',
   },
-  goalCardLabel: { color: '#fff', fontSize: 13, fontWeight: '700', textAlign: 'center' },
-  goalCardDesc: { color: '#555', fontSize: 10, textAlign: 'center' },
+  goalCardLabel: { color: '#fff', fontSize: 13, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', textAlign: 'center' },
+  goalCardDesc: { color: '#718FAF', fontSize: 10, textAlign: 'center' },
   activeCheck: {
     position: 'absolute', top: 8, right: 8,
     width: 16, height: 16, borderRadius: 8,
@@ -284,21 +287,21 @@ const styles = StyleSheet.create({
   durationRow: { flexDirection: 'row', gap: 10 },
   durationChip: {
     flex: 1, alignItems: 'center', paddingVertical: 12,
-    backgroundColor: '#1a1a1a', borderRadius: 12,
-    borderWidth: 1.5, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1.5, borderColor: '#162540',
   },
   durationChipActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
-  durationChipText: { color: '#666', fontSize: 13, fontWeight: '600' },
+  durationChipText: { color: '#718FAF', fontSize: 13, fontWeight: '600' },
   durationChipTextActive: { color: '#3B82F6' },
 
   chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     paddingHorizontal: 14, paddingVertical: 8,
-    backgroundColor: '#1a1a1a', borderRadius: 20,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 20,
+    borderWidth: 1, borderColor: '#162540',
   },
   chipActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
-  chipText: { color: '#666', fontSize: 13, fontWeight: '500' },
+  chipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   chipTextActive: { color: '#3B82F6', fontWeight: '600' },
 
   generateBtn: {
@@ -307,10 +310,11 @@ const styles = StyleSheet.create({
   },
   generateBtnDisabled: { opacity: 0.65 },
   generateBtnContent: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  generateBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  generateBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 
   hint: {
-    color: '#444', fontSize: 12, textAlign: 'center',
+    color: '#4A6080', fontSize: 12, textAlign: 'center',
     marginTop: 10, lineHeight: 18,
   },
 });

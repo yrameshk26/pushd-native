@@ -106,7 +106,7 @@ function Skeleton({
           width: width ?? '100%',
           height,
           borderRadius,
-          backgroundColor: '#2a2a2a',
+          backgroundColor: '#162540',
           opacity,
         },
         style,
@@ -120,7 +120,7 @@ function Skeleton({
 function SectionHeader({ icon, title }: { icon: string; title: string }) {
   return (
     <View style={styles.sectionHeaderRow}>
-      <Ionicons name={icon as never} size={14} color="#888" style={{ marginRight: 6 }} />
+      <Ionicons name={icon as never} size={14} color="#718FAF" style={{ marginRight: 6 }} />
       <Text style={styles.sectionTitle}>{title}</Text>
     </View>
   );
@@ -169,7 +169,7 @@ function StartWorkoutSheet({
         <View style={styles.sheetTitleRow}>
           <Text style={styles.sheetTitle}>Start Workout</Text>
           <Pressable onPress={onClose} style={styles.sheetCloseBtn} accessibilityLabel="Close">
-            <Ionicons name="close" size={20} color="#888" />
+            <Ionicons name="close" size={20} color="#718FAF" />
           </Pressable>
         </View>
 
@@ -573,7 +573,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
   },
   content: {
     padding: 20,
@@ -590,9 +590,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
     fontWeight: '400',
+    fontFamily: 'DMSans-Regular',
   },
   displayName: {
     color: '#fff',
@@ -600,6 +601,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 2,
     letterSpacing: -0.4,
+    fontFamily: 'BarlowCondensed-Bold',
   },
   streakBadge: {
     flexDirection: 'row',
@@ -617,6 +619,7 @@ const styles = StyleSheet.create({
     color: '#60a5fa',
     fontSize: 14,
     fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
 
   // ── Start workout button ──────────────────────────────────────────────────
@@ -635,6 +638,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 1,
     textTransform: 'uppercase',
+    fontFamily: 'DMSans-Bold',
   },
 
   // ── Spacing helpers ───────────────────────────────────────────────────────
@@ -652,29 +656,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
 
   // ── Generic card ─────────────────────────────────────────────────────────
   card: {
-    backgroundColor: '#111827',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#1f2937',
+    borderColor: '#162540',
     padding: 14,
     overflow: 'hidden',
   },
 
   // ── Suggested routine ────────────────────────────────────────────────────
   routineCard: {
-    backgroundColor: '#111827',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#1f2937',
+    borderColor: '#162540',
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
@@ -689,10 +694,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 4,
+    fontFamily: 'DMSans-Bold',
   },
   routineExercises: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
+    fontFamily: 'DMSans-Regular',
   },
   startBtn: {
     backgroundColor: '#3B82F6',
@@ -705,6 +712,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
 
   // ── Recent PRs ───────────────────────────────────────────────────────────
@@ -716,19 +724,21 @@ const styles = StyleSheet.create({
   },
   prRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#1f2937',
+    borderBottomColor: '#162540',
   },
   prName: {
-    color: '#aaa',
+    color: '#A8BDD4',
     fontSize: 13,
     flex: 1,
     marginRight: 10,
+    fontFamily: 'DMSans-Regular',
   },
   prValue: {
     color: '#60a5fa',
     fontSize: 13,
     fontWeight: '700',
     flexShrink: 0,
+    fontFamily: 'DMSans-Bold',
   },
 
   // ── Recent workouts ───────────────────────────────────────────────────────
@@ -742,10 +752,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   seeAllLink: {
     color: '#60a5fa',
     fontSize: 13,
+    fontFamily: 'DMSans-Regular',
   },
   workoutRow: {
     flexDirection: 'row',
@@ -755,7 +767,7 @@ const styles = StyleSheet.create({
   },
   workoutRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#1f2937',
+    borderBottomColor: '#162540',
   },
   workoutRowInfo: {
     flex: 1,
@@ -767,15 +779,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 2,
+    fontFamily: 'DMSans-Medium',
   },
   workoutMeta: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
+    fontFamily: 'DMSans-Regular',
   },
   workoutDate: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     flexShrink: 0,
+    fontFamily: 'DMSans-Regular',
   },
 
   // ── Start workout sheet ───────────────────────────────────────────────────
@@ -784,7 +799,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#00000080',
   },
   sheet: {
-    backgroundColor: '#111827',
+    backgroundColor: '#0B1326',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
@@ -794,7 +809,7 @@ const styles = StyleSheet.create({
   sheetHandle: {
     width: 36,
     height: 4,
-    backgroundColor: '#374151',
+    backgroundColor: '#162540',
     borderRadius: 2,
     alignSelf: 'center',
     marginTop: 10,
@@ -810,6 +825,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
   },
   sheetCloseBtn: {
     padding: 4,
@@ -821,7 +837,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    backgroundColor: '#1f2937',
+    backgroundColor: '#111D36',
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -838,14 +854,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   sheetRoutinesHeader: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginBottom: 10,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
   sheetRoutineRow: {
     flexDirection: 'row',
@@ -853,7 +871,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1f2937',
+    borderBottomColor: '#162540',
   },
   sheetRoutineInfo: {
     flex: 1,
@@ -865,9 +883,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 2,
+    fontFamily: 'DMSans-SemiBold',
   },
   sheetRoutineMeta: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
+    fontFamily: 'DMSans-Regular',
   },
 });

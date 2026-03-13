@@ -161,7 +161,7 @@ export default function LeaderboardScreen() {
           <Ionicons
             name="refresh-outline"
             size={22}
-            color={isRefetching ? '#444' : '#888'}
+            color={isRefetching ? '#4A6080' : '#718FAF'}
           />
         </TouchableOpacity>
       </View>
@@ -228,7 +228,7 @@ export default function LeaderboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -237,24 +237,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   headerCenter: { flex: 1, alignItems: 'center' },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
-  weekLabel: { color: '#666', fontSize: 11, marginTop: 2 },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
+  weekLabel: { color: '#718FAF', fontSize: 11, marginTop: 2 },
 
   tabRow: {
     flexDirection: 'row',
     marginHorizontal: 16,
     marginTop: 14,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     padding: 4,
     gap: 4,
   },
   tabPill: { flex: 1, paddingVertical: 8, borderRadius: 8, alignItems: 'center' },
-  tabPillActive: { backgroundColor: '#0a0a0a' },
-  tabText: { fontSize: 14, fontWeight: '500', color: '#666' },
+  tabPillActive: { backgroundColor: '#060C1B' },
+  tabText: { fontSize: 14, fontWeight: '500', color: '#718FAF' },
   tabTextActive: { color: '#fff', fontWeight: '600' },
 
   scopeRow: {
@@ -269,28 +270,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 5,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  scopePillActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
-  scopeText: { fontSize: 12, fontWeight: '600', color: '#666' },
-  scopeTextActive: { color: '#6C63FF' },
+  scopePillActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
+  scopeText: { fontSize: 12, fontWeight: '600', color: '#718FAF' },
+  scopeTextActive: { color: '#3B82F6' },
 
   yourPositionBanner: {
     marginHorizontal: 16,
     marginTop: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#6C63FF',
+    borderColor: '#3B82F6',
   },
   yourPositionLabel: {
-    color: '#6C63FF',
+    color: '#3B82F6',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 0.6,
     marginBottom: 8,
   },
@@ -300,25 +302,25 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
-  rowCurrentUser: { borderColor: '#6C63FF' },
+  rowCurrentUser: { borderColor: '#3B82F6' },
 
   rankCell: { width: 32, alignItems: 'center' },
-  rankText: { fontSize: 14, fontWeight: '700', color: '#888' },
+  rankText: { fontSize: 14, fontWeight: '700', color: '#718FAF' },
   rankMedal: { fontSize: 20 },
 
   avatarCircle: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -327,27 +329,27 @@ const styles = StyleSheet.create({
 
   entryInfo: { flex: 1, minWidth: 0 },
   entryName: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  entryUsername: { color: '#666', fontSize: 12, marginTop: 1 },
-  entryValue: { color: '#6C63FF', fontWeight: '700', fontSize: 14, flexShrink: 0 },
+  entryUsername: { color: '#718FAF', fontSize: 12, marginTop: 1 },
+  entryValue: { color: '#3B82F6', fontWeight: '700', fontSize: 14, flexShrink: 0 },
 
   skeletonList: { padding: 16, gap: 8 },
-  skeletonRank: { width: 24, height: 14, backgroundColor: '#2a2a2a', borderRadius: 4 },
+  skeletonRank: { width: 24, height: 14, backgroundColor: '#162540', borderRadius: 4 },
   skeletonAvatar: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     flexShrink: 0,
   },
-  skeletonName: { width: 110, height: 14, backgroundColor: '#2a2a2a', borderRadius: 4 },
+  skeletonName: { width: 110, height: 14, backgroundColor: '#162540', borderRadius: 4 },
   skeletonUsername: {
     width: 70,
     height: 11,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 4,
     marginTop: 5,
   },
-  skeletonValue: { width: 56, height: 14, backgroundColor: '#2a2a2a', borderRadius: 4 },
+  skeletonValue: { width: 56, height: 14, backgroundColor: '#162540', borderRadius: 4 },
 
-  empty: { color: '#555', textAlign: 'center', marginTop: 48, fontSize: 14 },
+  empty: { color: '#718FAF', textAlign: 'center', marginTop: 48, fontSize: 14 },
 });

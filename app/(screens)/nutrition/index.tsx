@@ -244,14 +244,14 @@ export default function NutritionScreen() {
           style={styles.goalsBtn}
           onPress={() => router.push('/(screens)/nutrition/goals')}
         >
-          <Ionicons name="settings-outline" size={20} color="#888" />
+          <Ionicons name="settings-outline" size={20} color="#718FAF" />
         </TouchableOpacity>
       </View>
 
       {/* Date Navigator */}
       <View style={styles.datePicker}>
         <TouchableOpacity onPress={() => navigateDay(-1)} style={styles.dateArrow}>
-          <Ionicons name="chevron-back" size={20} color="#888" />
+          <Ionicons name="chevron-back" size={20} color="#718FAF" />
         </TouchableOpacity>
         <Text style={styles.dateLabel}>{getDateLabel(selectedDate)}</Text>
         <TouchableOpacity
@@ -262,13 +262,13 @@ export default function NutritionScreen() {
           <Ionicons
             name="chevron-forward"
             size={20}
-            color={isToday ? '#333' : '#888'}
+            color={isToday ? '#162540' : '#718FAF'}
           />
         </TouchableOpacity>
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : (
         <ScrollView
           contentContainerStyle={styles.content}
@@ -277,7 +277,7 @@ export default function NutritionScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#6C63FF"
+              tintColor="#3B82F6"
             />
           }
         >
@@ -298,7 +298,7 @@ export default function NutritionScreen() {
               <View style={styles.calorieSummarySep} />
 
               <View style={styles.calorieSummaryItem}>
-                <Ionicons name="analytics-outline" size={16} color="#6C63FF" />
+                <Ionicons name="analytics-outline" size={16} color="#3B82F6" />
                 <Text
                   style={[
                     styles.calorieSummaryValue,
@@ -395,7 +395,7 @@ export default function NutritionScreen() {
               <View style={styles.waterDetailsChip}>
                 <Ionicons name="water-outline" size={16} color="#3B82F6" />
                 <Text style={styles.waterDetailsText}>Details</Text>
-                <Ionicons name="chevron-forward" size={13} color="#555" />
+                <Ionicons name="chevron-forward" size={13} color="#718FAF" />
               </View>
             </View>
 
@@ -421,7 +421,7 @@ export default function NutritionScreen() {
                   }}
                   disabled={logWaterMutation.isPending}
                 >
-                  <Ionicons name="add" size={14} color="#6C63FF" />
+                  <Ionicons name="add" size={14} color="#3B82F6" />
                   <Text style={styles.waterQuickText}>+{ml}ml</Text>
                 </TouchableOpacity>
               ))}
@@ -461,7 +461,7 @@ export default function NutritionScreen() {
               <View key={key} style={styles.card}>
                 <View style={styles.mealHeader}>
                   <View style={styles.mealTitleRow}>
-                    <Ionicons name={icon as any} size={18} color="#6C63FF" />
+                    <Ionicons name={icon as any} size={18} color="#3B82F6" />
                     <Text style={styles.mealTitle}>{label}</Text>
                     {mealCalories > 0 && (
                       <Text style={styles.mealCalories}>
@@ -477,7 +477,7 @@ export default function NutritionScreen() {
                       )
                     }
                   >
-                    <Ionicons name="add" size={16} color="#6C63FF" />
+                    <Ionicons name="add" size={16} color="#3B82F6" />
                     <Text style={styles.addFoodText}>Add food</Text>
                   </TouchableOpacity>
                 </View>
@@ -527,9 +527,9 @@ export default function NutritionScreen() {
             style={styles.goalsLink}
             onPress={() => router.push('/(screens)/nutrition/goals')}
           >
-            <Ionicons name="flag-outline" size={18} color="#6C63FF" />
+            <Ionicons name="flag-outline" size={18} color="#3B82F6" />
             <Text style={styles.goalsLinkText}>Edit Nutrition Goals</Text>
-            <Ionicons name="chevron-forward" size={16} color="#555" />
+            <Ionicons name="chevron-forward" size={16} color="#718FAF" />
           </TouchableOpacity>
 
           <View style={{ height: 100 }} />
@@ -589,7 +589,7 @@ function FoodLogRow({
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         style={styles.deleteBtn}
       >
-        <Ionicons name="close-circle-outline" size={20} color="#555" />
+        <Ionicons name="close-circle-outline" size={20} color="#718FAF" />
       </TouchableOpacity>
     </View>
   );
@@ -614,7 +614,7 @@ function SupplementRow({
         <Ionicons
           name={supplement.taken ? 'checkmark-circle' : 'ellipse-outline'}
           size={22}
-          color={supplement.taken ? '#22C55E' : '#555'}
+          color={supplement.taken ? '#22C55E' : '#718FAF'}
         />
       </TouchableOpacity>
       <View style={styles.supplementInfo}>
@@ -634,7 +634,7 @@ function SupplementRow({
         onPress={onDelete}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Ionicons name="trash-outline" size={16} color="#555" />
+        <Ionicons name="trash-outline" size={16} color="#718FAF" />
       </TouchableOpacity>
     </View>
   );
@@ -711,10 +711,10 @@ function FabActionSheet({
               onPress={() => onNavigate(action.path)}
             >
               <View style={styles.fabSheetIcon}>
-                <Ionicons name={action.icon as any} size={20} color="#6C63FF" />
+                <Ionicons name={action.icon as any} size={20} color="#3B82F6" />
               </View>
               <Text style={styles.fabSheetLabel}>{action.label}</Text>
-              <Ionicons name="chevron-forward" size={16} color="#555" />
+              <Ionicons name="chevron-forward" size={16} color="#718FAF" />
             </TouchableOpacity>
           ))}
           <TouchableOpacity style={styles.fabSheetCancel} onPress={onClose}>
@@ -730,7 +730,7 @@ function FabActionSheet({
 
 const styles = StyleSheet.create({
   // Layout
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   content: { paddingHorizontal: 16, paddingTop: 4 },
 
   // Header
@@ -742,7 +742,9 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
   },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  heading: { fontSize: 28, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
   goalsBtn: { padding: 4 },
 
   // Date navigator
@@ -758,24 +760,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     minWidth: 90,
     textAlign: 'center',
   },
 
   // Card
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 20,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   sectionTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1.2,
     marginBottom: 14,
   },
@@ -796,15 +800,16 @@ const styles = StyleSheet.create({
   calorieSummarySep: {
     width: 1,
     height: 40,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
   },
   calorieSummaryValue: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
   },
   calorieSummaryLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -818,7 +823,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
     gap: 6,
   },
   burnEntry: {
@@ -828,11 +833,11 @@ const styles = StyleSheet.create({
   },
   burnEntryName: {
     flex: 1,
-    color: '#aaa',
+    color: '#A8BDD4',
     fontSize: 12,
   },
   burnEntryDuration: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 11,
   },
   burnEntryKcal: {
@@ -849,8 +854,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   waterAmountText: { marginTop: 4 },
-  waterCurrent: { color: '#3B82F6', fontSize: 22, fontWeight: '700' },
-  waterGoal: { color: '#555', fontSize: 14 },
+  waterCurrent: { color: '#3B82F6', fontSize: 22, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold' },
+  waterGoal: { color: '#718FAF', fontSize: 14 },
   waterDetailsChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -863,7 +869,7 @@ const styles = StyleSheet.create({
   waterDetailsText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
   waterTrack: {
     height: 8,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 12,
@@ -879,12 +885,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     borderWidth: 1,
-    borderColor: '#6C63FF55',
+    borderColor: '#3B82F655',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
-  waterQuickText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  waterQuickText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
 
   // Meal templates
   templatesHeader: {
@@ -893,12 +899,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  seeAllText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  seeAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
   templateChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   templateChip: {
-    backgroundColor: '#6C63FF1A',
+    backgroundColor: '#3B82F61A',
     borderWidth: 1,
-    borderColor: '#6C63FF44',
+    borderColor: '#3B82F644',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -908,9 +914,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   templateChipCal: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     marginTop: 1,
   },
@@ -923,19 +930,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   mealTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  mealTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  mealCalories: { color: '#888', fontSize: 13, marginLeft: 4 },
+  mealTitle: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
+  mealCalories: { color: '#718FAF', fontSize: 13, marginLeft: 4 },
   addFoodBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  addFoodText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
-  emptyMeal: { color: '#444', fontSize: 13, fontStyle: 'italic' },
+  addFoodText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
+  emptyMeal: { color: '#4A6080', fontSize: 13, fontStyle: 'italic' },
 
   // Food log row
   foodRow: {
@@ -943,12 +951,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
   },
   foodInfo: { flex: 1 },
-  foodName: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 4 },
+  foodName: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 4 },
   foodMacroRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  foodCalories: { color: '#888', fontSize: 12 },
+  foodCalories: { color: '#718FAF', fontSize: 12 },
   foodMacroChip: { fontSize: 11, fontWeight: '600' },
   proteinChip: { color: '#3B82F6' },
   carbsChip: { color: '#F97316' },
@@ -967,28 +976,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
     gap: 10,
   },
   supplementCheck: {},
   supplementInfo: { flex: 1 },
-  supplementName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  supplementNameTaken: { color: '#666', textDecorationLine: 'line-through' },
-  supplementDosage: { color: '#888', fontSize: 12, marginTop: 2 },
+  supplementName: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  supplementNameTaken: { color: '#718FAF', textDecorationLine: 'line-through' },
+  supplementDosage: { color: '#718FAF', fontSize: 12, marginTop: 2 },
 
   // Goals link
   goalsLink: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 12,
   },
-  goalsLinkText: { flex: 1, color: '#6C63FF', fontSize: 15, fontWeight: '600' },
+  goalsLinkText: { flex: 1, color: '#3B82F6', fontSize: 15, fontWeight: '600' },
 
   // FAB
   fab: {
@@ -998,10 +1008,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6C63FF',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -1017,10 +1027,10 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   fabSheet: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     overflow: 'hidden',
   },
   fabSheetItem: {
@@ -1032,26 +1042,27 @@ const styles = StyleSheet.create({
   },
   fabSheetItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   fabSheetIcon: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  fabSheetLabel: { flex: 1, color: '#fff', fontSize: 16, fontWeight: '600' },
+  fabSheetLabel: { flex: 1, color: '#fff', fontSize: 16, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   fabSheetCancel: {
     marginTop: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingVertical: 16,
     alignItems: 'center',
     marginHorizontal: 0,
   },
-  fabSheetCancelText: { color: '#888', fontSize: 16, fontWeight: '600' },
+  fabSheetCancelText: { color: '#718FAF', fontSize: 16, fontWeight: '600' },
 });

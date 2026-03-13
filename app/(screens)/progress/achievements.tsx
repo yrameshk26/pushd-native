@@ -55,11 +55,11 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
 
   return (
     <View style={[styles.achCard, !isEarned && styles.achCardLocked]}>
-      <View style={[styles.iconCircle, { backgroundColor: isEarned ? tierColor + '22' : '#1f1f1f' }]}>
-        <Ionicons name={icon} size={24} color={isEarned ? tierColor : '#333'} />
+      <View style={[styles.iconCircle, { backgroundColor: isEarned ? tierColor + '22' : '#111D36' }]}>
+        <Ionicons name={icon} size={24} color={isEarned ? tierColor : '#162540'} />
       </View>
-      <View style={[styles.tierPill, { backgroundColor: isEarned ? tierColor + '33' : '#1f1f1f' }]}>
-        <Text style={[styles.tierLabel, { color: isEarned ? tierColor : '#333' }]}>
+      <View style={[styles.tierPill, { backgroundColor: isEarned ? tierColor + '33' : '#111D36' }]}>
+        <Text style={[styles.tierLabel, { color: isEarned ? tierColor : '#162540' }]}>
           {TIER_LABELS[achievement.tier]}
         </Text>
       </View>
@@ -74,7 +74,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       )}
       {!isEarned && (
         <View style={styles.lockRow}>
-          <Ionicons name="lock-closed-outline" size={12} color="#444" />
+          <Ionicons name="lock-closed-outline" size={12} color="#4A6080" />
           <Text style={styles.lockText}>Locked</Text>
         </View>
       )}
@@ -114,10 +114,10 @@ export default function AchievementsScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.errorWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color="#888" />
+          <Ionicons name="alert-circle-outline" size={48} color="#718FAF" />
           <Text style={styles.errorText}>Could not load achievements.</Text>
         </View>
       ) : (
@@ -171,7 +171,7 @@ export default function AchievementsScreen() {
 
           {achievements.length === 0 && (
             <View style={styles.emptyWrap}>
-              <Ionicons name="ribbon-outline" size={52} color="#333" />
+              <Ionicons name="ribbon-outline" size={52} color="#162540" />
               <Text style={styles.emptyText}>No achievements yet. Start training!</Text>
             </View>
           )}
@@ -182,7 +182,7 @@ export default function AchievementsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -190,28 +190,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
 
   content: { padding: 20, paddingBottom: 40 },
 
   progressCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 20,
     marginBottom: 28,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 14,
   },
   progressTop: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  progressTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  progressSub: { color: '#888', fontSize: 13, marginTop: 2 },
+  progressTitle: { color: '#fff', fontSize: 18, fontFamily: 'BarlowCondensed-Bold' },
+  progressSub: { color: '#718FAF', fontSize: 13, marginTop: 2, fontFamily: 'DMSans-Regular' },
   progressBarBg: {
     height: 6,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -224,8 +224,8 @@ const styles = StyleSheet.create({
   tierSection: { marginBottom: 24 },
   tierHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
   tierDot: { width: 8, height: 8, borderRadius: 4 },
-  tierTitle: { fontSize: 14, fontWeight: '700', flex: 1 },
-  tierCount: { color: '#555', fontSize: 13 },
+  tierTitle: { fontSize: 14, fontFamily: 'DMSans-Bold', flex: 1 },
+  tierCount: { color: '#4A6080', fontSize: 13, fontFamily: 'DMSans-Regular' },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
 
@@ -233,11 +233,11 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '46%',
     maxWidth: '48%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 6,
   },
   achCardLocked: { opacity: 0.5 },
@@ -258,20 +258,20 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 4,
   },
-  tierLabel: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  tierLabel: { fontSize: 10, fontFamily: 'DMSans-Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
 
-  achName: { color: '#fff', fontSize: 13, fontWeight: '700', lineHeight: 18 },
-  achNameLocked: { color: '#444' },
-  achDesc: { color: '#888', fontSize: 11, lineHeight: 16 },
-  achDescLocked: { color: '#333' },
-  earnedDate: { color: '#555', fontSize: 10, marginTop: 4 },
+  achName: { color: '#fff', fontSize: 13, fontFamily: 'DMSans-Bold', lineHeight: 18 },
+  achNameLocked: { color: '#4A6080' },
+  achDesc: { color: '#718FAF', fontSize: 11, lineHeight: 16, fontFamily: 'DMSans-Regular' },
+  achDescLocked: { color: '#162540' },
+  earnedDate: { color: '#4A6080', fontSize: 10, marginTop: 4, fontFamily: 'DMSans-Regular' },
 
   lockRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  lockText: { color: '#444', fontSize: 10 },
+  lockText: { color: '#4A6080', fontSize: 10, fontFamily: 'DMSans-Regular' },
 
   errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 
   emptyWrap: { alignItems: 'center', paddingVertical: 60, gap: 12 },
-  emptyText: { color: '#555', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: '#4A6080', fontSize: 15, textAlign: 'center', fontFamily: 'DMSans-Regular' },
 });

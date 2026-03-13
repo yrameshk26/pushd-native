@@ -32,18 +32,18 @@ export default function SearchScreen() {
       </View>
 
       <View style={styles.searchRow}>
-        <Ionicons name="search" size={16} color="#666" />
+        <Ionicons name="search" size={16} color="#718FAF" />
         <TextInput
           style={styles.input}
           placeholder="Search by name or username..."
-          placeholderTextColor="#555"
+          placeholderTextColor="#718FAF"
           value={query}
           onChangeText={setQuery}
           autoFocus
         />
       </View>
 
-      {isLoading && <ActivityIndicator color="#6C63FF" style={{ marginTop: 20 }} />}
+      {isLoading && <ActivityIndicator color="#3B82F6" style={{ marginTop: 20 }} />}
 
       <FlatList
         data={users}
@@ -77,20 +77,21 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
-  searchRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', marginHorizontal: 16, borderRadius: 12, paddingHorizontal: 14, gap: 8, marginBottom: 8, borderWidth: 1, borderColor: '#2a2a2a' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
+  searchRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0B1326', marginHorizontal: 16, borderRadius: 12, paddingHorizontal: 14, gap: 8, marginBottom: 8, borderWidth: 1, borderColor: '#162540' },
   input: { flex: 1, color: '#fff', fontSize: 15, paddingVertical: 14 },
-  userRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
+  userRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#0B1326' },
   userInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#6C63FF', justifyContent: 'center', alignItems: 'center' },
+  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#3B82F6', justifyContent: 'center', alignItems: 'center' },
   avatarText: { color: '#fff', fontWeight: '700', fontSize: 16 },
   name: { color: '#fff', fontWeight: '600', fontSize: 15 },
-  username: { color: '#666', fontSize: 13 },
-  followBtn: { backgroundColor: '#6C63FF', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
-  followingBtn: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#333' },
+  username: { color: '#718FAF', fontSize: 13 },
+  followBtn: { backgroundColor: '#3B82F6', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
+  followingBtn: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#162540' },
   followText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  followingText: { color: '#666' },
-  empty: { color: '#555', textAlign: 'center', marginTop: 40 },
+  followingText: { color: '#718FAF' },
+  empty: { color: '#718FAF', textAlign: 'center', marginTop: 40 },
 });

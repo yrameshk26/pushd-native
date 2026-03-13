@@ -31,7 +31,7 @@ function StrengthRow({ met, label }: { met: boolean; label: string }) {
       <Ionicons
         name={met ? 'checkmark-circle' : 'ellipse-outline'}
         size={14}
-        color={met ? '#6C63FF' : '#555'}
+        color={met ? '#3B82F6' : '#4A6080'}
         style={{ marginRight: 6 }}
       />
       <Text style={[strengthStyles.label, met && strengthStyles.labelMet]}>{label}</Text>
@@ -124,11 +124,11 @@ export default function ResetPasswordScreen() {
         showsVerticalScrollIndicator={false}
       >
         <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/(auth)/login')}>
-          <Ionicons name="arrow-back" size={24} color="#888" />
+          <Ionicons name="arrow-back" size={24} color="#718FAF" />
         </TouchableOpacity>
 
         <View style={styles.iconContainer}>
-          <Ionicons name="shield-checkmark-outline" size={40} color="#6C63FF" />
+          <Ionicons name="shield-checkmark-outline" size={40} color="#3B82F6" />
         </View>
 
         <Text style={styles.title}>Set new password</Text>
@@ -142,7 +142,7 @@ export default function ResetPasswordScreen() {
           <TextInput
             style={styles.inputFlex}
             placeholder="••••••••"
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
@@ -152,7 +152,7 @@ export default function ResetPasswordScreen() {
             autoFocus
           />
           <TouchableOpacity onPress={() => setShowPassword((v) => !v)} style={styles.eyeButton}>
-            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#555" />
+            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -165,7 +165,7 @@ export default function ResetPasswordScreen() {
             ref={confirmRef}
             style={styles.inputFlex}
             placeholder="••••••••"
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             secureTextEntry={!showConfirm}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -174,7 +174,7 @@ export default function ResetPasswordScreen() {
             autoComplete="new-password"
           />
           <TouchableOpacity onPress={() => setShowConfirm((v) => !v)} style={styles.eyeButton}>
-            <Ionicons name={showConfirm ? 'eye-off' : 'eye'} size={20} color="#555" />
+            <Ionicons name={showConfirm ? 'eye-off' : 'eye'} size={20} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -203,48 +203,49 @@ export default function ResetPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
   backButton: { marginBottom: 32, width: 40 },
   iconContainer: {
-    width: 72, height: 72, borderRadius: 20, backgroundColor: '#1a1a1a',
+    width: 72, height: 72, borderRadius: 20, backgroundColor: '#0B1326',
     alignItems: 'center', justifyContent: 'center', marginBottom: 24,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
-  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 15, color: '#888', marginBottom: 32, lineHeight: 22 },
-  label: { fontSize: 13, fontWeight: '600', color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 15, color: '#718FAF', marginBottom: 32, lineHeight: 22, fontFamily: 'DMSans-Regular' },
+  label: { fontSize: 13, fontWeight: '600', color: '#718FAF', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'BarlowCondensed-SemiBold' },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12,
-    borderWidth: 1, borderColor: '#333', marginBottom: 8,
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 8,
   },
   inputFlex: {
     flex: 1, color: '#fff', paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
+    fontFamily: 'DMSans-Regular',
   },
   eyeButton: { paddingHorizontal: 14, paddingVertical: 14 },
-  errorText: { color: '#FF6B6B', fontSize: 13, marginBottom: 12 },
+  errorText: { color: '#FF6B6B', fontSize: 13, marginBottom: 12, fontFamily: 'DMSans-Regular' },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center', marginTop: 24,
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   backLink: { alignItems: 'center', marginTop: 24 },
-  backLinkText: { color: '#888', fontSize: 15 },
+  backLinkText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 });
 
 const strengthStyles = StyleSheet.create({
   container: { marginBottom: 4 },
   bars: { flexDirection: 'row', gap: 4, marginBottom: 10 },
   segment: {
-    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#2a2a2a',
+    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#162540',
   },
-  segmentFilled: { backgroundColor: '#6C63FF' },
+  segmentFilled: { backgroundColor: '#3B82F6' },
   segmentWeak: { backgroundColor: '#FF6B6B' },
   segmentFair: { backgroundColor: '#FFB347' },
   segmentGood: { backgroundColor: '#51CF66' },
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  label: { fontSize: 13, color: '#555' },
-  labelMet: { color: '#aaa' },
+  label: { fontSize: 13, color: '#4A6080', fontFamily: 'DMSans-Regular' },
+  labelMet: { color: '#A8BDD4', fontFamily: 'DMSans-Regular' },
 });

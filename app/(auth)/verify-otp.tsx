@@ -37,7 +37,7 @@ export default function VerifyOtpScreen() {
           ref={inputRef}
           style={styles.input}
           placeholder="000000"
-          placeholderTextColor="#444"
+          placeholderTextColor="#4A6080"
           keyboardType="number-pad"
           maxLength={6}
           value={code}
@@ -58,21 +58,22 @@ export default function VerifyOtpScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { flex: 1, justifyContent: 'center', paddingHorizontal: 32 },
-  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#888', marginBottom: 40 },
+  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 16, color: '#718FAF', marginBottom: 40, fontFamily: 'DMSans-Regular' },
   input: {
-    backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12,
+    backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 32,
-    borderWidth: 1, borderColor: '#333', marginBottom: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
     textAlign: 'center', letterSpacing: 8,
+    fontFamily: 'DMSans-Regular',
   },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
   },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   back: { marginTop: 24, alignItems: 'center' },
-  backText: { color: '#888', fontSize: 15 },
+  backText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 });

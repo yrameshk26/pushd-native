@@ -162,12 +162,12 @@ export default function SupplementsScreen() {
         </TouchableOpacity>
         <Text style={styles.heading}>Supplements</Text>
         <TouchableOpacity style={styles.addBtn} onPress={() => setShowModal(true)}>
-          <Ionicons name="add" size={24} color="#6C63FF" />
+          <Ionicons name="add" size={24} color="#3B82F6" />
         </TouchableOpacity>
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Failed to load supplements.</Text>
@@ -207,7 +207,7 @@ export default function SupplementsScreen() {
           </Text>
           {logs.length === 0 ? (
             <View style={styles.emptyCard}>
-              <Ionicons name="flask-outline" size={40} color="#333" />
+              <Ionicons name="flask-outline" size={40} color="#162540" />
               <Text style={styles.emptyText}>No supplements logged today</Text>
               <Text style={styles.emptySubText}>
                 Use quick add above or tap + to add a custom supplement
@@ -239,7 +239,7 @@ export default function SupplementsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Add Supplement</Text>
               <TouchableOpacity onPress={() => { setShowModal(false); setForm(DEFAULT_FORM); }}>
-                <Ionicons name="close" size={24} color="#888" />
+                <Ionicons name="close" size={24} color="#718FAF" />
               </TouchableOpacity>
             </View>
 
@@ -248,7 +248,7 @@ export default function SupplementsScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Creatine"
-                placeholderTextColor="#555"
+                placeholderTextColor="#718FAF"
                 value={form.name}
                 onChangeText={(v) => setForm((p) => ({ ...p, name: v }))}
                 returnKeyType="next"
@@ -260,7 +260,7 @@ export default function SupplementsScreen() {
                 <TextInput
                   style={[styles.input, styles.doseInput]}
                   placeholder="0"
-                  placeholderTextColor="#555"
+                  placeholderTextColor="#718FAF"
                   value={form.dose}
                   onChangeText={(v) => setForm((p) => ({ ...p, dose: v }))}
                   keyboardType="decimal-pad"
@@ -366,14 +366,14 @@ function SupplementRow({
         onPress={onDelete}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Ionicons name="trash-outline" size={18} color="#444" />
+        <Ionicons name="trash-outline" size={18} color="#4A6080" />
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -382,45 +382,48 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  heading: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 20, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   addBtn: { padding: 4 },
   content: { paddingHorizontal: 16, paddingTop: 8 },
   sectionTitle: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1.2,
     marginBottom: 12,
   },
   quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   quickChip: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignItems: 'center',
     minWidth: 90,
   },
-  quickChipName: { color: '#fff', fontSize: 13, fontWeight: '600' },
-  quickChipDose: { color: '#6C63FF', fontSize: 11, marginTop: 2 },
+  quickChipName: { color: '#fff', fontSize: 13, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  quickChipDose: { color: '#3B82F6', fontSize: 11, marginTop: 2 },
   emptyCard: {
     alignItems: 'center',
     paddingVertical: 48,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
-  emptyText: { color: '#555', fontSize: 15, fontWeight: '600' },
-  emptySubText: { color: '#444', fontSize: 13, textAlign: 'center', paddingHorizontal: 24 },
+  emptyText: { color: '#718FAF', fontSize: 15, fontWeight: '600' },
+  emptySubText: { color: '#4A6080', fontSize: 13, textAlign: 'center', paddingHorizontal: 24 },
   errorContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15 },
   retryBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -430,27 +433,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   checkCircle: {
     width: 28,
     height: 28,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: '#333',
+    borderColor: '#162540',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkCircleActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
+  checkCircleActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
   supInfo: { flex: 1 },
-  supName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  supNameTaken: { color: '#555', textDecorationLine: 'line-through' },
-  supDose: { color: '#666', fontSize: 12, marginTop: 2 },
+  supName: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  supNameTaken: { color: '#718FAF', textDecorationLine: 'line-through' },
+  supDose: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   // Modal
   modalOverlay: {
     flex: 1,
@@ -458,7 +462,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   modalSheet: {
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -472,25 +476,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  modalTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  modalTitle: { color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold' },
   label: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1,
     marginBottom: 8,
     marginTop: 20,
   },
   input: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     color: '#fff',
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   doseRow: { gap: 10 },
   doseInput: { marginBottom: 8 },
@@ -499,32 +505,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  unitChipActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  unitChipText: { color: '#888', fontSize: 13, fontWeight: '500' },
+  unitChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  unitChipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   unitChipTextActive: { color: '#fff' },
   timingGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   timingChip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  timingChipActive: { backgroundColor: '#6C63FF22', borderColor: '#6C63FF' },
-  timingChipText: { color: '#888', fontSize: 13, fontWeight: '500' },
-  timingChipTextActive: { color: '#6C63FF' },
+  timingChipActive: { backgroundColor: '#3B82F622', borderColor: '#3B82F6' },
+  timingChipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
+  timingChipTextActive: { color: '#3B82F6' },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 28,
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });

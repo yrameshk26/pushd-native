@@ -76,7 +76,7 @@ export default function CoachScreen() {
 
         {loading && (
           <View style={styles.typing}>
-            <ActivityIndicator size="small" color="#6C63FF" />
+            <ActivityIndicator size="small" color="#3B82F6" />
             <Text style={styles.typingText}>Coach is thinking...</Text>
           </View>
         )}
@@ -85,7 +85,7 @@ export default function CoachScreen() {
           <TextInput
             style={styles.input}
             placeholder="Ask your coach..."
-            placeholderTextColor="#555"
+            placeholderTextColor="#718FAF"
             value={input}
             onChangeText={setInput}
             multiline
@@ -101,25 +101,28 @@ export default function CoachScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-  heading: { fontSize: 24, fontWeight: '800', color: '#fff' },
-  remaining: { color: '#666', fontSize: 13 },
+  heading: { fontSize: 24, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
+  remaining: { color: '#718FAF', fontSize: 13 },
   emptyState: { alignItems: 'center', paddingTop: 40, paddingBottom: 20 },
-  emptyTitle: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 8 },
-  emptySub: { color: '#888', fontSize: 14, textAlign: 'center', marginBottom: 24 },
+  emptyTitle: { color: '#fff', fontSize: 20, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', marginBottom: 8 },
+  emptySub: { color: '#718FAF', fontSize: 14, textAlign: 'center', marginBottom: 24 },
   starters: { width: '100%', gap: 10 },
-  starter: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#2a2a2a' },
-  starterText: { color: '#ccc', fontSize: 14 },
+  starter: { backgroundColor: '#0B1326', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#162540' },
+  starterText: { color: '#A8BDD4', fontSize: 14 },
   bubble: { maxWidth: '80%', borderRadius: 16, padding: 14, marginBottom: 10 },
-  userBubble: { backgroundColor: '#6C63FF', alignSelf: 'flex-end', borderBottomRightRadius: 4 },
-  aiBubble: { backgroundColor: '#1a1a1a', alignSelf: 'flex-start', borderBottomLeftRadius: 4 },
-  bubbleText: { color: '#e0e0e0', fontSize: 15, lineHeight: 22 },
+  userBubble: { backgroundColor: '#3B82F6', alignSelf: 'flex-end', borderBottomRightRadius: 4 },
+  aiBubble: { backgroundColor: '#0B1326', alignSelf: 'flex-start', borderBottomLeftRadius: 4 },
+  bubbleText: { color: '#A8BDD4', fontSize: 15, lineHeight: 22 },
   userText: { color: '#fff' },
   typing: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingBottom: 8 },
-  typingText: { color: '#666', fontSize: 13 },
-  inputRow: { flexDirection: 'row', alignItems: 'flex-end', padding: 12, gap: 10, borderTopWidth: 1, borderTopColor: '#1a1a1a' },
-  input: { flex: 1, backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, maxHeight: 100, borderWidth: 1, borderColor: '#2a2a2a' },
-  sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#6C63FF', justifyContent: 'center', alignItems: 'center' },
+  typingText: { color: '#718FAF', fontSize: 13 },
+  inputRow: { flexDirection: 'row', alignItems: 'flex-end', padding: 12, gap: 10, borderTopWidth: 1, borderTopColor: '#0B1326' },
+  input: { flex: 1, backgroundColor: '#0B1326', color: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, maxHeight: 100, borderWidth: 1, borderColor: '#162540' },
+  sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#3B82F6', justifyContent: 'center', alignItems: 'center' },
   sendBtnDisabled: { opacity: 0.4 },
 });

@@ -26,9 +26,9 @@ const LEVELS = ['untested', 'novice', 'intermediate', 'advanced', 'elite'] as co
 type Level = typeof LEVELS[number];
 
 const LEVEL_COLORS: Record<Level, string> = {
-  untested: '#555',
+  untested: '#4A6080',
   novice: '#10B981',
-  intermediate: '#6C63FF',
+  intermediate: '#3B82F6',
   advanced: '#F59E0B',
   elite: '#EF4444',
 };
@@ -164,7 +164,7 @@ export default function StrengthStandardsScreen() {
           <TextInput
             style={styles.bwInput}
             placeholder="e.g. 80"
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             keyboardType="decimal-pad"
             value={bodyweightInput}
             onChangeText={setBodyweightInput}
@@ -186,7 +186,7 @@ export default function StrengthStandardsScreen() {
                 <Ionicons
                   name={lift.icon}
                   size={20}
-                  color={isSelected ? '#fff' : '#888'}
+                  color={isSelected ? '#fff' : '#718FAF'}
                 />
                 <Text style={[styles.liftBtnText, isSelected && styles.liftBtnTextActive]}>
                   {lift.name}
@@ -198,10 +198,10 @@ export default function StrengthStandardsScreen() {
 
         {/* Standards Display */}
         {isLoading ? (
-          <ActivityIndicator color="#6C63FF" style={{ marginTop: 40 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginTop: 40 }} />
         ) : isError ? (
           <View style={styles.errorWrap}>
-            <Ionicons name="alert-circle-outline" size={48} color="#888" />
+            <Ionicons name="alert-circle-outline" size={48} color="#718FAF" />
             <Text style={styles.errorText}>Could not load standards.</Text>
           </View>
         ) : enrichedData ? (
@@ -210,7 +210,7 @@ export default function StrengthStandardsScreen() {
 
         {/* Info Note */}
         <View style={styles.infoCard}>
-          <Ionicons name="information-circle-outline" size={18} color="#6C63FF" />
+          <Ionicons name="information-circle-outline" size={18} color="#3B82F6" />
           <Text style={styles.infoText}>
             Strength standards are based on 1-rep max relative to bodyweight. Enter your bodyweight
             above to see how much weight corresponds to each level.
@@ -222,7 +222,7 @@ export default function StrengthStandardsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -230,39 +230,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
 
   content: { padding: 20, paddingBottom: 40 },
 
   bwCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 18,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
-  bwLabel: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  bwLabel: { color: '#fff', fontSize: 15, fontFamily: 'DMSans-SemiBold' },
   bwInput: {
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: '#fff',
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
+    fontFamily: 'DMSans-Regular',
   },
-  bwHint: { color: '#555', fontSize: 12 },
+  bwHint: { color: '#4A6080', fontSize: 12, fontFamily: 'DMSans-Regular' },
 
   sectionTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -272,56 +273,56 @@ const styles = StyleSheet.create({
   liftBtn: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 12,
     alignItems: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  liftBtnActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  liftBtnText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  liftBtnActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  liftBtnText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-SemiBold' },
   liftBtnTextActive: { color: '#fff' },
 
   errorWrap: { alignItems: 'center', paddingVertical: 40, gap: 12 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 
   infoCard: {
     flexDirection: 'row',
-    backgroundColor: '#6C63FF11',
+    backgroundColor: '#3B82F611',
     borderRadius: 12,
     padding: 14,
     marginTop: 20,
     gap: 10,
     borderWidth: 1,
-    borderColor: '#6C63FF33',
+    borderColor: '#3B82F633',
     alignItems: 'flex-start',
   },
-  infoText: { color: '#888', fontSize: 13, flex: 1, lineHeight: 18 },
+  infoText: { color: '#718FAF', fontSize: 13, flex: 1, lineHeight: 18, fontFamily: 'DMSans-Regular' },
 });
 
 const stdStyles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 14,
   },
-  exName: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  exName: { color: '#fff', fontSize: 18, fontFamily: 'BarlowCondensed-Bold' },
 
   levelRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   levelBadge: { borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
-  levelText: { fontSize: 13, fontWeight: '700' },
-  ratioText: { color: '#888', fontSize: 13 },
+  levelText: { fontSize: 13, fontFamily: 'DMSans-Bold' },
+  ratioText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
 
   barContainer: { position: 'relative' },
   barBg: {
     height: 8,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -356,12 +357,12 @@ const stdStyles = StyleSheet.create({
     paddingVertical: 6,
   },
   tableRowActive: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 8,
     paddingHorizontal: 8,
   },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  tableLevel: { color: '#888', fontSize: 13, flex: 1 },
-  tableRatio: { color: '#888', fontSize: 13, width: 48, textAlign: 'right' },
-  tableWeight: { color: '#888', fontSize: 13, width: 70, textAlign: 'right' },
+  tableLevel: { color: '#718FAF', fontSize: 13, flex: 1, fontFamily: 'DMSans-Regular' },
+  tableRatio: { color: '#718FAF', fontSize: 13, width: 48, textAlign: 'right', fontFamily: 'DMSans-Regular' },
+  tableWeight: { color: '#718FAF', fontSize: 13, width: 70, textAlign: 'right', fontFamily: 'DMSans-Regular' },
 });

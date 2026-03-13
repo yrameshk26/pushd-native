@@ -127,7 +127,7 @@ export default function SocialScreen() {
               <Text style={styles.cardLabel}>{item.label}</Text>
               <Text style={styles.cardSub}>{item.sub}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color="#444" />
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
         ))}
 
@@ -137,12 +137,12 @@ export default function SocialScreen() {
           onPress={() => router.push('/(screens)/social/search' as never)}
           activeOpacity={0.75}
         >
-          <Ionicons name="people-outline" size={20} color="#666" />
+          <Ionicons name="people-outline" size={20} color="#718FAF" />
           <View style={styles.networkText}>
             <Text style={styles.networkLabel}>Grow your network</Text>
             <Text style={styles.networkSub}>Find athletes to follow</Text>
           </View>
-          <Ionicons name="chevron-forward" size={16} color="#444" />
+          <Ionicons name="chevron-forward" size={16} color="#4A6080" />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -150,48 +150,48 @@ export default function SocialScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   content: { padding: 20, paddingBottom: 40 },
 
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
-  subtitle: { fontSize: 13, color: '#666', marginTop: 2 },
+  heading: { fontSize: 28, fontWeight: '800', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
+  subtitle: { fontSize: 13, color: '#718FAF', marginTop: 2, fontFamily: 'DMSans-Regular' },
   streakBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: 'rgba(249,115,22,0.1)', borderWidth: 1, borderColor: 'rgba(249,115,22,0.2)',
     borderRadius: 20, paddingHorizontal: 10, paddingVertical: 6,
   },
-  streakText: { fontSize: 13, fontWeight: '700', color: '#fb923c' },
+  streakText: { fontSize: 13, fontWeight: '700', color: '#fb923c', fontFamily: 'DMSans-Bold' },
 
   banner: {
     backgroundColor: 'rgba(59,130,246,0.08)', borderWidth: 1, borderColor: 'rgba(59,130,246,0.2)',
     borderRadius: 16, padding: 16, marginBottom: 16,
   },
   bannerTop: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  bannerLabel: { fontSize: 13, fontWeight: '600', color: '#60a5fa' },
-  bannerSub: { fontSize: 12, color: '#666', marginBottom: 8 },
+  bannerLabel: { fontSize: 13, fontWeight: '600', color: '#60a5fa', fontFamily: 'DMSans-SemiBold' },
+  bannerSub: { fontSize: 12, color: '#718FAF', marginBottom: 8, fontFamily: 'DMSans-Regular' },
   bannerLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  bannerLinkText: { fontSize: 12, fontWeight: '700', color: '#60a5fa' },
+  bannerLinkText: { fontSize: 12, fontWeight: '700', color: '#60a5fa', fontFamily: 'DMSans-Bold' },
 
   card: {
-    backgroundColor: '#1a1a1a', borderRadius: 16, padding: 16,
+    backgroundColor: '#0B1326', borderRadius: 16, padding: 16,
     marginBottom: 10, flexDirection: 'row', alignItems: 'center',
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
   iconBox: {
     width: 44, height: 44, borderRadius: 12, borderWidth: 1,
     justifyContent: 'center', alignItems: 'center', marginRight: 14,
   },
   cardText: { flex: 1 },
-  cardLabel: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 2 },
-  cardSub: { color: '#666', fontSize: 12 },
+  cardLabel: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 2, fontFamily: 'DMSans-SemiBold' },
+  cardSub: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular' },
 
   networkCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: '#141414', borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: '#2a2a2a', marginTop: 4,
+    backgroundColor: '#0B1326', borderRadius: 16, padding: 16,
+    borderWidth: 1, borderColor: '#162540', marginTop: 4,
   },
   networkText: { flex: 1 },
-  networkLabel: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  networkSub: { color: '#666', fontSize: 12, marginTop: 1 },
+  networkLabel: { color: '#fff', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  networkSub: { color: '#718FAF', fontSize: 12, marginTop: 1, fontFamily: 'DMSans-Regular' },
 });

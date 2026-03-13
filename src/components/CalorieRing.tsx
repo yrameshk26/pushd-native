@@ -81,7 +81,7 @@ export function CalorieRing({ consumed, goal }: Props) {
 const styles = StyleSheet.create({
   wrapper: { alignItems: 'center', marginVertical: 8 },
   ringTrack: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
@@ -93,18 +93,20 @@ const styles = StyleSheet.create({
   },
   innerCircle: {
     position: 'absolute',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     alignItems: 'center',
     justifyContent: 'center',
   },
   calorieNumber: {
     fontSize: 32,
     fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
   },
   kcalLabel: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
     marginTop: 2,
+    fontFamily: 'DMSans-Regular',
   },
   infoRow: {
     flexDirection: 'row',
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   infoItem: { alignItems: 'center' },
-  infoValue: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  infoLabel: { color: '#888', fontSize: 12, marginTop: 2 },
-  infoSep: { width: 1, height: 32, backgroundColor: '#2a2a2a' },
+  infoValue: { color: '#fff', fontSize: 18, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
+  infoLabel: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
+  infoSep: { width: 1, height: 32, backgroundColor: '#162540' },
 });

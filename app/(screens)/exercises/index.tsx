@@ -46,11 +46,11 @@ const MUSCLE_COLORS: Record<string, string> = {
   CALVES: '#16a085',
   CORE: '#d35400',
   CARDIO: '#c0392b',
-  FULL_BODY: '#6C63FF',
+  FULL_BODY: '#3B82F6',
 };
 
 function getMuscleColor(muscle: string): string {
-  return MUSCLE_COLORS[muscle] ?? '#6C63FF';
+  return MUSCLE_COLORS[muscle] ?? '#3B82F6';
 }
 
 function formatLabel(value: string): string {
@@ -75,7 +75,7 @@ function FilterChip({ label, active, color, onPress }: FilterChipProps) {
       onPress={onPress}
       style={[
         styles.chip,
-        active && { backgroundColor: color ?? '#6C63FF', borderColor: color ?? '#6C63FF' },
+        active && { backgroundColor: color ?? '#3B82F6', borderColor: color ?? '#3B82F6' },
       ]}
     >
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
@@ -117,7 +117,7 @@ function ExerciseRow({ exercise, onPress }: ExerciseRowProps) {
         </View>
       </View>
 
-      <Ionicons name="chevron-forward" size={16} color="#555" />
+      <Ionicons name="chevron-forward" size={16} color="#718FAF" />
     </TouchableOpacity>
   );
 }
@@ -161,13 +161,13 @@ export default function ExercisesScreen() {
     <>
       {/* Search bar */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color="#555" style={styles.searchIcon} />
+        <Ionicons name="search" size={18} color="#718FAF" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           value={search}
           onChangeText={setSearch}
           placeholder="Search exercises..."
-          placeholderTextColor="#555"
+          placeholderTextColor="#718FAF"
           returnKeyType="search"
           clearButtonMode="while-editing"
         />
@@ -183,7 +183,7 @@ export default function ExercisesScreen() {
         <FilterChip
           label="All"
           active={activeMuscle === null}
-          color="#6C63FF"
+          color="#3B82F6"
           onPress={() => setActiveMuscle(null)}
         />
         {MUSCLE_GROUPS.map((mg) => (
@@ -214,7 +214,7 @@ export default function ExercisesScreen() {
 
       {isLoading ? (
         <View style={styles.centeredState}>
-          <ActivityIndicator color="#6C63FF" size="large" />
+          <ActivityIndicator color="#3B82F6" size="large" />
         </View>
       ) : isError ? (
         <View style={styles.centeredState}>
@@ -235,7 +235,7 @@ export default function ExercisesScreen() {
           windowSize={10}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="barbell-outline" size={48} color="#333" />
+              <Ionicons name="barbell-outline" size={48} color="#162540" />
               <Text style={styles.emptyText}>No exercises found</Text>
               <Text style={styles.emptySubtext}>Try adjusting your search or filters</Text>
             </View>
@@ -249,7 +249,7 @@ export default function ExercisesScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   // Header
   header: {
@@ -260,9 +260,11 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
   },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  heading: { fontSize: 28, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
   createBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     width: 36,
     height: 36,
@@ -274,10 +276,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginHorizontal: 20,
     marginBottom: 12,
     paddingHorizontal: 12,
@@ -293,12 +295,12 @@ const styles = StyleSheet.create({
   chip: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingHorizontal: 14,
     paddingVertical: 6,
     marginRight: 8,
   },
-  chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
+  chipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   chipTextActive: { color: '#fff' },
 
   // List
@@ -309,10 +311,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginHorizontal: 20,
     marginBottom: 8,
     padding: 12,
@@ -329,11 +331,12 @@ const styles = StyleSheet.create({
   },
   rowThumbLabel: { fontSize: 14, fontWeight: '800' },
   rowBody: { flex: 1, marginRight: 8 },
-  rowName: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 4 },
+  rowName: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 4 },
   rowMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   muscleBadge: { borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2 },
   muscleBadgeText: { fontSize: 11, fontWeight: '600' },
-  equipmentText: { color: '#666', fontSize: 12 },
+  equipmentText: { color: '#718FAF', fontSize: 12 },
 
   // States
   centeredState: {
@@ -344,15 +347,15 @@ const styles = StyleSheet.create({
   },
   errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600' },
   retryBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#3B82F6', fontWeight: '600', fontSize: 14 },
   emptyState: { alignItems: 'center', paddingTop: 60, gap: 8 },
-  emptyText: { color: '#555', fontSize: 16, fontWeight: '600' },
-  emptySubtext: { color: '#444', fontSize: 13 },
+  emptyText: { color: '#718FAF', fontSize: 16, fontWeight: '600' },
+  emptySubtext: { color: '#4A6080', fontSize: 13 },
 });

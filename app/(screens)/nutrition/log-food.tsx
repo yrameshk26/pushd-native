@@ -274,7 +274,7 @@ export default function LogFoodScreen() {
                 style={[styles.modeTab, mode === key && styles.modeTabActive]}
                 onPress={() => { setMode(key); setAiError(''); }}
               >
-                <Ionicons name={icon as any} size={15} color={mode === key ? '#fff' : '#666'} />
+                <Ionicons name={icon as any} size={15} color={mode === key ? '#fff' : '#718FAF'} />
                 <Text style={[styles.modeTabText, mode === key && styles.modeTabTextActive]}>
                   {label}
                 </Text>
@@ -294,7 +294,7 @@ export default function LogFoodScreen() {
                 <TextInput
                   style={styles.describeInput}
                   placeholder="e.g. 2 scrambled eggs with toast, large latte"
-                  placeholderTextColor="#555"
+                  placeholderTextColor="#718FAF"
                   value={description}
                   onChangeText={setDescription}
                   multiline
@@ -330,11 +330,11 @@ export default function LogFoodScreen() {
               {!photoUri ? (
                 <View style={styles.photoGrid}>
                   <TouchableOpacity style={styles.photoBtn} onPress={handleTakePhoto}>
-                    <Ionicons name="camera-outline" size={20} color="#888" />
+                    <Ionicons name="camera-outline" size={20} color="#718FAF" />
                     <Text style={styles.photoBtnText}>Take Photo</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.photoBtn} onPress={handlePickPhoto}>
-                    <Ionicons name="image-outline" size={20} color="#888" />
+                    <Ionicons name="image-outline" size={20} color="#718FAF" />
                     <Text style={styles.photoBtnText}>Gallery</Text>
                   </TouchableOpacity>
                 </View>
@@ -378,11 +378,11 @@ export default function LogFoodScreen() {
               <Text style={styles.sectionHint}>Enter a product barcode to look up nutrition info</Text>
               <View style={styles.barcodeRow}>
                 <View style={styles.barcodeInput}>
-                  <Ionicons name="barcode-outline" size={18} color="#555" style={{ marginRight: 8 }} />
+                  <Ionicons name="barcode-outline" size={18} color="#718FAF" style={{ marginRight: 8 }} />
                   <TextInput
                     style={styles.barcodeText}
                     placeholder="Enter barcode number..."
-                    placeholderTextColor="#555"
+                    placeholderTextColor="#718FAF"
                     value={barcode}
                     onChangeText={setBarcode}
                     keyboardType="number-pad"
@@ -420,7 +420,7 @@ export default function LogFoodScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Chicken Breast"
-                placeholderTextColor="#555"
+                placeholderTextColor="#718FAF"
                 value={name}
                 onChangeText={setName}
                 returnKeyType="next"
@@ -430,7 +430,7 @@ export default function LogFoodScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="0"
-                placeholderTextColor="#555"
+                placeholderTextColor="#718FAF"
                 value={calories}
                 onChangeText={setCalories}
                 keyboardType="decimal-pad"
@@ -444,7 +444,7 @@ export default function LogFoodScreen() {
                   <TextInput
                     style={[styles.input, styles.macroInput]}
                     placeholder="0"
-                    placeholderTextColor="#555"
+                    placeholderTextColor="#718FAF"
                     value={protein}
                     onChangeText={setProtein}
                     keyboardType="decimal-pad"
@@ -455,7 +455,7 @@ export default function LogFoodScreen() {
                   <TextInput
                     style={[styles.input, styles.macroInput]}
                     placeholder="0"
-                    placeholderTextColor="#555"
+                    placeholderTextColor="#718FAF"
                     value={carbs}
                     onChangeText={setCarbs}
                     keyboardType="decimal-pad"
@@ -466,7 +466,7 @@ export default function LogFoodScreen() {
                   <TextInput
                     style={[styles.input, styles.macroInput]}
                     placeholder="0"
-                    placeholderTextColor="#555"
+                    placeholderTextColor="#718FAF"
                     value={fat}
                     onChangeText={setFat}
                     keyboardType="decimal-pad"
@@ -477,7 +477,7 @@ export default function LogFoodScreen() {
               </View>
 
               <View style={styles.dateInfo}>
-                <Ionicons name="calendar-outline" size={15} color="#555" />
+                <Ionicons name="calendar-outline" size={15} color="#718FAF" />
                 <Text style={styles.dateInfoText}>Logging for {date}</Text>
               </View>
 
@@ -513,7 +513,7 @@ export default function LogFoodScreen() {
                   style={styles.editBtn}
                   onPress={() => setMode('manual')}
                 >
-                  <Ionicons name="create-outline" size={14} color="#888" />
+                  <Ionicons name="create-outline" size={14} color="#718FAF" />
                   <Text style={styles.editBtnText}>Edit</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -541,7 +541,7 @@ export default function LogFoodScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -550,14 +550,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   content: { paddingHorizontal: 20, paddingTop: 8 },
 
   label: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold',
     letterSpacing: 1,
     marginBottom: 8,
     marginTop: 20,
@@ -568,18 +570,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  mealChipActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  mealChipText: { color: '#888', fontSize: 14, fontWeight: '500' },
+  mealChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  mealChipText: { color: '#718FAF', fontSize: 14, fontWeight: '500' },
   mealChipTextActive: { color: '#fff' },
 
   // Mode tabs
   modeTabs: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     padding: 4,
     marginTop: 20,
@@ -594,13 +596,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 9,
   },
-  modeTabActive: { backgroundColor: '#0a0a0a' },
-  modeTabText: { color: '#666', fontSize: 13, fontWeight: '500' },
+  modeTabActive: { backgroundColor: '#060C1B' },
+  modeTabText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   modeTabTextActive: { color: '#fff', fontWeight: '600' },
 
   section: { marginTop: 16 },
   sectionHint: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 14,
@@ -608,10 +610,10 @@ const styles = StyleSheet.create({
 
   // AI Describe
   describeRow: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 12,
@@ -628,12 +630,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 14,
   },
   aiBtnDisabled: { opacity: 0.5 },
-  aiBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  aiBtnText: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 
   divider: {
     flexDirection: 'row',
@@ -641,8 +644,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     gap: 10,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#2a2a2a' },
-  dividerText: { color: '#555', fontSize: 12 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#162540' },
+  dividerText: { color: '#718FAF', fontSize: 12 },
 
   photoGrid: { flexDirection: 'row', gap: 12 },
   photoBtn: {
@@ -652,30 +655,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderRadius: 12,
     paddingVertical: 20,
   },
-  photoBtnText: { color: '#888', fontSize: 13, fontWeight: '500' },
+  photoBtnText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
 
   photoPreviewContainer: { gap: 10 },
   photoPreview: {
     width: '100%',
     height: 200,
     borderRadius: 12,
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
   },
   photoActions: { flexDirection: 'row', gap: 10 },
   retakeBtn: {
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  retakeBtnText: { color: '#888', fontSize: 15 },
+  retakeBtnText: { color: '#718FAF', fontSize: 15 },
 
   errorText: { color: '#ef4444', fontSize: 13, marginTop: 10 },
 
@@ -685,52 +688,54 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   barcodeText: { flex: 1, color: '#fff', fontSize: 15, paddingVertical: 12 },
   barcodeBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     minWidth: 72,
     alignItems: 'center',
   },
-  barcodeBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  barcodeBtnText: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
 
   // Manual form
   input: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     color: '#fff',
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   macroRow: { flexDirection: 'row', gap: 10 },
   macroField: { flex: 1 },
-  macroFieldLabel: { color: '#666', fontSize: 12, marginBottom: 6 },
+  macroFieldLabel: { color: '#718FAF', fontSize: 12, marginBottom: 6 },
   macroInput: { paddingHorizontal: 12 },
   dateInfo: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 20, marginBottom: 4 },
-  dateInfoText: { color: '#555', fontSize: 13 },
+  dateInfoText: { color: '#718FAF', fontSize: 13 },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 24,
   },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 
   // Pre-fill card (shown after AI/barcode fills form)
   prefillCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
@@ -739,19 +744,20 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   prefillHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  prefillTitle: { color: '#fff', fontSize: 15, fontWeight: '700', flex: 1 },
+  prefillTitle: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', flex: 1 },
   prefillMacros: { flexDirection: 'row', gap: 12 },
-  prefillMacro: { color: '#888', fontSize: 13, fontWeight: '600' },
+  prefillMacro: { color: '#718FAF', fontSize: 13, fontWeight: '600' },
   prefillActions: { flexDirection: 'row', gap: 10, alignItems: 'center' },
   editBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
-  editBtnText: { color: '#888', fontSize: 14 },
+  editBtnText: { color: '#718FAF', fontSize: 14 },
 });

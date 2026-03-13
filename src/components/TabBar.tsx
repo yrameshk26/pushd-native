@@ -45,7 +45,7 @@ export default function TabBar() {
             <Ionicons
               name={isActive ? tab.activeIcon : tab.icon}
               size={24}
-              color={isActive ? '#3B82F6' : '#555'}
+              color={isActive ? '#3B82F6' : '#718FAF'}
             />
             <Text style={[styles.label, isActive && styles.labelActive]}>
               {tab.name}
@@ -60,9 +60,9 @@ export default function TabBar() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
+    borderTopColor: '#162540',
     paddingTop: 10,
   },
   tab: {
@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 10,
-    color: '#555',
+    color: '#718FAF',
     fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
   },
   labelActive: {
     color: '#3B82F6',
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
 });

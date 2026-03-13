@@ -98,7 +98,7 @@ function showToast(message: string) {
 function StatCard({ icon, label, value }: { icon: string; label: string; value: string | number }) {
   return (
     <View style={statStyles.card}>
-      <Ionicons name={icon as any} size={18} color="#888" />
+      <Ionicons name={icon as any} size={18} color="#718FAF" />
       <Text style={statStyles.value}>{value}</Text>
       <Text style={statStyles.label}>{label}</Text>
     </View>
@@ -107,11 +107,11 @@ function StatCard({ icon, label, value }: { icon: string; label: string; value: 
 
 const statStyles = StyleSheet.create({
   card: {
-    flex: 1, backgroundColor: '#1a1a1a', borderRadius: 14, padding: 14,
-    alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a', gap: 4,
+    flex: 1, backgroundColor: '#0B1326', borderRadius: 14, padding: 14,
+    alignItems: 'center', borderWidth: 1, borderColor: '#162540', gap: 4,
   },
   value: { color: '#fff', fontSize: 17, fontWeight: '800' },
-  label: { color: '#666', fontSize: 11 },
+  label: { color: '#718FAF', fontSize: 11 },
 });
 
 // ─── Exercise row ─────────────────────────────────────────────────────────
@@ -137,16 +137,17 @@ function ExerciseRow({ exercise, index }: { exercise: ProgramExercise; index: nu
 const exStyles = StyleSheet.create({
   row: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#0B1326',
   },
   badge: {
-    width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(108,99,255,0.15)',
+    width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(59, 130, 246,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
-  badgeText: { color: '#6C63FF', fontSize: 13, fontWeight: '700' },
+  badgeText: { color: '#3B82F6', fontSize: 13, fontWeight: '700' },
   info: { flex: 1 },
-  name: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 2 },
-  meta: { color: '#666', fontSize: 13 },
+  name: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 2 },
+  meta: { color: '#718FAF', fontSize: 13 },
 });
 
 // ─── Weekly schedule ──────────────────────────────────────────────────────
@@ -177,17 +178,18 @@ function WeeklyScheduleSection({ schedule }: { schedule: ProgramWeek[] }) {
 
 const schedStyles = StyleSheet.create({
   weekBlock: { marginBottom: 16 },
-  weekTitle: { color: '#6C63FF', fontSize: 13, fontWeight: '700', marginBottom: 8 },
+  weekTitle: { color: '#3B82F6', fontSize: 13, fontWeight: '700', marginBottom: 8 },
   dayBlock: {
-    backgroundColor: '#1a1a1a', borderRadius: 12, padding: 12,
-    marginBottom: 8, borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 12, padding: 12,
+    marginBottom: 8, borderWidth: 1, borderColor: '#162540',
   },
-  dayName: { color: '#fff', fontSize: 14, fontWeight: '700', marginBottom: 6 },
-  dayExercise: { color: '#888', fontSize: 13, lineHeight: 20 },
+  dayName: { color: '#fff', fontSize: 14, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', marginBottom: 6 },
+  dayExercise: { color: '#718FAF', fontSize: 13, lineHeight: 20 },
 });
 
 const sectionStyles = StyleSheet.create({
-  label: { color: '#555', fontSize: 11, fontWeight: '700', letterSpacing: 1, marginBottom: 12 },
+  label: { color: '#718FAF', fontSize: 11, fontWeight: '700', letterSpacing: 1, marginBottom: 12 },
 });
 
 // ─── Main screen ──────────────────────────────────────────────────────────
@@ -236,7 +238,7 @@ export default function ProgramDetailScreen() {
           <Text style={styles.headerTitle}>Program</Text>
           <View style={{ width: 40 }} />
         </View>
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 48 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 48 }} />
       </SafeAreaView>
     );
   }
@@ -252,7 +254,7 @@ export default function ProgramDetailScreen() {
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.errorState}>
-          <Ionicons name="alert-circle-outline" size={44} color="#333" />
+          <Ionicons name="alert-circle-outline" size={44} color="#162540" />
           <Text style={styles.errorText}>Program not found</Text>
           <TouchableOpacity onPress={() => router.push('/(screens)/programs')} style={styles.browseBtn}>
             <Text style={styles.browseBtnText}>Browse Programs</Text>
@@ -311,7 +313,7 @@ export default function ProgramDetailScreen() {
         {/* Author */}
         {program.author ? (
           <View style={styles.authorRow}>
-            <Ionicons name="person-circle-outline" size={16} color="#555" />
+            <Ionicons name="person-circle-outline" size={16} color="#718FAF" />
             <Text style={styles.authorText}>By {program.author}</Text>
           </View>
         ) : null}
@@ -375,16 +377,16 @@ export default function ProgramDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    borderBottomWidth: 1, borderBottomColor: '#0B1326',
   },
   backBtn: { width: 36, height: 36, justifyContent: 'center' },
   headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700', flex: 1, textAlign: 'center', marginHorizontal: 8 },
   addBtnSmall: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: '#6C63FF',
+    width: 36, height: 36, borderRadius: 10, backgroundColor: '#3B82F6',
     alignItems: 'center', justifyContent: 'center',
   },
   addBtnSmallDone: { backgroundColor: '#22c55e' },
@@ -392,23 +394,24 @@ const styles = StyleSheet.create({
   metaBadgeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   levelBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   levelBadgeText: { fontSize: 12, fontWeight: '700' },
-  equipChip: { backgroundColor: '#1a1a1a', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#2a2a2a' },
-  equipChipText: { color: '#888', fontSize: 11 },
-  description: { color: '#aaa', fontSize: 15, lineHeight: 23, marginBottom: 10 },
+  equipChip: { backgroundColor: '#0B1326', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#162540' },
+  equipChipText: { color: '#718FAF', fontSize: 11 },
+  description: { color: '#A8BDD4', fontSize: 15, lineHeight: 23, marginBottom: 10 },
   authorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 20 },
-  authorText: { color: '#555', fontSize: 13 },
+  authorText: { color: '#718FAF', fontSize: 13 },
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 28 },
   exerciseList: { marginBottom: 24 },
   addBtn: {
-    backgroundColor: '#6C63FF', borderRadius: 14, paddingVertical: 18,
+    backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 18,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     marginBottom: 10,
   },
   addBtnSuccess: { backgroundColor: '#22c55e' },
-  addBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  addHint: { color: '#555', fontSize: 12, textAlign: 'center', marginBottom: 8 },
+  addBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
+  addHint: { color: '#718FAF', fontSize: 12, textAlign: 'center', marginBottom: 8 },
   errorState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { color: '#555', fontSize: 16 },
+  errorText: { color: '#718FAF', fontSize: 16 },
   browseBtn: { marginTop: 4 },
-  browseBtnText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
+  browseBtnText: { color: '#3B82F6', fontSize: 14, fontWeight: '600' },
 });

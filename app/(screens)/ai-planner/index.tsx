@@ -114,9 +114,9 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 const dotStyles = StyleSheet.create({
   container: { flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#2a2a2a' },
-  dotActive: { width: 24, backgroundColor: '#6C63FF' },
-  dotPast: { backgroundColor: '#6C63FF', opacity: 0.4 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#162540' },
+  dotActive: { width: 24, backgroundColor: '#3B82F6' },
+  dotPast: { backgroundColor: '#3B82F6', opacity: 0.4 },
 });
 
 // ─── Step 1: Goal ──────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ function StepGoal({ form, update }: { form: PlanForm; update: (p: Partial<PlanFo
               <Text style={stepStyles.optionLabel}>{label}</Text>
               <Text style={stepStyles.optionDesc}>{desc}</Text>
             </View>
-            {selected && <Ionicons name="checkmark-circle" size={20} color="#6C63FF" />}
+            {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
           </TouchableOpacity>
         );
       })}
@@ -165,7 +165,7 @@ function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<Pl
               <Text style={stepStyles.optionLabel}>{label}</Text>
               <Text style={stepStyles.optionDesc}>{desc}</Text>
             </View>
-            {selected && <Ionicons name="checkmark-circle" size={20} color="#6C63FF" />}
+            {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
           </TouchableOpacity>
         );
       })}
@@ -238,16 +238,16 @@ const chipStyles = StyleSheet.create({
   chip: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
+    borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326',
     minWidth: '45%',
   },
-  chipSelected: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
+  chipSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
   checkbox: {
     width: 18, height: 18, borderRadius: 4, borderWidth: 1,
-    borderColor: '#444', justifyContent: 'center', alignItems: 'center',
+    borderColor: '#4A6080', justifyContent: 'center', alignItems: 'center',
   },
-  checkboxSelected: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  chipText: { color: '#888', fontSize: 14, fontWeight: '600' },
+  checkboxSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
 });
 
@@ -264,7 +264,7 @@ function StepPreferences({ form, update }: { form: PlanForm; update: (p: Partial
         value={form.preferences}
         onChangeText={(t) => update({ preferences: t })}
         placeholder="e.g. Bad left knee — avoid deep squats. Want to focus on upper body. Love deadlifts."
-        placeholderTextColor="#444"
+        placeholderTextColor="#4A6080"
         multiline
         numberOfLines={5}
         textAlignVertical="top"
@@ -276,38 +276,39 @@ function StepPreferences({ form, update }: { form: PlanForm; update: (p: Partial
 
 const prefStyles = StyleSheet.create({
   textarea: {
-    backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
     borderRadius: 12, padding: 14, color: '#fff', fontSize: 15, lineHeight: 22,
     minHeight: 120, marginTop: 16,
   },
-  hint: { color: '#444', fontSize: 13, marginTop: 8 },
+  hint: { color: '#4A6080', fontSize: 13, marginTop: 8 },
 });
 
 // ─── Shared step styles ───────────────────────────────────────────────────
 
 const stepStyles = StyleSheet.create({
   container: { gap: 10 },
-  sectionLabel: { color: '#888', fontSize: 13, fontWeight: '700', letterSpacing: 0.5, marginBottom: 6 },
-  accentText: { color: '#6C63FF' },
+  sectionLabel: { color: '#718FAF', fontSize: 13, fontWeight: '700', letterSpacing: 0.5, marginBottom: 6 },
+  accentText: { color: '#3B82F6' },
   optionRow: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#2a2a2a',
-    backgroundColor: '#1a1a1a',
+    padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#162540',
+    backgroundColor: '#0B1326',
   },
-  optionRowSelected: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
+  optionRowSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
   optionEmoji: { fontSize: 22 },
   optionInfo: { flex: 1 },
-  optionLabel: { color: '#fff', fontSize: 15, fontWeight: '700', marginBottom: 2 },
-  optionDesc: { color: '#888', fontSize: 13, lineHeight: 19 },
+  optionLabel: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', marginBottom: 2 },
+  optionDesc: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
   selectAllBtn: { alignSelf: 'flex-start', marginBottom: 4 },
-  selectAllText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  selectAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
   daysRow: { flexDirection: 'row', gap: 10 },
   dayBtn: {
     flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1,
-    borderColor: '#2a2a2a', backgroundColor: '#1a1a1a', alignItems: 'center',
+    borderColor: '#162540', backgroundColor: '#0B1326', alignItems: 'center',
   },
-  dayBtnSelected: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  dayBtnText: { color: '#888', fontSize: 16, fontWeight: '700' },
+  dayBtnSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  dayBtnText: { color: '#718FAF', fontSize: 16, fontWeight: '700' },
   dayBtnTextSelected: { color: '#fff' },
 });
 
@@ -319,7 +320,7 @@ function GeneratingScreen({ motivationalText }: { motivationalText: string }) {
       <View style={genStyles.pulseWrap}>
         <View style={genStyles.pulseOuter} />
         <View style={genStyles.pulseInner}>
-          <Ionicons name="sparkles" size={28} color="#6C63FF" />
+          <Ionicons name="sparkles" size={28} color="#3B82F6" />
         </View>
       </View>
       <Text style={genStyles.title}>Building Your Plan</Text>
@@ -350,10 +351,10 @@ function SuccessScreen({ plan, onViewRoutines }: { plan: GeneratedPlan; onViewRo
             activeOpacity={0.7}
           >
             <View style={successStyles.routineIcon}>
-              <Ionicons name="barbell" size={16} color="#6C63FF" />
+              <Ionicons name="barbell" size={16} color="#3B82F6" />
             </View>
             <Text style={successStyles.routineName}>{r.name}</Text>
-            <Ionicons name="chevron-forward" size={16} color="#555" />
+            <Ionicons name="chevron-forward" size={16} color="#718FAF" />
           </TouchableOpacity>
         ))}
       </View>
@@ -370,39 +371,44 @@ const genStyles = StyleSheet.create({
   pulseWrap: { width: 72, height: 72, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
   pulseOuter: {
     position: 'absolute', width: 72, height: 72, borderRadius: 36,
-    backgroundColor: 'rgba(108,99,255,0.15)',
+    backgroundColor: 'rgba(59, 130, 246,0.15)',
   },
   pulseInner: {
     width: 56, height: 56, borderRadius: 28,
-    backgroundColor: 'rgba(108,99,255,0.2)', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(59, 130, 246,0.2)', alignItems: 'center', justifyContent: 'center',
   },
-  title: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 10, textAlign: 'center' },
-  status: { color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8 },
-  hint: { color: '#444', fontSize: 13, textAlign: 'center' },
+  title: { color: '#fff', fontSize: 20, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', marginBottom: 10, textAlign: 'center' },
+  status: { color: '#718FAF', fontSize: 15, textAlign: 'center', marginBottom: 8 },
+  hint: { color: '#4A6080', fontSize: 13, textAlign: 'center' },
 });
 
 const successStyles = StyleSheet.create({
   container: { padding: 24, paddingBottom: 40, alignItems: 'center' },
   iconWrap: { marginBottom: 16 },
-  planName: { color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 8 },
-  planDesc: { color: '#888', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 6 },
-  schedule: { color: '#6C63FF', fontSize: 13, textAlign: 'center', marginBottom: 20 },
+  planName: { color: '#fff', fontSize: 22, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center', marginBottom: 8 },
+  planDesc: { color: '#718FAF', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 6 },
+  schedule: { color: '#3B82F6', fontSize: 13, textAlign: 'center', marginBottom: 20 },
   routineList: { width: '100%', gap: 10, marginBottom: 24 },
   routineRow: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: '#1a1a1a', borderRadius: 14, padding: 14,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: '#162540',
   },
   routineIcon: {
     width: 34, height: 34, borderRadius: 8,
-    backgroundColor: 'rgba(108,99,255,0.15)', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(59, 130, 246,0.15)', alignItems: 'center', justifyContent: 'center',
   },
-  routineName: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600' },
+  routineName: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   viewBtn: {
-    width: '100%', backgroundColor: '#6C63FF', borderRadius: 14,
+    width: '100%', backgroundColor: '#3B82F6', borderRadius: 14,
     paddingVertical: 18, alignItems: 'center',
   },
-  viewBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  viewBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });
 
 // ─── Main screen ──────────────────────────────────────────────────────────
@@ -566,7 +572,7 @@ export default function AIPlannerScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Ionicons name="sparkles" size={18} color="#6C63FF" />
+          <Ionicons name="sparkles" size={18} color="#3B82F6" />
           <Text style={styles.heading}>AI Planner</Text>
         </View>
         <Text style={styles.stepCount}>
@@ -631,34 +637,38 @@ export default function AIPlannerScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 14,
   },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
-  heading: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  stepCount: { color: '#555', fontSize: 13, width: 40, textAlign: 'right' },
+  heading: { color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold' },
+  stepCount: { color: '#718FAF', fontSize: 13, width: 40, textAlign: 'right' },
   content: { paddingHorizontal: 20, paddingBottom: 24 },
-  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800', marginBottom: 4 },
-  stepSubtitle: { color: '#888', fontSize: 14 },
+  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
+  stepSubtitle: { color: '#718FAF', fontSize: 14 },
   footer: {
-    padding: 20, borderTopWidth: 1, borderTopColor: '#1a1a1a',
-    backgroundColor: '#0a0a0a',
+    padding: 20, borderTopWidth: 1, borderTopColor: '#0B1326',
+    backgroundColor: '#060C1B',
   },
   nextBtn: {
-    backgroundColor: '#6C63FF', borderRadius: 14, paddingVertical: 18,
+    backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 18,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   nextBtnDisabled: { opacity: 0.4 },
-  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   errorWrap: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
   errorBox: {
-    backgroundColor: '#1a1a1a', borderRadius: 16, padding: 24,
+    backgroundColor: '#0B1326', borderRadius: 16, padding: 24,
     borderWidth: 1, borderColor: '#ef444430', alignItems: 'center', width: '100%',
   },
   errorText: { color: '#ef4444', fontSize: 15, textAlign: 'center', lineHeight: 22 },
   retryBtn: { marginTop: 14 },
-  retryText: { color: '#888', fontSize: 13, textDecorationLine: 'underline' },
+  retryText: { color: '#718FAF', fontSize: 13, textDecorationLine: 'underline' },
 });

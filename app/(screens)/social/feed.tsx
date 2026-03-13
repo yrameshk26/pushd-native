@@ -170,12 +170,12 @@ function WorkoutCard({
       <View style={styles.statsRow}>
         {workout.duration != null && workout.duration > 0 && (
           <View style={styles.statItem}>
-            <Ionicons name="time-outline" size={13} color="#888" />
+            <Ionicons name="time-outline" size={13} color="#718FAF" />
             <Text style={styles.statText}>{formatDuration(workout.duration)}</Text>
           </View>
         )}
         <View style={styles.statItem}>
-          <Ionicons name="barbell-outline" size={13} color="#888" />
+          <Ionicons name="barbell-outline" size={13} color="#718FAF" />
           <Text style={styles.statText}>
             {workout.exercises.length} exercise
             {workout.exercises.length !== 1 ? 's' : ''}
@@ -203,7 +203,7 @@ function WorkoutCard({
           <Ionicons
             name={workout.isLiked ? 'heart' : 'heart-outline'}
             size={18}
-            color={workout.isLiked ? '#ef4444' : '#666'}
+            color={workout.isLiked ? '#ef4444' : '#718FAF'}
           />
           <Text style={[styles.actionText, workout.isLiked && styles.actionTextLiked]}>
             {likeCount}
@@ -214,12 +214,12 @@ function WorkoutCard({
           style={styles.actionBtn}
           onPress={() => router.push(`/(screens)/workout/${workout.id}` as never)}
         >
-          <Ionicons name="chatbubble-outline" size={16} color="#666" />
+          <Ionicons name="chatbubble-outline" size={16} color="#718FAF" />
           <Text style={styles.actionText}>{commentCount}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.actionBtn, styles.shareBtn]} onPress={handleShare}>
-          <Ionicons name="share-outline" size={18} color="#666" />
+          <Ionicons name="share-outline" size={18} color="#718FAF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -309,7 +309,7 @@ export default function FeedScreen() {
     if (tab === 'following') {
       return (
         <View style={styles.emptyState}>
-          <Ionicons name="people-outline" size={48} color="#333" />
+          <Ionicons name="people-outline" size={48} color="#162540" />
           <Text style={styles.emptyTitle}>No activity yet</Text>
           <Text style={styles.emptySubtitle}>
             Follow people to see their workouts, or check Discover
@@ -325,7 +325,7 @@ export default function FeedScreen() {
     }
     return (
       <View style={styles.emptyState}>
-        <Ionicons name="barbell-outline" size={48} color="#333" />
+        <Ionicons name="barbell-outline" size={48} color="#162540" />
         <Text style={styles.emptySubtitle}>No public workouts yet</Text>
       </View>
     );
@@ -359,7 +359,7 @@ export default function FeedScreen() {
 
       {isLoading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#6C63FF" />
+          <ActivityIndicator color="#3B82F6" />
         </View>
       ) : (
         <FlatList
@@ -371,7 +371,7 @@ export default function FeedScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={refetch}
-              tintColor="#6C63FF"
+              tintColor="#3B82F6"
             />
           }
           onEndReached={() => hasNextPage && fetchNextPage()}
@@ -379,7 +379,7 @@ export default function FeedScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <ActivityIndicator
-                color="#6C63FF"
+                color="#3B82F6"
                 style={{ marginVertical: 16 }}
               />
             ) : null
@@ -392,7 +392,7 @@ export default function FeedScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
     flexDirection: 'row',
@@ -401,16 +401,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
 
   tabContainer: {
     flexDirection: 'row',
     marginHorizontal: 16,
     marginTop: 14,
     marginBottom: 14,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     padding: 4,
     gap: 4,
@@ -421,17 +422,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  tabPillActive: { backgroundColor: '#0a0a0a' },
-  tabText: { fontSize: 14, fontWeight: '500', color: '#666' },
+  tabPillActive: { backgroundColor: '#060C1B' },
+  tabText: { fontSize: 14, fontWeight: '500', color: '#718FAF' },
   tabTextActive: { color: '#fff', fontWeight: '600' },
 
   listContent: { paddingHorizontal: 16, paddingBottom: 24 },
 
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 14,
     overflow: 'hidden',
   },
@@ -443,15 +444,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   avatar: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: { color: '#fff', fontWeight: '700' },
   userInfo: { flex: 1 },
   userName: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  usernameHandle: { color: '#888', fontSize: 11 },
-  timeAgo: { color: '#666', fontSize: 12, marginTop: 1 },
+  usernameHandle: { color: '#718FAF', fontSize: 11 },
+  timeAgo: { color: '#718FAF', fontSize: 12, marginTop: 1 },
 
   workoutTitle: {
     color: '#fff',
@@ -469,10 +470,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   statItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  statText: { color: '#888', fontSize: 13 },
+  statText: { color: '#718FAF', fontSize: 13 },
 
   exerciseList: {
-    color: '#555',
+    color: '#718FAF',
     fontSize: 12,
     paddingHorizontal: 14,
     paddingBottom: 10,
@@ -482,7 +483,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
     paddingHorizontal: 6,
     paddingVertical: 8,
   },
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   shareBtn: { marginLeft: 'auto' },
-  actionText: { color: '#666', fontSize: 13 },
+  actionText: { color: '#718FAF', fontSize: 13 },
   actionTextLiked: { color: '#ef4444' },
 
   emptyState: {
@@ -507,21 +508,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     marginTop: 16,
     marginBottom: 6,
   },
   emptySubtitle: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 13,
     textAlign: 'center',
     lineHeight: 18,
   },
   discoverBtn: {
     marginTop: 16,
-    backgroundColor: 'rgba(108, 99, 255, 0.15)',
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
   },
-  discoverBtnText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  discoverBtnText: { color: '#3B82F6', fontWeight: '600', fontSize: 14 },
 });

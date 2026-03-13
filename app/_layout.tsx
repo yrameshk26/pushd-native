@@ -6,6 +6,19 @@ import { useAuthStore } from '../src/store/auth';
 import TabBar from '../src/components/TabBar';
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';
 import { api } from '../src/api/client';
+import { useFonts } from 'expo-font';
+import {
+  DMSans_400Regular,
+  DMSans_500Medium,
+  DMSans_600SemiBold,
+  DMSans_700Bold,
+} from '@expo-google-fonts/dm-sans';
+import {
+  BarlowCondensed_400Regular,
+  BarlowCondensed_600SemiBold,
+  BarlowCondensed_700Bold,
+  BarlowCondensed_800ExtraBold,
+} from '@expo-google-fonts/barlow-condensed';
 
 // Lazy-import expo-notifications for the response listener — the lib guard is
 // already inside notifications.ts; here we only need the subscription type.
@@ -33,6 +46,17 @@ export default function RootLayout() {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith('/(auth)') || pathname === '/';
   const showTabBar = isAuthenticated && !isAuthRoute;
+
+  const [fontsLoaded] = useFonts({
+    'DMSans-Regular': DMSans_400Regular,
+    'DMSans-Medium': DMSans_500Medium,
+    'DMSans-SemiBold': DMSans_600SemiBold,
+    'DMSans-Bold': DMSans_700Bold,
+    'BarlowCondensed-Regular': BarlowCondensed_400Regular,
+    'BarlowCondensed-SemiBold': BarlowCondensed_600SemiBold,
+    'BarlowCondensed-Bold': BarlowCondensed_700Bold,
+    'BarlowCondensed-ExtraBold': BarlowCondensed_800ExtraBold,
+  });
 
   // Hold a reference to the notification-response subscription so we can
   // remove it on unmount.
@@ -82,10 +106,12 @@ export default function RootLayout() {
     };
   }, []);
 
+  if (!fontsLoaded) return null;
+
   return (
     <QueryClientProvider client={queryClient}>
-      <View style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }} />
+      <View style={{ flex: 1, backgroundColor: '#060C1B' }}>
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060C1B' } }} />
         {showTabBar && <TabBar />}
       </View>
     </QueryClientProvider>

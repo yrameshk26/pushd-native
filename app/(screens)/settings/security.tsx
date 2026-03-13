@@ -133,7 +133,7 @@ function SessionsSection() {
               {index > 0 && <View style={styles.sep} />}
               <View style={styles.sessionRow}>
                 <View style={styles.sessionIconWrap}>
-                  <Ionicons name={deviceIcon(session.deviceType) as never} size={18} color="#888" />
+                  <Ionicons name={deviceIcon(session.deviceType) as never} size={18} color="#718FAF" />
                 </View>
                 <View style={styles.sessionInfo}>
                   <View style={styles.sessionNameRow}>
@@ -174,7 +174,7 @@ function SessionsSection() {
       {(data?.lastLoginAt || data?.lastLoginIp) && (
         <View style={[styles.card, { marginTop: 10 }]}>
           <View style={styles.activityRow}>
-            <Ionicons name="time-outline" size={16} color="#555" style={{ marginRight: 10, marginTop: 2 }} />
+            <Ionicons name="time-outline" size={16} color="#718FAF" style={{ marginRight: 10, marginTop: 2 }} />
             <View>
               <Text style={styles.activityLabel}>Account Activity</Text>
               {data?.lastLoginAt && <Text style={styles.activityValue}>Last login: {formatDate(data.lastLoginAt)}</Text>}
@@ -331,7 +331,7 @@ function PasskeysSection() {
                 value={newKeyName}
                 onChangeText={setNewKeyName}
                 placeholder={`Name (e.g. "${getDefaultPasskeyName()}")`}
-                placeholderTextColor="#555"
+                placeholderTextColor="#718FAF"
                 autoFocus
               />
               <TouchableOpacity
@@ -366,7 +366,7 @@ function PasskeysSection() {
               {index > 0 && <View style={styles.sep} />}
               <View style={styles.passkeyRow}>
                 <View style={styles.passkeyIconWrap}>
-                  <Ionicons name={key.credentialDeviceType === 'multiDevice' ? 'phone-portrait-outline' : 'laptop-outline'} size={16} color="#888" />
+                  <Ionicons name={key.credentialDeviceType === 'multiDevice' ? 'phone-portrait-outline' : 'laptop-outline'} size={16} color="#718FAF" />
                 </View>
                 <View style={styles.passkeyInfo}>
                   <Text style={styles.passkeyName}>{key.name}</Text>
@@ -418,7 +418,7 @@ export default function SecurityScreen() {
           <TouchableOpacity style={styles.actionRow} onPress={() => router.push('/(auth)/reset-password' as never)}>
             <Ionicons name="lock-closed-outline" size={20} color="#60a5fa" style={{ marginRight: 12 }} />
             <Text style={styles.actionLabel}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={18} color="#444" />
+            <Ionicons name="chevron-forward" size={18} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -431,24 +431,25 @@ export default function SecurityScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 12,
-    borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    borderBottomWidth: 1, borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff', textAlign: 'center' },
+  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
 
   scrollContent: { paddingHorizontal: 16, paddingTop: 16 },
 
-  sectionLabel: { fontSize: 11, fontWeight: '700', color: '#555', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginTop: 20, marginLeft: 2 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', color: '#718FAF', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginTop: 20, marginLeft: 2 },
 
-  card: { backgroundColor: '#1a1a1a', borderRadius: 14, borderWidth: 1, borderColor: '#2a2a2a', overflow: 'hidden' },
-  sep: { height: 1, backgroundColor: '#2a2a2a', marginLeft: 16 },
+  card: { backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: '#162540', overflow: 'hidden' },
+  sep: { height: 1, backgroundColor: '#162540', marginLeft: 16 },
 
   errorText: { color: '#ef4444', fontSize: 14, padding: 16, textAlign: 'center' },
-  emptyText: { color: '#555', fontSize: 13, padding: 16, textAlign: 'center', lineHeight: 20 },
+  emptyText: { color: '#718FAF', fontSize: 13, padding: 16, textAlign: 'center', lineHeight: 20 },
 
   // Info banner
   infoBanner: {
@@ -457,44 +458,48 @@ const styles = StyleSheet.create({
     borderRadius: 14, padding: 14, marginBottom: 10,
   },
   infoBannerTitle: { fontSize: 13, fontWeight: '700', color: '#60a5fa', marginBottom: 4 },
-  infoBannerText: { fontSize: 12, color: '#666', lineHeight: 17 },
+  infoBannerText: { fontSize: 12, color: '#718FAF', lineHeight: 17 },
 
   // Sessions
   sessionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
-  sessionIconWrap: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#2a2a2a', alignItems: 'center', justifyContent: 'center' },
+  sessionIconWrap: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#162540', alignItems: 'center', justifyContent: 'center' },
   sessionInfo: { flex: 1, minWidth: 0 },
   sessionNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 },
-  sessionDevice: { color: '#fff', fontSize: 14, fontWeight: '600', flex: 1 },
-  sessionMeta: { color: '#555', fontSize: 12 },
+  sessionDevice: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', flex: 1 },
+  sessionMeta: { color: '#718FAF', fontSize: 12 },
   currentBadge: { backgroundColor: 'rgba(59,130,246,0.15)', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 20 },
   currentBadgeText: { color: '#60a5fa', fontSize: 10, fontWeight: '700' },
   revokeBtn: { borderWidth: 1, borderColor: 'rgba(239,68,68,0.4)', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, minWidth: 64, alignItems: 'center' },
   revokeBtnDisabled: { opacity: 0.5 },
   revokeBtnText: { color: '#ef4444', fontSize: 12, fontWeight: '600' },
-  revokeAllBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 8, paddingVertical: 14, backgroundColor: '#1a1a1a', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)' },
+  revokeAllBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 8, paddingVertical: 14, backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)' },
   revokeAllBtnText: { color: '#ef4444', fontSize: 14, fontWeight: '600' },
   activityRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 16 },
-  activityLabel: { color: '#888', fontSize: 12, fontWeight: '600', marginBottom: 4 },
-  activityValue: { color: '#555', fontSize: 12, lineHeight: 18 },
+  activityLabel: { color: '#718FAF', fontSize: 12, fontWeight: '600', marginBottom: 4 },
+  activityValue: { color: '#718FAF', fontSize: 12, lineHeight: 18 },
 
   // Passkeys
   passkeyHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14 },
-  passkeyHeaderTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  passkeyHeaderTitle: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   addPasskeyBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   addPasskeyText: { color: '#60a5fa', fontSize: 13, fontWeight: '600' },
   addPasskeyForm: { padding: 16, gap: 10 },
-  passkeyNameInput: { backgroundColor: '#111', borderRadius: 10, borderWidth: 1, borderColor: '#2a2a2a', paddingHorizontal: 14, paddingVertical: 11, color: '#fff', fontSize: 14 },
+  passkeyNameInput: { backgroundColor: '#0B1326', borderRadius: 10, borderWidth: 1, borderColor: '#162540', paddingHorizontal: 14, paddingVertical: 11, color: '#fff', fontSize: 14 },
   registerBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#3B82F6', borderRadius: 10, paddingVertical: 12 },
-  registerBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  registerBtnText: { color: '#fff', fontSize: 14, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   registerError: { color: '#ef4444', fontSize: 12, textAlign: 'center' },
   registerSuccess: { color: '#4ade80', fontSize: 12, textAlign: 'center' },
   passkeyRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
-  passkeyIconWrap: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#2a2a2a', alignItems: 'center', justifyContent: 'center' },
+  passkeyIconWrap: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#162540', alignItems: 'center', justifyContent: 'center' },
   passkeyInfo: { flex: 1 },
-  passkeyName: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2 },
-  passkeyMeta: { color: '#555', fontSize: 12 },
+  passkeyName: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 2 },
+  passkeyMeta: { color: '#718FAF', fontSize: 12 },
   deletePasskeyBtn: { padding: 6 },
-  passkeyHint: { color: '#444', fontSize: 12, padding: 14, lineHeight: 18 },
+  passkeyHint: { color: '#4A6080', fontSize: 12, padding: 14, lineHeight: 18 },
 
   // Password
   actionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16 },

@@ -8,7 +8,7 @@ interface Props {
   color?: string;
 }
 
-export function StatCard({ value, label, icon, color = '#6C63FF' }: Props) {
+export function StatCard({ value, label, icon, color = '#3B82F6' }: Props) {
   return (
     <View style={styles.card}>
       {icon && (
@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   iconWrap: {
     width: 36,
@@ -43,11 +43,13 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 28,
     fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
     marginBottom: 4,
   },
   label: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
     fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
   },
 });

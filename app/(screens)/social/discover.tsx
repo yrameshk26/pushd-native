@@ -84,11 +84,11 @@ function WorkoutFeedCard({ item }: { item: DiscoverWorkout }) {
       {/* Workout Stats */}
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
-          <Ionicons name="barbell-outline" size={14} color="#6C63FF" />
+          <Ionicons name="barbell-outline" size={14} color="#3B82F6" />
           <Text style={styles.statText}>{exerciseCount} exercises</Text>
         </View>
         <View style={styles.statItem}>
-          <Ionicons name="stats-chart-outline" size={14} color="#6C63FF" />
+          <Ionicons name="stats-chart-outline" size={14} color="#3B82F6" />
           <Text style={styles.statText}>{formatVolume(item.totalVolume)}</Text>
         </View>
         <View style={styles.statItem}>
@@ -103,7 +103,7 @@ function WorkoutFeedCard({ item }: { item: DiscoverWorkout }) {
 function EmptyState({ search }: { search: string }) {
   return (
     <View style={styles.emptyState}>
-      <Ionicons name="compass-outline" size={52} color="#333" />
+      <Ionicons name="compass-outline" size={52} color="#162540" />
       <Text style={styles.emptyTitle}>
         {search ? 'No results found' : 'Nothing here yet'}
       </Text>
@@ -163,7 +163,7 @@ export default function DiscoverScreen() {
 
   const renderFooter = () => {
     if (!isFetchingNextPage) return null;
-    return <ActivityIndicator color="#6C63FF" style={{ marginVertical: 20 }} />;
+    return <ActivityIndicator color="#3B82F6" style={{ marginVertical: 20 }} />;
   };
 
   return (
@@ -179,13 +179,13 @@ export default function DiscoverScreen() {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={18} color="#555" style={styles.searchIcon} />
+        <Ionicons name="search-outline" size={18} color="#718FAF" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           value={search}
           onChangeText={handleSearchChange}
           placeholder="Search exercises or users..."
-          placeholderTextColor="#555"
+          placeholderTextColor="#718FAF"
           returnKeyType="search"
           clearButtonMode="while-editing"
         />
@@ -196,17 +196,17 @@ export default function DiscoverScreen() {
               setDebouncedSearch('');
             }}
           >
-            <Ionicons name="close-circle" size={18} color="#555" />
+            <Ionicons name="close-circle" size={18} color="#718FAF" />
           </TouchableOpacity>
         )}
       </View>
 
       {/* Content */}
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.emptyState}>
-          <Ionicons name="wifi-outline" size={48} color="#333" />
+          <Ionicons name="wifi-outline" size={48} color="#162540" />
           <Text style={styles.emptyTitle}>Failed to load</Text>
           <Text style={styles.emptySub}>Check your connection and try again.</Text>
         </View>
@@ -228,7 +228,7 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -236,18 +236,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   backBtn: { width: 40, padding: 4 },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff', textAlign: 'center' },
+  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
 
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginHorizontal: 16,
     marginVertical: 12,
     paddingHorizontal: 12,
@@ -259,10 +260,10 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: 16, paddingBottom: 40 },
 
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 16,
     marginBottom: 12,
   },
@@ -277,13 +278,13 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: { color: '#fff', fontSize: 14, fontWeight: '800' },
   userDisplayName: { fontSize: 14, fontWeight: '700', color: '#fff' },
-  userUsername: { fontSize: 12, color: '#6C63FF' },
+  userUsername: { fontSize: 12, color: '#3B82F6' },
 
   workoutTitle: {
     fontSize: 17,
@@ -295,9 +296,9 @@ const styles = StyleSheet.create({
 
   statsRow: { flexDirection: 'row', gap: 16 },
   statItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  statText: { fontSize: 13, color: '#888' },
+  statText: { fontSize: 13, color: '#718FAF' },
 
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, paddingHorizontal: 32 },
-  emptyTitle: { fontSize: 16, fontWeight: '700', color: '#555', marginTop: 14 },
-  emptySub: { fontSize: 13, color: '#444', marginTop: 6, textAlign: 'center', lineHeight: 18 },
+  emptyTitle: { fontSize: 16, fontWeight: '700', color: '#718FAF', marginTop: 14 },
+  emptySub: { fontSize: 13, color: '#4A6080', marginTop: 6, textAlign: 'center', lineHeight: 18 },
 });

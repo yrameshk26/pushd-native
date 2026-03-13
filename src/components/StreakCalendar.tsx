@@ -142,9 +142,10 @@ const styles = StyleSheet.create({
     top: 0,
   },
   monthLabel: {
-    color: '#666',
+    color: '#718FAF',
     fontSize: 10,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   gridBody: {
     flexDirection: 'row',
@@ -161,8 +162,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayLabel: {
-    color: '#555',
+    color: '#4A6080',
     fontSize: 9,
+    fontFamily: 'DMSans-Regular',
   },
   columnsRow: {
     flexDirection: 'row',
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
     width: CELL_SIZE,
     height: CELL_SIZE,
     borderRadius: 3,
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#111D36',
   },
   cellActive: {
     backgroundColor: '#3B82F6',
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     borderColor: '#3B82F6',
   },
   cellFuture: {
-    backgroundColor: '#141414',
+    backgroundColor: '#060C1B',
     opacity: 0.5,
   },
 });

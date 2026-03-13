@@ -46,11 +46,11 @@ const MUSCLE_COLORS: Record<string, string> = {
   CALVES: '#16a085',
   CORE: '#d35400',
   CARDIO: '#c0392b',
-  FULL_BODY: '#6C63FF',
+  FULL_BODY: '#3B82F6',
 };
 
 function getMuscleColor(muscle: string): string {
-  return MUSCLE_COLORS[muscle] ?? '#6C63FF';
+  return MUSCLE_COLORS[muscle] ?? '#3B82F6';
 }
 
 function formatLabel(value: string): string {
@@ -91,7 +91,7 @@ function ExerciseItem({ exercise, index }: ExerciseItemProps) {
         </View>
       </View>
 
-      <Ionicons name="reorder-three-outline" size={18} color="#444" />
+      <Ionicons name="reorder-three-outline" size={18} color="#4A6080" />
     </View>
   );
 }
@@ -179,7 +179,7 @@ export default function RoutineDetailScreen() {
           <View style={{ flex: 1 }} />
         </View>
         <View style={styles.centeredState}>
-          <ActivityIndicator color="#6C63FF" size="large" />
+          <ActivityIndicator color="#3B82F6" size="large" />
         </View>
       </SafeAreaView>
     );
@@ -228,9 +228,9 @@ export default function RoutineDetailScreen() {
           disabled={duplicateMutation.isPending}
         >
           {duplicateMutation.isPending ? (
-            <ActivityIndicator size="small" color="#6C63FF" />
+            <ActivityIndicator size="small" color="#3B82F6" />
           ) : (
-            <Ionicons name="copy-outline" size={20} color="#6C63FF" />
+            <Ionicons name="copy-outline" size={20} color="#3B82F6" />
           )}
         </TouchableOpacity>
 
@@ -239,7 +239,7 @@ export default function RoutineDetailScreen() {
           style={styles.headerBtn}
           onPress={() => router.push(`/(screens)/routines/edit?id=${id}`)}
         >
-          <Ionicons name="pencil-outline" size={20} color="#6C63FF" />
+          <Ionicons name="pencil-outline" size={20} color="#3B82F6" />
         </TouchableOpacity>
 
         {/* Delete */}
@@ -265,7 +265,7 @@ export default function RoutineDetailScreen() {
         {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Ionicons name="barbell-outline" size={16} color="#6C63FF" />
+            <Ionicons name="barbell-outline" size={16} color="#3B82F6" />
             <Text style={styles.statText}>
               {exercises.length} exercise{exercises.length !== 1 ? 's' : ''}
             </Text>
@@ -288,7 +288,7 @@ export default function RoutineDetailScreen() {
 
         {exercises.length === 0 ? (
           <View style={styles.emptyExercises}>
-            <Ionicons name="barbell-outline" size={36} color="#333" />
+            <Ionicons name="barbell-outline" size={36} color="#162540" />
             <Text style={styles.emptyExercisesText}>No exercises in this routine</Text>
             <TouchableOpacity
               style={styles.addExerciseBtn}
@@ -312,7 +312,7 @@ export default function RoutineDetailScreen() {
           disabled={duplicateMutation.isPending}
           activeOpacity={0.8}
         >
-          <Ionicons name="copy-outline" size={18} color="#6C63FF" />
+          <Ionicons name="copy-outline" size={18} color="#3B82F6" />
           <Text style={styles.duplicateText}>Duplicate Routine</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -323,7 +323,7 @@ export default function RoutineDetailScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   // Header
   header: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   headerBtn: {
     width: 40,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
 
   // Description
   description: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 14,
     lineHeight: 22,
     marginBottom: 16,
@@ -369,19 +369,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   statItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  statText: { color: '#888', fontSize: 13 },
+  statText: { color: '#718FAF', fontSize: 13 },
 
   // Start button
   startBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 18,
     gap: 10,
     marginBottom: 28,
-    shadowColor: '#6C63FF',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 12,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
 
   // Section
   sectionLabel: {
-    color: '#555',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1,
@@ -401,10 +401,10 @@ const styles = StyleSheet.create({
 
   // Exercise list
   exerciseList: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     overflow: 'hidden',
     marginBottom: 24,
   },
@@ -414,41 +414,42 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   orderBadge: {
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
     flexShrink: 0,
   },
-  orderText: { color: '#6C63FF', fontWeight: '700', fontSize: 14 },
+  orderText: { color: '#3B82F6', fontWeight: '700', fontSize: 14 },
   exerciseInfo: { flex: 1, marginRight: 8 },
-  exerciseName: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 5 },
+  exerciseName: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 5 },
   exerciseMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   muscleBadge: { borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2 },
   muscleBadgeText: { fontSize: 11, fontWeight: '600' },
-  exerciseMetaText: { color: '#666', fontSize: 13 },
+  exerciseMetaText: { color: '#718FAF', fontSize: 13 },
 
   // Empty exercises
   emptyExercises: {
     alignItems: 'center',
     paddingVertical: 40,
     gap: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 24,
   },
-  emptyExercisesText: { color: '#555', fontSize: 14 },
+  emptyExercisesText: { color: '#718FAF', fontSize: 14 },
   addExerciseBtn: {
     marginTop: 8,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -461,25 +462,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingVertical: 14,
     marginBottom: 16,
   },
-  duplicateText: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },
+  duplicateText: { color: '#3B82F6', fontSize: 15, fontWeight: '600' },
 
   // States
   centeredState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600' },
   retryBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#3B82F6', fontWeight: '600', fontSize: 14 },
 });

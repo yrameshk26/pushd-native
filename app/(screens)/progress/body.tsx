@@ -146,7 +146,7 @@ function AddEntryModal({ visible, onClose, onSave, isSaving, preferredUnit }: Ad
               <TextInput
                 style={[modalStyles.input, { flex: 1 }]}
                 placeholder={unit === 'KG' ? 'e.g. 80.5' : 'e.g. 177.5'}
-                placeholderTextColor="#555"
+                placeholderTextColor="#4A6080"
                 keyboardType="decimal-pad"
                 value={weight}
                 onChangeText={setWeight}
@@ -181,7 +181,7 @@ function AddEntryModal({ visible, onClose, onSave, isSaving, preferredUnit }: Ad
             <TextInput
               style={modalStyles.input}
               placeholder="e.g. 15.2"
-              placeholderTextColor="#555"
+              placeholderTextColor="#4A6080"
               keyboardType="decimal-pad"
               value={bodyFat}
               onChangeText={setBodyFat}
@@ -194,7 +194,7 @@ function AddEntryModal({ visible, onClose, onSave, isSaving, preferredUnit }: Ad
             <TextInput
               style={modalStyles.input}
               placeholder="e.g. 2026-03-12"
-              placeholderTextColor="#555"
+              placeholderTextColor="#4A6080"
               value={date}
               onChangeText={setDate}
               keyboardType="numbers-and-punctuation"
@@ -295,10 +295,10 @@ export default function BodyWeightScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.errorWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color="#888" />
+          <Ionicons name="alert-circle-outline" size={48} color="#718FAF" />
           <Text style={styles.errorText}>Could not load body weight data.</Text>
           <TouchableOpacity
             style={styles.retryBtn}
@@ -316,8 +316,8 @@ export default function BodyWeightScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#6C63FF"
-              colors={['#6C63FF']}
+              tintColor="#3B82F6"
+              colors={['#3B82F6']}
             />
           }
         >
@@ -352,12 +352,12 @@ export default function BodyWeightScreen() {
                   <Ionicons
                     name={weightDiff < 0 ? 'trending-down' : weightDiff > 0 ? 'trending-up' : 'remove'}
                     size={18}
-                    color={weightDiff < 0 ? '#10B981' : weightDiff > 0 ? '#EF4444' : '#888'}
+                    color={weightDiff < 0 ? '#10B981' : weightDiff > 0 ? '#EF4444' : '#718FAF'}
                   />
                   <Text
                     style={[
                       styles.diffText,
-                      { color: weightDiff < 0 ? '#10B981' : weightDiff > 0 ? '#EF4444' : '#888' },
+                      { color: weightDiff < 0 ? '#10B981' : weightDiff > 0 ? '#EF4444' : '#718FAF' },
                     ]}
                   >
                     {weightDiff > 0 ? '+' : ''}
@@ -374,7 +374,7 @@ export default function BodyWeightScreen() {
                     <Text
                       style={[
                         styles.bfDiff,
-                        { color: bfDiff < 0 ? '#10B981' : bfDiff > 0 ? '#EF4444' : '#888' },
+                        { color: bfDiff < 0 ? '#10B981' : bfDiff > 0 ? '#EF4444' : '#718FAF' },
                       ]}
                     >
                       {bfDiff > 0 ? '+' : ''}
@@ -386,7 +386,7 @@ export default function BodyWeightScreen() {
             </View>
           ) : (
             <View style={styles.emptyHero}>
-              <Ionicons name="body-outline" size={48} color="#333" />
+              <Ionicons name="body-outline" size={48} color="#162540" />
               <Text style={styles.emptyHeroText}>No entries yet</Text>
               <TouchableOpacity style={styles.emptyAddBtn} onPress={() => setShowModal(true)}>
                 <Text style={styles.emptyAddBtnText}>Add First Entry</Text>
@@ -420,7 +420,7 @@ export default function BodyWeightScreen() {
                         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                         style={styles.deleteBtn}
                       >
-                        <Ionicons name="trash-outline" size={18} color="#555" />
+                        <Ionicons name="trash-outline" size={18} color="#718FAF" />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -457,7 +457,7 @@ export default function BodyWeightScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -465,23 +465,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
   headerRight: { width: 40 },
 
   content: { padding: 20, paddingBottom: 100 },
 
   // Hero card
   heroCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 20,
     padding: 24,
     alignItems: 'center',
     marginBottom: 28,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   unitToggleRow: {
     flexDirection: 'row',
@@ -493,19 +493,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   unitToggleBtnActive: {
-    backgroundColor: '#6C63FF',
-    borderColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
   },
-  unitToggleBtnText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  unitToggleBtnText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-SemiBold' },
   unitToggleBtnTextActive: { color: '#fff' },
 
   heroLabel: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 8,
@@ -513,15 +513,15 @@ const styles = StyleSheet.create({
   heroValue: {
     color: '#10B981',
     fontSize: 56,
-    fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
     lineHeight: 64,
   },
   heroUnit: {
     fontSize: 24,
-    fontWeight: '600',
+    fontFamily: 'BarlowCondensed-SemiBold',
     color: '#10B981',
   },
-  heroDate: { color: '#555', fontSize: 13, marginTop: 4, marginBottom: 12 },
+  heroDate: { color: '#4A6080', fontSize: 13, marginTop: 4, marginBottom: 12, fontFamily: 'DMSans-Regular' },
 
   diffRow: {
     flexDirection: 'row',
@@ -529,37 +529,37 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 8,
   },
-  diffText: { fontSize: 14, fontWeight: '600' },
+  diffText: { fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 
   bfRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 },
-  bfValue: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },
-  bfDiff: { fontSize: 13, fontWeight: '600' },
+  bfValue: { color: '#3B82F6', fontSize: 15, fontFamily: 'DMSans-SemiBold' },
+  bfDiff: { fontSize: 13, fontFamily: 'DMSans-SemiBold' },
 
   // Empty hero
   emptyHero: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 20,
     padding: 40,
     alignItems: 'center',
     marginBottom: 28,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 12,
   },
-  emptyHeroText: { color: '#555', fontSize: 16 },
+  emptyHeroText: { color: '#4A6080', fontSize: 16, fontFamily: 'DMSans-Regular' },
   emptyAddBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  emptyAddBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  emptyAddBtnText: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 
   // Section
   sectionTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -570,20 +570,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   entryLeft: { flex: 1 },
-  entryDate: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2 },
-  entryBf: { color: '#6C63FF', fontSize: 12, marginTop: 2 },
-  entryNotes: { color: '#555', fontSize: 12, marginTop: 2 },
+  entryDate: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold', marginBottom: 2 },
+  entryBf: { color: '#3B82F6', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
+  entryNotes: { color: '#4A6080', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
   entryRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  entryWeight: { color: '#10B981', fontSize: 18, fontWeight: '700' },
+  entryWeight: { color: '#10B981', fontSize: 18, fontFamily: 'DMSans-Bold' },
   deleteBtn: { padding: 4 },
 
   // FAB
@@ -594,10 +594,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6C63FF',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -606,39 +606,40 @@ const styles = StyleSheet.create({
 
   // Error
   errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
   retryBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#3B82F6', fontFamily: 'DMSans-SemiBold', fontSize: 14 },
 });
 
 const modalStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a', padding: 24, paddingTop: 20 },
+  container: { flex: 1, backgroundColor: '#060C1B', padding: 24, paddingTop: 20 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 32,
   },
-  title: { color: '#fff', fontSize: 20, fontWeight: '700' },
+  title: { color: '#fff', fontSize: 20, fontFamily: 'BarlowCondensed-Bold' },
   field: { marginBottom: 20 },
-  fieldLabel: { color: '#888', fontSize: 13, fontWeight: '500', marginBottom: 8 },
+  fieldLabel: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Medium', marginBottom: 8 },
   weightRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
   input: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     color: '#fff',
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
+    fontFamily: 'DMSans-Regular',
   },
   unitToggle: { flexDirection: 'row', gap: 6 },
   unitBtn: {
@@ -646,21 +647,21 @@ const modalStyles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
-    backgroundColor: '#1a1a1a',
+    borderColor: '#162540',
+    backgroundColor: '#0B1326',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  unitBtnActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  unitBtnText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  unitBtnActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  unitBtnText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-SemiBold' },
   unitBtnTextActive: { color: '#fff' },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 12,
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontFamily: 'DMSans-Bold' },
 });

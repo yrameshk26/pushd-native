@@ -101,7 +101,7 @@ export interface Achievement {
 }
 
 export async function fetchProgressSummary(): Promise<ProgressSummary> {
-  const { data } = await api.get('/api/progress/summary');
+  const { data } = await api.get('/api/progress/overview');
   return data;
 }
 
@@ -130,9 +130,31 @@ export async function addBodyWeight(weight: number, bodyFat?: number): Promise<B
   return data;
 }
 
-export async function fetchStrengthStandards(exerciseId: string): Promise<StrengthStandard> {
-  const { data } = await api.get('/api/progress/strength-standards', { params: { exerciseId } });
-  return data;
+export async function fetchStrengthStandards(liftId: string): Promise<StrengthStandard> {
+  const { data } = await api.get<{ bodyweight: number | null; lifts: any[] }>(
+    '/api/progress/strength-standards',
+  );
+  const lifts: any[] = data?.lifts ?? [];
+  // liftId may be hyphenated ('bench-press') while API uses spaces ('bench press')
+  const normalizedId = liftId.replace(/-/g, ' ');
+  const lift = lifts.find((l) => l.exercise === normalizedId) ?? lifts[0];
+  if (!lift) throw new Error('Lift not found');
+
+  const s = lift.standards ?? {};
+  return {
+    exerciseId: lift.exercise,
+    exerciseName: lift.displayName,
+    standards: {
+      // API uses 'beginner', native UI uses 'untested'
+      untested: s.beginner ?? 0.5,
+      novice: s.novice ?? 0.75,
+      intermediate: s.intermediate ?? 1.0,
+      advanced: s.advanced ?? 1.5,
+      elite: s.elite ?? 2.0,
+    },
+    userRatio: lift.ratio ?? undefined,
+    userLevel: lift.level ?? undefined,
+  };
 }
 
 export async function fetchUserStreak(): Promise<UserStreak> {

@@ -58,14 +58,14 @@ function ExerciseRow({ item, index, total, onChange, onRemove, onMoveUp, onMoveD
             onPress={onMoveUp}
             disabled={index === 0}
           >
-            <Ionicons name="chevron-up" size={16} color={index === 0 ? '#333' : '#888'} />
+            <Ionicons name="chevron-up" size={16} color={index === 0 ? '#162540' : '#718FAF'} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[rowStyles.arrowBtn, index === total - 1 && rowStyles.arrowBtnDisabled]}
             onPress={onMoveDown}
             disabled={index === total - 1}
           >
-            <Ionicons name="chevron-down" size={16} color={index === total - 1 ? '#333' : '#888'} />
+            <Ionicons name="chevron-down" size={16} color={index === total - 1 ? '#162540' : '#718FAF'} />
           </TouchableOpacity>
           <TouchableOpacity style={rowStyles.removeBtn} onPress={onRemove}>
             <Ionicons name="close-circle" size={20} color="#e74c3c" />
@@ -104,7 +104,7 @@ function ExerciseRow({ item, index, total, onChange, onRemove, onMoveUp, onMoveD
             onChangeText={(v) => onChange({ reps: v })}
             keyboardType="numeric"
             placeholder="10"
-            placeholderTextColor="#444"
+            placeholderTextColor="#4A6080"
             maxLength={4}
           />
         </View>
@@ -118,7 +118,7 @@ function ExerciseRow({ item, index, total, onChange, onRemove, onMoveUp, onMoveD
             onChangeText={(v) => onChange({ weight: v })}
             keyboardType="decimal-pad"
             placeholder="—"
-            placeholderTextColor="#444"
+            placeholderTextColor="#4A6080"
             maxLength={6}
           />
         </View>
@@ -251,7 +251,7 @@ export default function CreateRoutineScreen() {
           value={name}
           onChangeText={setName}
           placeholder="Routine name (e.g. Push Day A)"
-          placeholderTextColor="#444"
+          placeholderTextColor="#4A6080"
           autoCapitalize="words"
           returnKeyType="next"
         />
@@ -262,7 +262,7 @@ export default function CreateRoutineScreen() {
           value={description}
           onChangeText={setDescription}
           placeholder="Description (optional)"
-          placeholderTextColor="#444"
+          placeholderTextColor="#4A6080"
           multiline
           numberOfLines={2}
           returnKeyType="done"
@@ -297,7 +297,7 @@ export default function CreateRoutineScreen() {
 
         {/* Add exercise button */}
         <TouchableOpacity style={styles.addExerciseBtn} onPress={() => setShowPicker(true)}>
-          <Ionicons name="add-circle-outline" size={20} color="#6C63FF" />
+          <Ionicons name="add-circle-outline" size={20} color="#3B82F6" />
           <Text style={styles.addExerciseBtnText}>Add Exercise</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -316,12 +316,12 @@ export default function CreateRoutineScreen() {
 
 const rowStyles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   headerRow: {
     flexDirection: 'row',
@@ -332,19 +332,20 @@ const rowStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 8,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
   },
-  orderText: { color: '#6C63FF', fontWeight: '700', fontSize: 13 },
-  name: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600' },
+  orderText: { color: '#3B82F6', fontWeight: '700', fontSize: 13 },
+  name: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   actions: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   arrowBtn: {
     width: 30,
     height: 30,
     borderRadius: 8,
-    backgroundColor: '#242424',
+    backgroundColor: '#162540',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -353,7 +354,7 @@ const rowStyles = StyleSheet.create({
   fields: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   fieldGroup: {},
   fieldLabel: {
-    color: '#555',
+    color: '#718FAF',
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.8,
@@ -362,10 +363,10 @@ const rowStyles = StyleSheet.create({
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignSelf: 'flex-start',
   },
   stepBtn: {
@@ -374,22 +375,24 @@ const rowStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  stepBtnText: { color: '#6C63FF', fontSize: 20, fontWeight: '600', lineHeight: 22 },
+  stepBtnText: { color: '#3B82F6', fontSize: 20, fontWeight: '600', lineHeight: 22 },
   stepValue: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
     minWidth: 32,
     textAlign: 'center',
   },
   numInput: {
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
     paddingHorizontal: 14,
     paddingVertical: 8,
     width: 90,
@@ -400,7 +403,7 @@ const rowStyles = StyleSheet.create({
 // ─── Screen Styles ────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -408,12 +411,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   headerBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  heading: { flex: 1, color: '#fff', fontSize: 18, fontWeight: '700', textAlign: 'center', marginHorizontal: 8 },
+  heading: { flex: 1, color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', textAlign: 'center', marginHorizontal: 8 },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 18,
     paddingVertical: 8,
@@ -424,22 +428,23 @@ const styles = StyleSheet.create({
   saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   content: { padding: 20, paddingBottom: 60 },
   nameInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 12,
   },
   descInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 15,
     paddingHorizontal: 16,
@@ -461,7 +466,7 @@ const styles = StyleSheet.create({
   },
   errorText: { color: '#e74c3c', fontSize: 13, flex: 1 },
   sectionLabel: {
-    color: '#555',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1,
@@ -473,12 +478,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderStyle: 'dashed',
     paddingVertical: 16,
   },
-  addExerciseBtnText: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },
+  addExerciseBtnText: { color: '#3B82F6', fontSize: 15, fontWeight: '600' },
 });

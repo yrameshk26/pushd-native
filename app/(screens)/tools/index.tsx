@@ -17,12 +17,12 @@ export default function ToolsScreen() {
         <Text style={styles.heading}>Tools & AI</Text>
         {TOOLS.map((t) => (
           <TouchableOpacity key={t.route} style={styles.card} onPress={() => router.push(t.route as never)}>
-            <View style={styles.iconBox}><Ionicons name={t.icon as never} size={22} color="#6C63FF" /></View>
+            <View style={styles.iconBox}><Ionicons name={t.icon as never} size={22} color="#3B82F6" /></View>
             <View style={styles.text}>
               <Text style={styles.label}>{t.label}</Text>
               <Text style={styles.sub}>{t.sub}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color="#444" />
+            <Ionicons name="chevron-forward" size={18} color="#4A6080" />
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -31,12 +31,15 @@ export default function ToolsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   content: { padding: 20 },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 24 },
-  card: { backgroundColor: '#1a1a1a', borderRadius: 14, padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a' },
-  iconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#0d0d1f', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
+  heading: { fontSize: 28, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff', marginBottom: 24 },
+  card: { backgroundColor: '#0B1326', borderRadius: 14, padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#162540' },
+  iconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#060C1B', justifyContent: 'center', alignItems: 'center', marginRight: 14 },
   text: { flex: 1 },
-  label: { color: '#fff', fontSize: 16, fontWeight: '600', marginBottom: 2 },
-  sub: { color: '#666', fontSize: 13 },
+  label: { color: '#fff', fontSize: 16, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold', marginBottom: 2 },
+  sub: { color: '#718FAF', fontSize: 13 },
 });

@@ -66,7 +66,7 @@ export function ExerciseDetailSheet({ exerciseId, onClose }: Props) {
         </View>
 
         {isLoading ? (
-          <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
         ) : error ? (
           <View style={styles.errorBox}>
             <Ionicons name="alert-circle-outline" size={18} color="#ff4444" />
@@ -155,20 +155,20 @@ export function ExerciseDetailSheet({ exerciseId, onClose }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 20, paddingTop: 24, paddingBottom: 16,
   },
-  title: { fontSize: 20, fontWeight: '800', color: '#fff', flex: 1, marginRight: 12 },
+  title: { fontSize: 20, fontWeight: '800', color: '#fff', flex: 1, marginRight: 12, fontFamily: 'BarlowCondensed-Bold' },
   content: { paddingBottom: 40 },
   image: {
     width: '100%', height: 220,
-    backgroundColor: '#161b22',
+    backgroundColor: '#111D36',
   },
   imageFallback: {
     width: '100%', height: 220,
-    backgroundColor: '#161b22',
+    backgroundColor: '#111D36',
     justifyContent: 'center', alignItems: 'center',
   },
   badgeRow: {
@@ -177,27 +177,27 @@ const styles = StyleSheet.create({
   },
   badge: {
     paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 6, backgroundColor: '#1e2a3a',
+    borderRadius: 6, backgroundColor: '#111D36',
   },
-  badgeText: { fontSize: 11, fontWeight: '700', color: '#9ca3af', letterSpacing: 0.5 },
+  badgeText: { fontSize: 11, fontWeight: '700', color: '#718FAF', letterSpacing: 0.5, fontFamily: 'BarlowCondensed-Bold' },
   section: { paddingHorizontal: 20, paddingTop: 24, gap: 12 },
-  sectionTitle: { fontSize: 11, fontWeight: '700', color: '#4b5563', letterSpacing: 1 },
+  sectionTitle: { fontSize: 11, fontWeight: '700', color: '#4A6080', letterSpacing: 1, fontFamily: 'BarlowCondensed-SemiBold' },
   muscleChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   muscleChip: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
-  muscleChipText: { fontSize: 12, fontWeight: '600' },
-  descriptionText: { color: '#9ca3af', fontSize: 14, lineHeight: 22 },
+  muscleChipText: { fontSize: 12, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  descriptionText: { color: '#9ca3af', fontSize: 14, lineHeight: 22, fontFamily: 'DMSans-Regular' },
   instructionRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
   stepNumber: {
     width: 24, height: 24, borderRadius: 12,
-    backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#6C63FF',
+    backgroundColor: '#111D36', borderWidth: 1, borderColor: '#3B82F6',
     justifyContent: 'center', alignItems: 'center', flexShrink: 0, marginTop: 1,
   },
-  stepNumberText: { color: '#6C63FF', fontSize: 11, fontWeight: '700' },
-  instructionText: { color: '#d1d5db', fontSize: 14, lineHeight: 22, flex: 1 },
+  stepNumberText: { color: '#3B82F6', fontSize: 11, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  instructionText: { color: '#d1d5db', fontSize: 14, lineHeight: 22, flex: 1, fontFamily: 'DMSans-Regular' },
   errorBox: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     margin: 20, padding: 16, backgroundColor: '#1a0a0a',
     borderRadius: 12, borderWidth: 1, borderColor: '#ff4444',
   },
-  errorText: { color: '#ff6666', fontSize: 14, flex: 1 },
+  errorText: { color: '#ff6666', fontSize: 14, flex: 1, fontFamily: 'DMSans-Regular' },
 });

@@ -89,7 +89,7 @@ export function ExerciseSubstitutionSheet({
         {/* Content */}
         {isLoading ? (
           <View style={styles.centered}>
-            <ActivityIndicator color="#6C63FF" size="large" />
+            <ActivityIndicator color="#3B82F6" size="large" />
             <Text style={styles.loadingText}>Finding alternatives…</Text>
           </View>
         ) : error ? (
@@ -99,7 +99,7 @@ export function ExerciseSubstitutionSheet({
           </View>
         ) : alternatives.length === 0 ? (
           <View style={styles.centered}>
-            <Ionicons name="swap-horizontal-outline" size={36} color="#444" />
+            <Ionicons name="swap-horizontal-outline" size={36} color="#162540" />
             <Text style={styles.emptyText}>No alternatives found</Text>
             <Text style={styles.emptySubtext}>
               Try adding a different exercise manually
@@ -140,7 +140,7 @@ export function ExerciseSubstitutionSheet({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -148,16 +148,16 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   headerLeft: { flex: 1, marginRight: 12 },
-  title: { fontSize: 20, fontWeight: '700', color: '#fff' },
-  subtitle: { fontSize: 13, color: '#666', marginTop: 3 },
+  title: { fontSize: 20, fontWeight: '700', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
+  subtitle: { fontSize: 13, color: '#718FAF', marginTop: 3, fontFamily: 'DMSans-Regular' },
   closeBtn: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -168,36 +168,36 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 32,
   },
-  loadingText: { color: '#666', fontSize: 14, marginTop: 8 },
-  errorText: { color: '#ff4444', fontSize: 14, textAlign: 'center' },
-  emptyText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  emptySubtext: { color: '#555', fontSize: 13, textAlign: 'center' },
+  loadingText: { color: '#718FAF', fontSize: 14, marginTop: 8, fontFamily: 'DMSans-Regular' },
+  errorText: { color: '#ff4444', fontSize: 14, textAlign: 'center', fontFamily: 'DMSans-Regular' },
+  emptyText: { color: '#fff', fontSize: 16, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  emptySubtext: { color: '#4A6080', fontSize: 13, textAlign: 'center', fontFamily: 'DMSans-Regular' },
   list: { padding: 16, gap: 12 },
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   cardInfo: { flex: 1, marginRight: 12 },
-  cardName: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 8 },
+  cardName: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 8, fontFamily: 'DMSans-SemiBold' },
   badgeRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   badge: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  badgeEquipment: { backgroundColor: '#1a1a2e', borderWidth: 1, borderColor: '#2a2a50' },
-  badgeText: { color: '#aaa', fontSize: 11, fontWeight: '500' },
+  badgeEquipment: { backgroundColor: '#111D36', borderWidth: 1, borderColor: '#111D36' },
+  badgeText: { color: '#A8BDD4', fontSize: 11, fontWeight: '500', fontFamily: 'DMSans-Medium' },
   selectBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 9,
   },
-  selectBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  selectBtnText: { color: '#fff', fontSize: 13, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 });

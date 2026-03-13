@@ -32,7 +32,7 @@ function StrengthRow({ met, label }: { met: boolean; label: string }) {
       <Ionicons
         name={met ? 'checkmark-circle' : 'ellipse-outline'}
         size={14}
-        color={met ? '#6C63FF' : '#555'}
+        color={met ? '#3B82F6' : '#4A6080'}
         style={{ marginRight: 6 }}
       />
       <Text style={[strengthStyles.label, met && strengthStyles.labelMet]}>{label}</Text>
@@ -149,7 +149,7 @@ export default function RegisterScreen() {
         showsVerticalScrollIndicator={false}
       >
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#888" />
+          <Ionicons name="arrow-back" size={24} color="#718FAF" />
         </TouchableOpacity>
 
         <Text style={styles.title}>Create account</Text>
@@ -160,7 +160,7 @@ export default function RegisterScreen() {
         <TextInput
           style={styles.input}
           placeholder="you@example.com"
-          placeholderTextColor="#555"
+          placeholderTextColor="#4A6080"
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
@@ -176,7 +176,7 @@ export default function RegisterScreen() {
           ref={displayNameRef}
           style={styles.input}
           placeholder="John Doe"
-          placeholderTextColor="#555"
+          placeholderTextColor="#4A6080"
           autoCapitalize="words"
           value={displayName}
           onChangeText={setDisplayName}
@@ -190,7 +190,7 @@ export default function RegisterScreen() {
           ref={usernameRef}
           style={styles.input}
           placeholder="johndoe"
-          placeholderTextColor="#555"
+          placeholderTextColor="#4A6080"
           autoCapitalize="none"
           autoCorrect={false}
           value={username}
@@ -206,7 +206,7 @@ export default function RegisterScreen() {
             ref={passwordRef}
             style={styles.inputFlex}
             placeholder="••••••••"
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
@@ -215,7 +215,7 @@ export default function RegisterScreen() {
             autoComplete="new-password"
           />
           <TouchableOpacity onPress={() => setShowPassword((v) => !v)} style={styles.eyeButton}>
-            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#555" />
+            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -228,7 +228,7 @@ export default function RegisterScreen() {
             ref={confirmRef}
             style={styles.inputFlex}
             placeholder="••••••••"
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             secureTextEntry={!showConfirm}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -237,7 +237,7 @@ export default function RegisterScreen() {
             autoComplete="new-password"
           />
           <TouchableOpacity onPress={() => setShowConfirm((v) => !v)} style={styles.eyeButton}>
-            <Ionicons name={showConfirm ? 'eye-off' : 'eye'} size={20} color="#555" />
+            <Ionicons name={showConfirm ? 'eye-off' : 'eye'} size={20} color="#4A6080" />
           </TouchableOpacity>
         </View>
         {confirmPassword.length > 0 && password !== confirmPassword && (
@@ -293,41 +293,42 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
   backButton: { marginBottom: 32, width: 40 },
-  title: { fontSize: 32, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#888', marginBottom: 32 },
-  label: { fontSize: 13, fontWeight: '600', color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  title: { fontSize: 32, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 16, color: '#718FAF', marginBottom: 32, fontFamily: 'DMSans-Regular' },
+  label: { fontSize: 13, fontWeight: '600', color: '#718FAF', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'BarlowCondensed-SemiBold' },
   input: {
-    backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12,
+    backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
-    borderWidth: 1, borderColor: '#333', marginBottom: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
+    fontFamily: 'DMSans-Regular',
   },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12,
-    borderWidth: 1, borderColor: '#333', marginBottom: 8,
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 8,
   },
   inputFlex: {
     flex: 1, color: '#fff', paddingHorizontal: 16, paddingVertical: 14,
-    fontSize: 16,
+    fontSize: 16, fontFamily: 'DMSans-Regular',
   },
   eyeButton: { paddingHorizontal: 14, paddingVertical: 14 },
-  errorText: { color: '#FF6B6B', fontSize: 13, marginBottom: 12 },
+  errorText: { color: '#FF6B6B', fontSize: 13, marginBottom: 12, fontFamily: 'DMSans-Regular' },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center', marginTop: 24,
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#333' },
-  dividerText: { color: '#555', fontSize: 14, marginHorizontal: 12 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#162540' },
+  dividerText: { color: '#718FAF', fontSize: 14, marginHorizontal: 12, fontFamily: 'DMSans-Regular' },
   googleButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 14,
-    borderWidth: 1, borderColor: '#333', marginBottom: 4,
+    backgroundColor: '#0B1326', borderRadius: 12, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 4,
   },
   googleButtonDisabled: { opacity: 0.6 },
   googleIconCircle: {
@@ -335,24 +336,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center',
     marginRight: 10,
   },
-  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700' },
-  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600', fontFamily: 'DMSans-Medium' },
   loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
-  loginText: { color: '#888', fontSize: 15 },
-  loginLink: { color: '#6C63FF', fontSize: 15, fontWeight: '600' },
+  loginText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
+  loginLink: { color: '#3B82F6', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-Medium' },
 });
 
 const strengthStyles = StyleSheet.create({
   container: { marginBottom: 4 },
   bars: { flexDirection: 'row', gap: 4, marginBottom: 10 },
   segment: {
-    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#2a2a2a',
+    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#162540',
   },
-  segmentFilled: { backgroundColor: '#6C63FF' },
+  segmentFilled: { backgroundColor: '#3B82F6' },
   segmentWeak: { backgroundColor: '#FF6B6B' },
   segmentFair: { backgroundColor: '#FFB347' },
   segmentGood: { backgroundColor: '#51CF66' },
   row: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  label: { fontSize: 13, color: '#555' },
-  labelMet: { color: '#aaa' },
+  label: { fontSize: 13, color: '#4A6080', fontFamily: 'DMSans-Regular' },
+  labelMet: { color: '#A8BDD4', fontFamily: 'DMSans-Regular' },
 });

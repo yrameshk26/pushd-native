@@ -35,12 +35,12 @@ export default function ForgotPasswordScreen() {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/(auth)/login')}>
-          <Ionicons name="arrow-back" size={24} color="#888" />
+          <Ionicons name="arrow-back" size={24} color="#718FAF" />
         </TouchableOpacity>
 
         <View style={styles.inner}>
           <View style={styles.iconContainer}>
-            <Ionicons name="checkmark-circle" size={48} color="#6C63FF" />
+            <Ionicons name="checkmark-circle" size={48} color="#3B82F6" />
           </View>
           <Text style={styles.title}>Check your inbox</Text>
           <Text style={styles.subtitle}>
@@ -64,11 +64,11 @@ export default function ForgotPasswordScreen() {
     >
       <View style={styles.inner}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#888" />
+          <Ionicons name="arrow-back" size={24} color="#718FAF" />
         </TouchableOpacity>
 
         <View style={styles.iconContainer}>
-          <Ionicons name="lock-closed-outline" size={40} color="#6C63FF" />
+          <Ionicons name="lock-closed-outline" size={40} color="#3B82F6" />
         </View>
 
         <Text style={styles.title}>Forgot password?</Text>
@@ -80,7 +80,7 @@ export default function ForgotPasswordScreen() {
         <TextInput
           style={styles.input}
           placeholder="you@example.com"
-          placeholderTextColor="#555"
+          placeholderTextColor="#4A6080"
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
@@ -104,7 +104,7 @@ export default function ForgotPasswordScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.backLink} onPress={() => router.replace('/(auth)/login')}>
-          <Ionicons name="arrow-back" size={16} color="#888" style={{ marginRight: 4 }} />
+          <Ionicons name="arrow-back" size={16} color="#718FAF" style={{ marginRight: 4 }} />
           <Text style={styles.backLinkText}>Back to Login</Text>
         </TouchableOpacity>
       </View>
@@ -113,29 +113,30 @@ export default function ForgotPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
   backButton: { position: 'absolute', top: 60, left: 24, width: 40, zIndex: 10 },
   iconContainer: {
-    width: 72, height: 72, borderRadius: 20, backgroundColor: '#1a1a1a',
+    width: 72, height: 72, borderRadius: 20, backgroundColor: '#0B1326',
     alignItems: 'center', justifyContent: 'center', marginBottom: 24,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
-  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 15, color: '#888', marginBottom: 32, lineHeight: 22 },
-  emailHighlight: { color: '#fff', fontWeight: '600' },
-  label: { fontSize: 13, fontWeight: '600', color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 15, color: '#718FAF', marginBottom: 32, lineHeight: 22, fontFamily: 'DMSans-Regular' },
+  emailHighlight: { color: '#fff', fontWeight: '600', fontFamily: 'DMSans-Medium' },
+  label: { fontSize: 13, fontWeight: '600', color: '#718FAF', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'BarlowCondensed-SemiBold' },
   input: {
-    backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12,
+    backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
-    borderWidth: 1, borderColor: '#333', marginBottom: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
+    fontFamily: 'DMSans-Regular',
   },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   backLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24 },
-  backLinkText: { color: '#888', fontSize: 15 },
+  backLinkText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 });

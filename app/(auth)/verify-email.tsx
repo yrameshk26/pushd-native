@@ -96,11 +96,11 @@ export default function VerifyEmailScreen() {
     >
       <View style={styles.inner}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#888" />
+          <Ionicons name="arrow-back" size={24} color="#718FAF" />
         </TouchableOpacity>
 
         <View style={styles.iconContainer}>
-          <Ionicons name="mail-outline" size={40} color="#6C63FF" />
+          <Ionicons name="mail-outline" size={40} color="#3B82F6" />
         </View>
 
         <Text style={styles.title}>Verify your email</Text>
@@ -113,7 +113,7 @@ export default function VerifyEmailScreen() {
           ref={inputRef}
           style={styles.input}
           placeholder="000000"
-          placeholderTextColor="#444"
+          placeholderTextColor="#4A6080"
           keyboardType="number-pad"
           maxLength={6}
           value={code}
@@ -141,7 +141,7 @@ export default function VerifyEmailScreen() {
           ) : (
             <TouchableOpacity onPress={handleResend} disabled={resendLoading}>
               {resendLoading ? (
-                <ActivityIndicator color="#6C63FF" size="small" />
+                <ActivityIndicator color="#3B82F6" size="small" />
               ) : (
                 <Text style={styles.resendLink}>Resend</Text>
               )}
@@ -154,31 +154,32 @@ export default function VerifyEmailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
   backButton: { position: 'absolute', top: 60, left: 24, width: 40 },
   iconContainer: {
-    width: 72, height: 72, borderRadius: 20, backgroundColor: '#1a1a1a',
+    width: 72, height: 72, borderRadius: 20, backgroundColor: '#0B1326',
     alignItems: 'center', justifyContent: 'center', marginBottom: 24,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
-  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 15, color: '#888', marginBottom: 36, lineHeight: 22 },
-  emailHighlight: { color: '#fff', fontWeight: '600' },
+  title: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 15, color: '#718FAF', marginBottom: 36, lineHeight: 22, fontFamily: 'DMSans-Regular' },
+  emailHighlight: { color: '#fff', fontWeight: '600', fontFamily: 'DMSans-Medium' },
   input: {
-    backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12,
+    backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 16, fontSize: 36,
-    borderWidth: 1, borderColor: '#333', marginBottom: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
     textAlign: 'center', letterSpacing: 10,
+    fontFamily: 'DMSans-Regular',
   },
   button: {
-    backgroundColor: '#6C63FF', borderRadius: 12,
+    backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   resendRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 24, alignItems: 'center' },
-  resendText: { color: '#888', fontSize: 14 },
-  resendLink: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
-  cooldownText: { color: '#555', fontSize: 14, fontWeight: '600' },
+  resendText: { color: '#718FAF', fontSize: 14, fontFamily: 'DMSans-Regular' },
+  resendLink: { color: '#3B82F6', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-Medium' },
+  cooldownText: { color: '#4A6080', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-Medium' },
 });

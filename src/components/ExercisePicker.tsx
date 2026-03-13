@@ -66,18 +66,18 @@ export function ExercisePicker({ visible, onSelect, onClose }: Props) {
 
         {/* Search */}
         <View style={styles.searchRow}>
-          <Ionicons name="search" size={16} color="#666" />
+          <Ionicons name="search" size={16} color="#718FAF" />
           <TextInput
             style={styles.searchInput}
             placeholder="Search exercises..."
-            placeholderTextColor="#555"
+            placeholderTextColor="#4A6080"
             value={search}
             onChangeText={setSearch}
             autoFocus
           />
           {search.length > 0 && (
             <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={16} color="#555" />
+              <Ionicons name="close-circle" size={16} color="#4A6080" />
             </TouchableOpacity>
           )}
         </View>
@@ -172,7 +172,7 @@ export function ExercisePicker({ visible, onSelect, onClose }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0d1117',
+    backgroundColor: '#060C1B',
   },
   header: {
     flexDirection: 'row',
@@ -186,12 +186,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
     color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold',
   },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#161b22',
+    backgroundColor: '#111D36',
     marginHorizontal: 16,
     borderRadius: 10,
     paddingHorizontal: 12,
@@ -205,6 +206,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     padding: 0,
+    fontFamily: 'DMSans-Regular',
   },
   filterWrapper: {
     height: 52,
@@ -223,17 +225,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#30363d',
+    borderColor: '#162540',
     backgroundColor: 'transparent',
   },
   chipText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 13,
     fontWeight: '500',
+    fontFamily: 'DMSans-Medium',
   },
   chipTextActive: {
     color: '#fff',
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   listContent: {
     paddingHorizontal: 16,
@@ -245,13 +249,13 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#161b22',
+    borderBottomColor: '#111D36',
   },
   thumbnail: {
     width: 48,
     height: 48,
     borderRadius: 6,
-    backgroundColor: '#161b22',
+    backgroundColor: '#111D36',
   },
   thumbnailFallback: {
     width: 48,
@@ -263,6 +267,7 @@ const styles = StyleSheet.create({
   thumbnailFallbackText: {
     fontSize: 13,
     fontWeight: '700',
+    fontFamily: 'DMSans-Bold',
   },
   exerciseInfo: {
     flex: 1,
@@ -272,6 +277,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold',
   },
   exerciseMeta: {
     flexDirection: 'row',
@@ -287,16 +293,19 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.3,
+    fontFamily: 'BarlowCondensed-Bold',
   },
   equipmentText: {
-    color: '#888',
+    color: '#718FAF',
     fontSize: 12,
     textTransform: 'capitalize',
+    fontFamily: 'DMSans-Regular',
   },
   empty: {
-    color: '#555',
+    color: '#4A6080',
     textAlign: 'center',
     marginTop: 40,
     fontSize: 14,
+    fontFamily: 'DMSans-Regular',
   },
 });

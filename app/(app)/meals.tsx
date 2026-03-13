@@ -80,7 +80,7 @@ export default function MealsScreen() {
         ) : plans.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>
-              <Ionicons name="restaurant-outline" size={32} color="#666" />
+              <Ionicons name="restaurant-outline" size={32} color="#4A6080" />
             </View>
             <Text style={styles.emptyTitle}>No meal plans yet</Text>
             <Text style={styles.emptySub}>
@@ -151,73 +151,73 @@ export default function MealsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
   },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  heading: { fontSize: 28, fontWeight: '800', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
   headerActions: { flexDirection: 'row', gap: 8, alignItems: 'center' },
 
   outlineBtn: {
-    borderWidth: 1, borderColor: '#333', borderRadius: 10,
+    borderWidth: 1, borderColor: '#162540', borderRadius: 10,
     paddingHorizontal: 12, paddingVertical: 7,
   },
-  outlineBtnText: { color: '#ccc', fontSize: 13, fontWeight: '600' },
+  outlineBtnText: { color: '#A8BDD4', fontSize: 13, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
 
   primaryBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
     backgroundColor: '#3B82F6', borderRadius: 10,
     paddingHorizontal: 12, paddingVertical: 7,
   },
-  primaryBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  primaryBtnText: { color: '#fff', fontSize: 13, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 
   content: { paddingHorizontal: 20, paddingTop: 8 },
 
   center: { alignItems: 'center', paddingTop: 80, gap: 16 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
   retryBtn: { backgroundColor: '#3B82F6', borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10 },
-  retryText: { color: '#fff', fontWeight: '600' },
+  retryText: { color: '#fff', fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
 
   emptyState: { alignItems: 'center', paddingTop: 80, paddingBottom: 40, gap: 12 },
   emptyIconWrap: {
     width: 64, height: 64, borderRadius: 32,
-    backgroundColor: '#1a1a1a', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#0B1326', alignItems: 'center', justifyContent: 'center',
   },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#fff' },
-  emptySub: { fontSize: 13, color: '#666', textAlign: 'center', paddingHorizontal: 32, lineHeight: 18 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
+  emptySub: { fontSize: 13, color: '#718FAF', textAlign: 'center', paddingHorizontal: 32, lineHeight: 18, fontFamily: 'DMSans-Regular' },
   createBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     backgroundColor: '#3B82F6', borderRadius: 12, paddingHorizontal: 20, paddingVertical: 12, marginTop: 4,
   },
-  createBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  createBtnText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 
   planCard: {
-    backgroundColor: '#1a1a1a', borderRadius: 16, marginBottom: 12,
-    borderWidth: 1, borderColor: '#2a2a2a', overflow: 'hidden',
+    backgroundColor: '#0B1326', borderRadius: 16, marginBottom: 12,
+    borderWidth: 1, borderColor: '#162540', overflow: 'hidden',
   },
   planCardBody: {
     flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between',
     padding: 16, gap: 12,
   },
   planCardLeft: { flex: 1, minWidth: 0 },
-  planName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 8 },
+  planName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 8, fontFamily: 'DMSans-Bold' },
   planMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   goalBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
-  goalText: { fontSize: 11, fontWeight: '600' },
-  planDays: { fontSize: 11, color: '#666' },
+  goalText: { fontSize: 11, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  planDays: { fontSize: 11, color: '#718FAF', fontFamily: 'DMSans-Regular' },
 
   planCardRight: { alignItems: 'flex-end', gap: 4, flexShrink: 0 },
   calorieRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  calorieValue: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  calorieUnit: { color: '#666', fontSize: 11 },
-  planDate: { color: '#666', fontSize: 11 },
+  calorieValue: { color: '#fff', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  calorieUnit: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular' },
+  planDate: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular' },
 
   groceryRow: {
     paddingHorizontal: 16, paddingBottom: 12, paddingTop: 8,
     borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)',
   },
   groceryLink: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  groceryText: { fontSize: 12, color: '#60a5fa', fontWeight: '600' },
+  groceryText: { fontSize: 12, color: '#60a5fa', fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
 });

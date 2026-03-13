@@ -100,15 +100,15 @@ export default function ProgressScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#6C63FF"
-            colors={['#6C63FF']}
+            tintColor="#3B82F6"
+            colors={['#3B82F6']}
           />
         }
       >
         <Text style={styles.heading}>Progress</Text>
 
         {isLoading ? (
-          <ActivityIndicator color="#6C63FF" style={{ marginTop: 40 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginTop: 40 }} />
         ) : (
           <>
             {/* Stats Grid: Total Workouts, Total Volume, PRs This Month, Current Streak */}
@@ -117,7 +117,7 @@ export default function ProgressScreen() {
                 value={summary?.totalWorkouts ?? 0}
                 label="Total Workouts"
                 icon="barbell-outline"
-                color="#6C63FF"
+                color="#3B82F6"
               />
               <StatCard
                 value={formatVolume(summary?.totalVolume ?? 0)}
@@ -147,7 +147,7 @@ export default function ProgressScreen() {
               >
                 <Ionicons name="body-outline" size={22} color="#10B981" />
                 <Text style={styles.quickLinkText}>Body Weight</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+                <Ionicons name="chevron-forward" size={16} color="#718FAF" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -156,30 +156,30 @@ export default function ProgressScreen() {
               >
                 <Ionicons name="stats-chart-outline" size={22} color="#F59E0B" />
                 <Text style={styles.quickLinkText}>Strength Standards</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+                <Ionicons name="chevron-forward" size={16} color="#718FAF" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.quickLink}
                 onPress={() => router.push('/(screens)/progress/achievements')}
               >
-                <Ionicons name="medal-outline" size={22} color="#6C63FF" />
+                <Ionicons name="medal-outline" size={22} color="#3B82F6" />
                 <Text style={styles.quickLinkText}>Achievements</Text>
                 {(summary?.achievementCount ?? 0) > 0 && (
                   <View style={styles.countBadge}>
                     <Text style={styles.countBadgeText}>{summary?.achievementCount}</Text>
                   </View>
                 )}
-                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+                <Ionicons name="chevron-forward" size={16} color="#718FAF" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.quickLink}
                 onPress={() => router.push('/(screens)/progress/volume')}
               >
-                <Ionicons name="bar-chart-outline" size={22} color="#6C63FF" />
+                <Ionicons name="bar-chart-outline" size={22} color="#3B82F6" />
                 <Text style={styles.quickLinkText}>Volume Trends</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+                <Ionicons name="chevron-forward" size={16} color="#718FAF" style={styles.chevron} />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -188,7 +188,7 @@ export default function ProgressScreen() {
               >
                 <Ionicons name="document-text-outline" size={22} color="#A78BFA" />
                 <Text style={styles.quickLinkText}>Weekly Summary</Text>
-                <Ionicons name="chevron-forward" size={16} color="#555" style={styles.chevron} />
+                <Ionicons name="chevron-forward" size={16} color="#718FAF" style={styles.chevron} />
               </TouchableOpacity>
             </View>
 
@@ -197,7 +197,7 @@ export default function ProgressScreen() {
               <Text style={styles.sectionTitle}>Muscle Activity This Week</Text>
               <View style={styles.heatmapCard}>
                 {heatmapLoading ? (
-                  <ActivityIndicator color="#6C63FF" style={{ paddingVertical: 24 }} />
+                  <ActivityIndicator color="#3B82F6" style={{ paddingVertical: 24 }} />
                 ) : (
                   <MuscleHeatmap muscleData={heatmapData ?? {}} />
                 )}
@@ -227,7 +227,7 @@ export default function ProgressScreen() {
                     </View>
                     <View style={styles.prRight}>
                       <Text style={styles.prDate}>{formatDate(pr.achievedAt)}</Text>
-                      <Ionicons name="chevron-forward" size={14} color="#555" />
+                      <Ionicons name="chevron-forward" size={14} color="#718FAF" />
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -251,7 +251,7 @@ export default function ProgressScreen() {
                       {ex.exerciseName}
                     </Text>
                     <Text style={styles.exerciseCount}>{ex.sessionCount} sessions</Text>
-                    <Ionicons name="chevron-forward" size={16} color="#555" />
+                    <Ionicons name="chevron-forward" size={16} color="#718FAF" />
                   </TouchableOpacity>
                 ))}
               </View>
@@ -264,17 +264,17 @@ export default function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   content: { padding: 20, paddingBottom: 40 },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff', marginBottom: 20 },
+  heading: { fontSize: 28, fontFamily: 'BarlowCondensed-Bold', color: '#fff', marginBottom: 20 },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
 
   quickLinksRow: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     marginBottom: 24,
     overflow: 'hidden',
   },
@@ -285,13 +285,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   quickLinkLast: { borderBottomWidth: 0 },
-  quickLinkText: { color: '#fff', fontSize: 15, fontWeight: '500', flex: 1 },
+  quickLinkText: { color: '#fff', fontSize: 15, fontFamily: 'DMSans-Medium', flex: 1 },
   chevron: { marginLeft: 'auto' },
   countBadge: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -299,66 +299,66 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 5,
   },
-  countBadgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  countBadgeText: { color: '#fff', fontSize: 11, fontFamily: 'DMSans-Bold' },
 
   section: { marginBottom: 24 },
   sectionTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
   },
 
   heatmapCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
 
   prRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   prLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 10 },
   prTextWrap: { flex: 1 },
   prRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  prName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  prMeta: { color: '#888', fontSize: 12, marginTop: 2 },
-  prDate: { color: '#555', fontSize: 12 },
+  prName: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
+  prMeta: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
+  prDate: { color: '#4A6080', fontSize: 12, fontFamily: 'DMSans-Regular' },
 
   exerciseRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 10,
   },
   rankBadge: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#162540',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rankText: { color: '#888', fontSize: 13, fontWeight: '700' },
-  exerciseName: { color: '#fff', fontSize: 14, fontWeight: '600', flex: 1 },
-  exerciseCount: { color: '#6C63FF', fontSize: 13, fontWeight: '500' },
+  rankText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Bold' },
+  exerciseName: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold', flex: 1 },
+  exerciseCount: { color: '#3B82F6', fontSize: 13, fontFamily: 'DMSans-Medium' },
 });

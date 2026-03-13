@@ -73,7 +73,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="you@example.com"
-          placeholderTextColor="#666"
+          placeholderTextColor="#4A6080"
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
@@ -85,7 +85,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password"
-          placeholderTextColor="#666"
+          placeholderTextColor="#4A6080"
           secureTextEntry
           autoCapitalize="none"
           autoComplete="password"
@@ -146,32 +146,33 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   inner: { flex: 1, justifyContent: 'center', paddingHorizontal: 32 },
-  title: { fontSize: 40, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#888', marginBottom: 32 },
+  title: { fontSize: 40, fontWeight: '800', color: '#fff', marginBottom: 8, fontFamily: 'BarlowCondensed-ExtraBold' },
+  subtitle: { fontSize: 16, color: '#718FAF', marginBottom: 32, fontFamily: 'DMSans-Regular' },
   successBanner: {
     backgroundColor: 'rgba(81,207,102,0.12)', borderRadius: 10,
     padding: 14, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(81,207,102,0.3)',
   },
-  successText: { color: '#51CF66', fontSize: 14, fontWeight: '500' },
+  successText: { color: '#51CF66', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
   input: {
-    backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12,
+    backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
-    borderWidth: 1, borderColor: '#333', marginBottom: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
+    fontFamily: 'DMSans-Regular',
   },
   button: {
     backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
   },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#333' },
-  dividerText: { color: '#555', fontSize: 14, marginHorizontal: 12 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#162540' },
+  dividerText: { color: '#718FAF', fontSize: 14, marginHorizontal: 12, fontFamily: 'DMSans-Regular' },
   googleButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12, paddingVertical: 14,
-    borderWidth: 1, borderColor: '#333', marginBottom: 4,
+    backgroundColor: '#0B1326', borderRadius: 12, paddingVertical: 14,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 4,
   },
   googleButtonDisabled: { opacity: 0.6 },
   googleIconCircle: {
@@ -179,11 +180,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center',
     marginRight: 10,
   },
-  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700' },
-  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600', fontFamily: 'DMSans-Medium' },
   forgotButton: { alignItems: 'center', marginTop: 20 },
-  forgotText: { color: '#888', fontSize: 15 },
+  forgotText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
   registerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 16 },
-  registerText: { color: '#888', fontSize: 15 },
-  registerLink: { color: '#3B82F6', fontSize: 15, fontWeight: '600' },
+  registerText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
+  registerLink: { color: '#3B82F6', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-Medium' },
 });

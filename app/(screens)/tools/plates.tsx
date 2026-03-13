@@ -36,7 +36,7 @@ export default function PlateCalculator() {
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.label}>Target Weight (kg)</Text>
-        <TextInput style={styles.input} keyboardType="numeric" placeholder="100" placeholderTextColor="#444" value={target} onChangeText={setTarget} />
+        <TextInput style={styles.input} keyboardType="numeric" placeholder="100" placeholderTextColor="#4A6080" value={target} onChangeText={setTarget} />
         <Text style={styles.barNote}>Barbell: {BAR_WEIGHT}kg</Text>
 
         {valid && plates.length > 0 && (
@@ -44,7 +44,7 @@ export default function PlateCalculator() {
             <Text style={styles.sectionTitle}>Plates per side</Text>
             {plates.map(({ weight, count }) => (
               <View key={weight} style={styles.plateRow}>
-                <View style={[styles.plateColor, { backgroundColor: PLATE_COLORS[weight] ?? '#888' }]} />
+                <View style={[styles.plateColor, { backgroundColor: PLATE_COLORS[weight] ?? '#718FAF' }]} />
                 <Text style={styles.plateWeight}>{weight}kg</Text>
                 <Text style={styles.plateCount}>× {count}</Text>
                 <Text style={styles.plateTotal}>{(weight * count).toFixed(2)}kg</Text>
@@ -58,13 +58,13 @@ export default function PlateCalculator() {
               <View style={styles.barShaft} />
               {[...plates].reverse().map(({ weight, count }) =>
                 Array.from({ length: count }).map((_, i) => (
-                  <View key={`${weight}-${i}`} style={[styles.plateVisual, { backgroundColor: PLATE_COLORS[weight] ?? '#888', height: 20 + weight * 1.5 }]} />
+                  <View key={`${weight}-${i}`} style={[styles.plateVisual, { backgroundColor: PLATE_COLORS[weight] ?? '#718FAF', height: 20 + weight * 1.5 }]} />
                 ))
               )}
               <View style={styles.barCenter}><Text style={styles.barCenterText}>{target}kg</Text></View>
               {plates.map(({ weight, count }) =>
                 Array.from({ length: count }).map((_, i) => (
-                  <View key={`${weight}-${i}-r`} style={[styles.plateVisual, { backgroundColor: PLATE_COLORS[weight] ?? '#888', height: 20 + weight * 1.5 }]} />
+                  <View key={`${weight}-${i}-r`} style={[styles.plateVisual, { backgroundColor: PLATE_COLORS[weight] ?? '#718FAF', height: 20 + weight * 1.5 }]} />
                 ))
               )}
               <View style={styles.barShaft} />
@@ -80,25 +80,28 @@ export default function PlateCalculator() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   content: { padding: 20 },
-  label: { color: '#888', fontSize: 13, marginBottom: 8 },
-  input: { backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12, padding: 16, fontSize: 28, fontWeight: '700', borderWidth: 1, borderColor: '#2a2a2a', textAlign: 'center', marginBottom: 8 },
-  barNote: { color: '#666', fontSize: 12, textAlign: 'center', marginBottom: 24 },
-  sectionTitle: { color: '#888', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 },
-  plateRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', borderRadius: 10, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: '#2a2a2a', gap: 12 },
+  label: { color: '#718FAF', fontSize: 13, marginBottom: 8 },
+  input: { backgroundColor: '#0B1326', color: '#fff', borderRadius: 12, padding: 16, fontSize: 28, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', borderWidth: 1, borderColor: '#162540', textAlign: 'center', marginBottom: 8 },
+  barNote: { color: '#718FAF', fontSize: 12, textAlign: 'center', marginBottom: 24 },
+  sectionTitle: { color: '#718FAF', fontSize: 12, fontWeight: '700', textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold', letterSpacing: 1, marginBottom: 12 },
+  plateRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0B1326', borderRadius: 10, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: '#162540', gap: 12 },
   plateColor: { width: 12, height: 32, borderRadius: 4 },
   plateWeight: { color: '#fff', fontWeight: '700', fontSize: 16, flex: 1 },
-  plateCount: { color: '#888', fontSize: 15 },
-  plateTotal: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
-  barVisual: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', borderRadius: 14, padding: 16, overflow: 'hidden' },
-  barEnd: { width: 12, height: 40, backgroundColor: '#666', borderRadius: 4 },
-  barShaft: { width: 30, height: 8, backgroundColor: '#444' },
+  plateCount: { color: '#718FAF', fontSize: 15 },
+  plateTotal: { color: '#3B82F6', fontWeight: '600', fontSize: 14 },
+  barVisual: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0B1326', borderRadius: 14, padding: 16, overflow: 'hidden' },
+  barEnd: { width: 12, height: 40, backgroundColor: '#718FAF', borderRadius: 4 },
+  barShaft: { width: 30, height: 8, backgroundColor: '#4A6080' },
   plateVisual: { width: 14, borderRadius: 3, marginHorizontal: 1 },
   barCenter: { flex: 1, alignItems: 'center' },
   barCenterText: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  empty: { color: '#666', textAlign: 'center', marginTop: 20, fontSize: 15 },
+  empty: { color: '#718FAF', textAlign: 'center', marginTop: 20, fontSize: 15 },
   error: { color: '#ef4444', textAlign: 'center', marginTop: 20 },
 });

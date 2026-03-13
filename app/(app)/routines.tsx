@@ -53,7 +53,7 @@ function AIPlannerCard() {
         <Text style={styles.ctaTitle}>AI Workout Planner</Text>
         <Text style={styles.ctaSubtitle}>Get a personalised plan built just for you</Text>
       </View>
-      <Ionicons name="chevron-forward" size={16} color="#888" />
+      <Ionicons name="chevron-forward" size={16} color="#718FAF" />
     </TouchableOpacity>
   );
 }
@@ -72,7 +72,7 @@ function ProgramsCard() {
         <Text style={styles.ctaTitle}>Browse Programs</Text>
         <Text style={styles.ctaSubtitle}>Pre-built Push, Pull, Legs, Full Body & more</Text>
       </View>
-      <Ionicons name="chevron-forward" size={16} color="#888" />
+      <Ionicons name="chevron-forward" size={16} color="#718FAF" />
     </TouchableOpacity>
   );
 }
@@ -91,7 +91,7 @@ function RoutineCard({ routine }: RoutineCardProps) {
       <View style={styles.routineCardLeft}>
         <Text style={styles.routineName} numberOfLines={1}>{routine.name}</Text>
         <View style={styles.routineMeta}>
-          <Ionicons name="barbell-outline" size={13} color="#6C63FF" />
+          <Ionicons name="barbell-outline" size={13} color="#3B82F6" />
           <Text style={styles.routineMetaText}>
             {routine._count.exercises} exercise{routine._count.exercises !== 1 ? 's' : ''}
           </Text>
@@ -102,7 +102,7 @@ function RoutineCard({ routine }: RoutineCardProps) {
           <Text style={styles.routineDesc} numberOfLines={1}>{routine.description}</Text>
         ) : null}
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#444" />
+      <Ionicons name="chevron-forward" size={18} color="#4A6080" />
     </TouchableOpacity>
   );
 }
@@ -124,7 +124,7 @@ export default function RoutinesScreen() {
 
   const EmptyComponent = (
     <View style={styles.emptyState}>
-      <Ionicons name="book-outline" size={56} color="#2a2a2a" />
+      <Ionicons name="book-outline" size={56} color="#162540" />
       <Text style={styles.emptyTitle}>No routines yet</Text>
       <Text style={styles.emptySubtitle}>Create your first routine or use the AI Planner</Text>
       <TouchableOpacity
@@ -157,7 +157,7 @@ export default function RoutinesScreen() {
 
       {isLoading ? (
         <View style={styles.centeredState}>
-          <ActivityIndicator color="#6C63FF" size="large" />
+          <ActivityIndicator color="#3B82F6" size="large" />
         </View>
       ) : isError ? (
         <View style={styles.centeredState}>
@@ -184,7 +184,7 @@ export default function RoutinesScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   // Header
   header: {
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
   },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  heading: { fontSize: 28, fontWeight: '800', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
   createBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     width: 36,
     height: 36,
@@ -214,16 +214,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#1a0f3a',
+    backgroundColor: '#111D36',
     borderWidth: 1,
-    borderColor: '#5B52CC44',
+    borderColor: '#3B82F644',
     borderRadius: 14,
     padding: 16,
     marginBottom: 10,
     marginTop: 10,
   },
   ctaCardBlue: {
-    backgroundColor: '#0f1f3a',
+    backgroundColor: '#111D36',
     borderColor: '#3B82F644',
     marginTop: 0,
   },
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -246,60 +246,61 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   ctaBody: { flex: 1 },
-  ctaTitle: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2 },
-  ctaSubtitle: { color: '#888', fontSize: 12 },
+  ctaTitle: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2, fontFamily: 'DMSans-SemiBold' },
+  ctaSubtitle: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular' },
 
   // Section label
   sectionLabel: {
-    color: '#555',
+    color: '#718FAF',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1,
     marginTop: 16,
     marginBottom: 10,
+    fontFamily: 'BarlowCondensed-SemiBold',
   },
 
   // Routine card
   routineCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 16,
     marginBottom: 10,
   },
   routineCardLeft: { flex: 1, marginRight: 8 },
-  routineName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 6 },
+  routineName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 6, fontFamily: 'DMSans-Bold' },
   routineMeta: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 4 },
-  routineMetaText: { color: '#666', fontSize: 12 },
-  routineMetaDot: { color: '#444', fontSize: 12 },
-  routineDesc: { color: '#555', fontSize: 12, marginTop: 2 },
+  routineMetaText: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular' },
+  routineMetaDot: { color: '#4A6080', fontSize: 12, fontFamily: 'DMSans-Regular' },
+  routineDesc: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
 
   // Empty state
   emptyState: { alignItems: 'center', paddingTop: 48, gap: 10 },
-  emptyTitle: { color: '#888', fontSize: 17, fontWeight: '700' },
-  emptySubtitle: { color: '#555', fontSize: 13, textAlign: 'center', maxWidth: 260 },
+  emptyTitle: { color: '#718FAF', fontSize: 17, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
+  emptySubtitle: { color: '#718FAF', fontSize: 13, textAlign: 'center', maxWidth: 260, fontFamily: 'DMSans-Regular' },
   emptyCreateBtn: {
     marginTop: 12,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingHorizontal: 24,
     paddingVertical: 12,
   },
-  emptyCreateText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  emptyCreateText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 
   // States
   centeredState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600' },
+  errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
   retryBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#3B82F6', fontWeight: '600', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 });

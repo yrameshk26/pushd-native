@@ -35,7 +35,7 @@ interface GoalField {
 }
 
 const GOAL_FIELDS: GoalField[] = [
-  { key: 'calories', label: 'Daily Calories', unit: 'kcal', color: '#6C63FF', hint: 'Recommended: 1800–2500 kcal for most adults' },
+  { key: 'calories', label: 'Daily Calories', unit: 'kcal', color: '#3B82F6', hint: 'Recommended: 1800–2500 kcal for most adults' },
   { key: 'protein', label: 'Protein', unit: 'g', color: '#3B82F6', hint: '0.7–1g per lb of bodyweight is a common target' },
   { key: 'carbs', label: 'Carbohydrates', unit: 'g', color: '#F97316', hint: '45–65% of total calories from carbs' },
   { key: 'fat', label: 'Fat', unit: 'g', color: '#EAB308', hint: '20–35% of total calories from fat' },
@@ -105,7 +105,7 @@ export default function NutritionGoalsScreen() {
   if (goalsQuery.isLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       </SafeAreaView>
     );
   }
@@ -132,7 +132,7 @@ export default function NutritionGoalsScreen() {
         >
           {/* Info Banner */}
           <View style={styles.infoBanner}>
-            <Ionicons name="information-circle-outline" size={18} color="#6C63FF" />
+            <Ionicons name="information-circle-outline" size={18} color="#3B82F6" />
             <Text style={styles.infoText}>
               Set your daily targets. These goals are used to calculate your progress bars and remaining intake.
             </Text>
@@ -161,7 +161,7 @@ export default function NutritionGoalsScreen() {
           {/* Macro Calculator Info */}
           <View style={styles.calcCard}>
             <View style={styles.calcHeader}>
-              <Ionicons name="calculator-outline" size={18} color="#6C63FF" />
+              <Ionicons name="calculator-outline" size={18} color="#3B82F6" />
               <Text style={styles.calcTitle}>Macro Split Guide</Text>
             </View>
             <Text style={styles.calcText}>
@@ -211,7 +211,7 @@ export default function NutritionGoalsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -220,27 +220,28 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   content: { paddingHorizontal: 20, paddingTop: 8 },
   infoBanner: {
     flexDirection: 'row',
     gap: 10,
-    backgroundColor: '#6C63FF15',
+    backgroundColor: '#3B82F615',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#6C63FF33',
+    borderColor: '#3B82F633',
     marginBottom: 20,
     alignItems: 'flex-start',
   },
-  infoText: { flex: 1, color: '#999', fontSize: 13, lineHeight: 18 },
+  infoText: { flex: 1, color: '#718FAF', fontSize: 13, lineHeight: 18 },
   fieldCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   fieldHeader: {
     flexDirection: 'row',
@@ -249,42 +250,46 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   fieldDot: { width: 10, height: 10, borderRadius: 5 },
-  fieldLabel: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600' },
-  fieldUnit: { color: '#555', fontSize: 13 },
+  fieldLabel: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  fieldUnit: { color: '#718FAF', fontSize: 13 },
   fieldInput: {
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#060C1B',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     color: '#fff',
     fontSize: 22,
     fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold',
     borderWidth: 1,
     marginBottom: 8,
     textAlign: 'center',
   },
-  fieldHint: { color: '#555', fontSize: 12 },
+  fieldHint: { color: '#718FAF', fontSize: 12 },
   calcCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   calcHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  calcTitle: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  calcText: { color: '#666', fontSize: 13, marginBottom: 12 },
+  calcTitle: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  calcText: { color: '#718FAF', fontSize: 13, marginBottom: 12 },
   calcRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6 },
-  calcLabel: { flex: 1, color: '#888', fontSize: 14 },
+  calcLabel: { flex: 1, color: '#718FAF', fontSize: 14 },
   calcValue: { fontSize: 16, fontWeight: '700', marginRight: 6 },
-  calcPct: { color: '#555', fontSize: 12 },
+  calcPct: { color: '#718FAF', fontSize: 12 },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });

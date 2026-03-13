@@ -133,9 +133,9 @@ function StepDots({ current, total }: { current: number; total: number }) {
 
 const dotStyles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#2a2a2a' },
-  dotActive: { width: 26, backgroundColor: '#6C63FF' },
-  dotPast: { backgroundColor: '#6C63FF', opacity: 0.4 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#162540' },
+  dotActive: { width: 26, backgroundColor: '#3B82F6' },
+  dotPast: { backgroundColor: '#3B82F6', opacity: 0.4 },
 });
 
 // ─── Step 1: Goal + Duration ───────────────────────────────────────────────
@@ -161,13 +161,13 @@ function Step1({
               activeOpacity={0.7}
             >
               <View style={[stepStyles.iconWrap, selected && stepStyles.iconWrapSelected]}>
-                <Ionicons name={icon as any} size={20} color={selected ? '#6C63FF' : '#666'} />
+                <Ionicons name={icon as any} size={20} color={selected ? '#3B82F6' : '#718FAF'} />
               </View>
               <View style={stepStyles.optionInfo}>
                 <Text style={stepStyles.optionLabel}>{label}</Text>
                 <Text style={stepStyles.optionDesc}>{desc}</Text>
               </View>
-              {selected && <Ionicons name="checkmark-circle" size={20} color="#6C63FF" />}
+              {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
             </TouchableOpacity>
           );
         })}
@@ -308,18 +308,18 @@ const equipStyles = StyleSheet.create({
     paddingVertical: 13,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
-    backgroundColor: '#1a1a1a',
+    borderColor: '#162540',
+    backgroundColor: '#0B1326',
     minWidth: '45%',
     flex: 1,
   },
-  chipSelected: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
+  chipSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
   checkbox: {
     width: 18, height: 18, borderRadius: 4, borderWidth: 1,
-    borderColor: '#444', alignItems: 'center', justifyContent: 'center',
+    borderColor: '#4A6080', alignItems: 'center', justifyContent: 'center',
   },
-  checkboxSelected: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  chipText: { color: '#888', fontSize: 14, fontWeight: '600' },
+  checkboxSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
 });
 
@@ -342,7 +342,7 @@ function Step4({
         value={form.notes}
         onChangeText={(t) => update({ notes: t })}
         placeholder="e.g. Focus on upper body. Avoid heavy squats due to knee. Love Romanian deadlifts."
-        placeholderTextColor="#444"
+        placeholderTextColor="#4A6080"
         multiline
         numberOfLines={6}
         textAlignVertical="top"
@@ -356,9 +356,9 @@ function Step4({
 
 const notesStyles = StyleSheet.create({
   textarea: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderRadius: 12,
     padding: 14,
     color: '#fff',
@@ -367,8 +367,8 @@ const notesStyles = StyleSheet.create({
     minHeight: 140,
     marginTop: 16,
   },
-  charCount: { color: '#444', fontSize: 12, textAlign: 'right', marginTop: 6 },
-  hint: { color: '#444', fontSize: 13, marginTop: 8 },
+  charCount: { color: '#4A6080', fontSize: 12, textAlign: 'right', marginTop: 6 },
+  hint: { color: '#4A6080', fontSize: 13, marginTop: 8 },
 });
 
 // ─── Generating screen ─────────────────────────────────────────────────────
@@ -397,7 +397,7 @@ function GeneratingScreen({ tip }: { tip: string }) {
         <View style={genStyles.pulseOuter} />
         <View style={genStyles.pulseInner}>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="sparkles" size={28} color="#6C63FF" />
+            <Ionicons name="sparkles" size={28} color="#3B82F6" />
           </Animated.View>
         </View>
       </View>
@@ -414,16 +414,17 @@ const genStyles = StyleSheet.create({
   pulseOuter: {
     position: 'absolute',
     width: 80, height: 80, borderRadius: 40,
-    backgroundColor: 'rgba(108,99,255,0.12)',
+    backgroundColor: 'rgba(59, 130, 246,0.12)',
   },
   pulseInner: {
     width: 60, height: 60, borderRadius: 30,
-    backgroundColor: 'rgba(108,99,255,0.2)',
+    backgroundColor: 'rgba(59, 130, 246,0.2)',
     alignItems: 'center', justifyContent: 'center',
   },
-  title: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 10, textAlign: 'center' },
-  tip: { color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 8, lineHeight: 22 },
-  hint: { color: '#444', fontSize: 13, textAlign: 'center' },
+  title: { color: '#fff', fontSize: 20, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', marginBottom: 10, textAlign: 'center' },
+  tip: { color: '#718FAF', fontSize: 15, textAlign: 'center', marginBottom: 8, lineHeight: 22 },
+  hint: { color: '#4A6080', fontSize: 13, textAlign: 'center' },
 });
 
 // ─── Success screen ────────────────────────────────────────────────────────
@@ -480,70 +481,74 @@ function SuccessScreen({ result }: { result: GenerateResult }) {
 const successStyles = StyleSheet.create({
   container: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40, alignItems: 'center' },
   iconWrap: { marginBottom: 16 },
-  programName: { color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center', marginBottom: 8 },
-  programDesc: { color: '#888', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 20 },
+  programName: { color: '#fff', fontSize: 22, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center', marginBottom: 8 },
+  programDesc: { color: '#718FAF', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 20 },
   scheduleCard: {
-    width: '100%', backgroundColor: '#1a1a1a', borderRadius: 14,
-    borderWidth: 1, borderColor: '#2a2a2a', padding: 16, marginBottom: 20,
+    width: '100%', backgroundColor: '#0B1326', borderRadius: 14,
+    borderWidth: 1, borderColor: '#162540', padding: 16, marginBottom: 20,
   },
-  scheduleTitle: { color: '#888', fontSize: 11, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 },
+  scheduleTitle: { color: '#718FAF', fontSize: 11, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 },
   scheduleRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#2a2a2a',
+    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#162540',
   },
-  scheduleDay: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  scheduleDay: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   routineNum: {
     width: 24, height: 24, borderRadius: 12,
-    backgroundColor: 'rgba(108,99,255,0.2)', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(59, 130, 246,0.2)', alignItems: 'center', justifyContent: 'center',
   },
-  routineNumText: { color: '#6C63FF', fontSize: 12, fontWeight: '700' },
+  routineNumText: { color: '#3B82F6', fontSize: 12, fontWeight: '700' },
   saveBtn: {
-    width: '100%', backgroundColor: '#6C63FF', borderRadius: 14,
+    width: '100%', backgroundColor: '#3B82F6', borderRadius: 14,
     paddingVertical: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     marginBottom: 12,
   },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   secondaryBtn: { paddingVertical: 12 },
-  secondaryBtnText: { color: '#666', fontSize: 14, textDecorationLine: 'underline' },
+  secondaryBtnText: { color: '#718FAF', fontSize: 14, textDecorationLine: 'underline' },
 });
 
 // ─── Shared step styles ────────────────────────────────────────────────────
 
 const stepStyles = StyleSheet.create({
-  sectionLabel: { color: '#888', fontSize: 12, fontWeight: '700', letterSpacing: 0.6, marginBottom: 10 },
+  sectionLabel: { color: '#718FAF', fontSize: 12, fontWeight: '700', letterSpacing: 0.6, marginBottom: 10 },
   gap10: { gap: 10 },
   optionRow: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     padding: 16, borderRadius: 14, borderWidth: 1,
-    borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
+    borderColor: '#162540', backgroundColor: '#0B1326',
   },
-  optionRowSelected: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
+  optionRowSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
   iconWrap: {
     width: 40, height: 40, borderRadius: 10,
-    backgroundColor: '#2a2a2a', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#162540', alignItems: 'center', justifyContent: 'center',
   },
-  iconWrapSelected: { backgroundColor: 'rgba(108,99,255,0.2)' },
+  iconWrapSelected: { backgroundColor: 'rgba(59, 130, 246,0.2)' },
   optionInfo: { flex: 1 },
-  optionLabel: { color: '#888', fontSize: 15, fontWeight: '700', marginBottom: 2 },
+  optionLabel: { color: '#718FAF', fontSize: 15, fontWeight: '700', marginBottom: 2 },
   optionLabelSelected: { color: '#fff' },
-  optionDesc: { color: '#666', fontSize: 13, lineHeight: 19 },
+  optionDesc: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
   optionCard: {
     flexDirection: 'row', alignItems: 'center',
     padding: 16, borderRadius: 14, borderWidth: 1,
-    borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
+    borderColor: '#162540', backgroundColor: '#0B1326',
   },
   optionCardSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
   optionLeft: { flex: 1 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: {
     paddingHorizontal: 18, paddingVertical: 12, borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
+    borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326',
   },
-  chipSelected: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.12)' },
-  chipText: { color: '#888', fontSize: 14, fontWeight: '600' },
+  chipSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
+  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
   chipTextSelected: { color: '#fff' },
   selectAllBtn: { alignSelf: 'flex-start' },
-  selectAllText: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
+  selectAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
 });
 
 // ─── Main screen ──────────────────────────────────────────────────────────
@@ -685,7 +690,7 @@ export default function GenerateProgramScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Ionicons name="sparkles" size={16} color="#6C63FF" />
+          <Ionicons name="sparkles" size={16} color="#3B82F6" />
           <Text style={styles.headerTitle}>Build with AI</Text>
         </View>
         <Text style={styles.stepCount}>{step + 1}/{TOTAL_STEPS}</Text>
@@ -738,7 +743,7 @@ export default function GenerateProgramScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -747,26 +752,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700' },
-  stepCount: { color: '#555', fontSize: 13, width: 40, textAlign: 'right' },
+  stepCount: { color: '#718FAF', fontSize: 13, width: 40, textAlign: 'right' },
 
   formContent: { flex: 1, paddingHorizontal: 20, paddingTop: 24 },
-  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800', marginBottom: 4 },
-  stepSubtitle: { color: '#888', fontSize: 14, marginBottom: 20 },
+  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
+  stepSubtitle: { color: '#718FAF', fontSize: 14, marginBottom: 20 },
   stepBody: { flex: 1 },
 
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
-    backgroundColor: '#0a0a0a',
+    borderTopColor: '#0B1326',
+    backgroundColor: '#060C1B',
   },
   nextBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 18,
     flexDirection: 'row',
@@ -775,15 +782,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   nextBtnDisabled: { opacity: 0.4 },
-  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 
   errorWrap: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
   errorBox: {
-    backgroundColor: '#1a1a1a', borderRadius: 16, padding: 24,
+    backgroundColor: '#0B1326', borderRadius: 16, padding: 24,
     borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)',
     alignItems: 'center', width: '100%',
   },
   errorText: { color: '#ef4444', fontSize: 15, textAlign: 'center', lineHeight: 22 },
   retryBtn: { marginTop: 14 },
-  retryText: { color: '#888', fontSize: 13, textDecorationLine: 'underline' },
+  retryText: { color: '#718FAF', fontSize: 13, textDecorationLine: 'underline' },
 });

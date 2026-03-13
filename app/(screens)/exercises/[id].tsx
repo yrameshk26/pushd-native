@@ -31,11 +31,11 @@ const MUSCLE_COLORS: Record<string, string> = {
   CALVES: '#16a085',
   CORE: '#d35400',
   CARDIO: '#c0392b',
-  FULL_BODY: '#6C63FF',
+  FULL_BODY: '#3B82F6',
 };
 
 function getMuscleColor(muscle: string): string {
-  return MUSCLE_COLORS[muscle] ?? '#6C63FF';
+  return MUSCLE_COLORS[muscle] ?? '#3B82F6';
 }
 
 function formatLabel(value: string): string {
@@ -113,7 +113,7 @@ export default function ExerciseDetailScreen() {
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.centeredState}>
-          <ActivityIndicator color="#6C63FF" size="large" />
+          <ActivityIndicator color="#3B82F6" size="large" />
         </View>
       </SafeAreaView>
     );
@@ -165,7 +165,7 @@ export default function ExerciseDetailScreen() {
             style={styles.editBtn}
             onPress={() => router.push(`/(screens)/exercises/edit?id=${id}`)}
           >
-            <Ionicons name="pencil-outline" size={18} color="#6C63FF" />
+            <Ionicons name="pencil-outline" size={18} color="#3B82F6" />
           </TouchableOpacity>
         ) : (
           <View style={{ width: 40 }} />
@@ -210,7 +210,7 @@ export default function ExerciseDetailScreen() {
 
             {/* Equipment */}
             <View style={styles.tagOutline}>
-              <Ionicons name="barbell-outline" size={11} color="#888" style={{ marginRight: 3 }} />
+              <Ionicons name="barbell-outline" size={11} color="#718FAF" style={{ marginRight: 3 }} />
               <Text style={styles.tagOutlineText}>{formatLabel(exercise.equipment)}</Text>
             </View>
 
@@ -226,7 +226,7 @@ export default function ExerciseDetailScreen() {
           {estimated1RM && estimated1RM > 0 ? (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
-                <Ionicons name="trophy-outline" size={16} color="#6C63FF" />
+                <Ionicons name="trophy-outline" size={16} color="#3B82F6" />
                 <Text style={styles.cardTitle}>Estimated 1RM</Text>
               </View>
               <Text style={styles.oneRMValue}>{Math.round(estimated1RM)} kg</Text>
@@ -246,7 +246,7 @@ export default function ExerciseDetailScreen() {
           {instructions.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeaderRow}>
-                <Ionicons name="information-circle-outline" size={16} color="#888" />
+                <Ionicons name="information-circle-outline" size={16} color="#718FAF" />
                 <Text style={styles.sectionTitle}>Instructions</Text>
               </View>
               {instructions.map((step: string, index: number) => (
@@ -263,7 +263,7 @@ export default function ExerciseDetailScreen() {
           {/* No content placeholder */}
           {instructions.length === 0 && !exercise.description && !estimated1RM && (
             <View style={styles.noHistoryState}>
-              <Ionicons name="barbell-outline" size={36} color="#333" />
+              <Ionicons name="barbell-outline" size={36} color="#162540" />
               <Text style={styles.noHistoryText}>No details available for this exercise yet</Text>
             </View>
           )}
@@ -323,7 +323,7 @@ export default function ExerciseDetailScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   // Header
   header: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontWeight: '700', textAlign: 'center' },
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -364,7 +364,9 @@ const styles = StyleSheet.create({
   // Body
   scrollContent: { paddingBottom: 120 },
   body: { padding: 20 },
-  name: { color: '#fff', fontSize: 24, fontWeight: '800', marginBottom: 12 },
+  name: { color: '#fff', fontSize: 24, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 12 },
 
   // Tags
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 20 },
@@ -377,38 +379,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  tagOutlineText: { color: '#888', fontSize: 12 },
+  tagOutlineText: { color: '#718FAF', fontSize: 12 },
 
   // Card
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 16,
     marginBottom: 20,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  cardTitle: { color: '#ccc', fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
+  cardTitle: { color: '#A8BDD4', fontSize: 13, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
 
   // 1RM
-  oneRMValue: { color: '#6C63FF', fontSize: 32, fontWeight: '800', marginBottom: 4 },
-  oneRMSubtext: { color: '#555', fontSize: 12 },
+  oneRMValue: { color: '#3B82F6', fontSize: 32, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
+  oneRMSubtext: { color: '#718FAF', fontSize: 12 },
 
   // Sections
   section: { marginBottom: 24 },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
   sectionTitle: {
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.6,
     marginBottom: 12,
   },
-  descriptionText: { color: '#999', fontSize: 14, lineHeight: 22 },
+  descriptionText: { color: '#718FAF', fontSize: 14, lineHeight: 22 },
 
   // Instructions
   instructionRow: {
@@ -427,7 +431,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   stepNumber: { fontSize: 13, fontWeight: '800' },
-  instructionText: { flex: 1, color: '#bbb', fontSize: 14, lineHeight: 22 },
+  instructionText: { flex: 1, color: '#A8BDD4', fontSize: 14, lineHeight: 22 },
 
   // Sessions
   sessionRow: {
@@ -438,29 +442,30 @@ const styles = StyleSheet.create({
   },
   sessionRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   sessionLeft: { flex: 1 },
-  sessionDate: { color: '#888', fontSize: 12, marginBottom: 2 },
-  sessionMeta: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  sessionDate: { color: '#718FAF', fontSize: 12, marginBottom: 2 },
+  sessionMeta: { color: '#fff', fontSize: 14, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   sessionRight: { alignItems: 'flex-end' },
-  sessionVolume: { color: '#6C63FF', fontSize: 14, fontWeight: '700' },
-  sessionVolumeLabel: { color: '#555', fontSize: 11 },
+  sessionVolume: { color: '#3B82F6', fontSize: 14, fontWeight: '700' },
+  sessionVolumeLabel: { color: '#718FAF', fontSize: 11 },
 
   // States
   centeredState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600' },
   retryBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  retryText: { color: '#6C63FF', fontWeight: '600', fontSize: 14 },
+  retryText: { color: '#3B82F6', fontWeight: '600', fontSize: 14 },
   noHistoryState: { alignItems: 'center', paddingTop: 40, gap: 10, marginBottom: 20 },
-  noHistoryText: { color: '#555', fontSize: 14, textAlign: 'center' },
+  noHistoryText: { color: '#718FAF', fontSize: 14, textAlign: 'center' },
 
   // FAB / add to workout
   fabContainer: {
@@ -473,15 +478,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     gap: 8,
-    shadowColor: '#6C63FF',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 8,
   },
-  addToWorkoutText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  addToWorkoutText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });

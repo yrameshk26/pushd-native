@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0a0a0a"
+      "backgroundColor": "#060C1B"
     },
     "ios": {
       "supportsTablet": false,
@@ -25,7 +25,7 @@
     "android": {
       "package": "fit.pushd.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0a0a0a",
+        "backgroundColor": "#060C1B",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "permissions": [
@@ -60,7 +60,7 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#6C63FF",
+          "color": "#3B82F6",
           "sounds": []
         }
       ],

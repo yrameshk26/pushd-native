@@ -1,140 +1,131 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 export interface MuscleHeatmapProps {
-  muscleData: Record<string, number>; // muscle name → intensity 0-1
+  muscleData: Record<string, number>; // muscle key → intensity 0–1 (already normalized)
 }
 
-// Front body muscle regions: top, left as % of container, width/height as % of container
-interface MuscleRegion {
+// Original SVG canvas: 848 × 1264
+const IMG_W = 848;
+const IMG_H = 1264;
+
+interface Region {
   muscle: string;
-  label: string;
-  topPct: number;
-  leftPct: number;
-  widthPct: number;
-  heightPct: number;
+  // cx, cy = centre; rx, ry = radii in the 848×1264 space
+  cx: number; cy: number; rx: number; ry: number;
 }
 
-const FRONT_REGIONS: MuscleRegion[] = [
-  { muscle: 'CHEST',       label: 'Chest',       topPct: 22, leftPct: 22, widthPct: 56, heightPct: 16 },
-  { muscle: 'FRONT_DELTS', label: 'Delts',       topPct: 18, leftPct: 8,  widthPct: 14, heightPct: 12 },
-  { muscle: 'FRONT_DELTS', label: 'Delts',       topPct: 18, leftPct: 78, widthPct: 14, heightPct: 12 },
-  { muscle: 'BICEPS',      label: 'Biceps',      topPct: 32, leftPct: 6,  widthPct: 12, heightPct: 18 },
-  { muscle: 'BICEPS',      label: 'Biceps',      topPct: 32, leftPct: 82, widthPct: 12, heightPct: 18 },
-  { muscle: 'ABS',         label: 'Abs',         topPct: 40, leftPct: 30, widthPct: 40, heightPct: 22 },
-  { muscle: 'QUADS',       label: 'Quads',       topPct: 64, leftPct: 20, widthPct: 24, heightPct: 24 },
-  { muscle: 'QUADS',       label: 'Quads',       topPct: 64, leftPct: 56, widthPct: 24, heightPct: 24 },
+const FRONT_REGIONS: Region[] = [
+  { muscle: 'CHEST',     cx: 424, cy: 315, rx: 135, ry: 65  },
+  { muscle: 'SHOULDERS', cx: 212, cy: 262, rx: 68,  ry: 48  },
+  { muscle: 'SHOULDERS', cx: 636, cy: 262, rx: 68,  ry: 48  },
+  { muscle: 'BICEPS',    cx: 175, cy: 422, rx: 48,  ry: 72  },
+  { muscle: 'BICEPS',    cx: 673, cy: 422, rx: 48,  ry: 72  },
+  { muscle: 'FOREARMS',  cx: 158, cy: 568, rx: 40,  ry: 62  },
+  { muscle: 'FOREARMS',  cx: 690, cy: 568, rx: 40,  ry: 62  },
+  { muscle: 'CORE',      cx: 424, cy: 488, rx: 88,  ry: 105 },
+  { muscle: 'QUADS',     cx: 330, cy: 782, rx: 78,  ry: 118 },
+  { muscle: 'QUADS',     cx: 518, cy: 782, rx: 78,  ry: 118 },
 ];
 
-const BACK_REGIONS: MuscleRegion[] = [
-  { muscle: 'TRAPS',       label: 'Traps',       topPct: 10, leftPct: 28, widthPct: 44, heightPct: 12 },
-  { muscle: 'REAR_DELTS',  label: 'Rear Delts',  topPct: 18, leftPct: 8,  widthPct: 14, heightPct: 10 },
-  { muscle: 'REAR_DELTS',  label: 'Rear Delts',  topPct: 18, leftPct: 78, widthPct: 14, heightPct: 10 },
-  { muscle: 'LATS',        label: 'Lats',        topPct: 24, leftPct: 18, widthPct: 64, heightPct: 20 },
-  { muscle: 'TRICEPS',     label: 'Triceps',     topPct: 32, leftPct: 6,  widthPct: 12, heightPct: 18 },
-  { muscle: 'TRICEPS',     label: 'Triceps',     topPct: 32, leftPct: 82, widthPct: 12, heightPct: 18 },
-  { muscle: 'GLUTES',      label: 'Glutes',      topPct: 52, leftPct: 22, widthPct: 56, heightPct: 14 },
-  { muscle: 'HAMSTRINGS',  label: 'Hamstrings',  topPct: 64, leftPct: 20, widthPct: 24, heightPct: 22 },
-  { muscle: 'HAMSTRINGS',  label: 'Hamstrings',  topPct: 64, leftPct: 56, widthPct: 24, heightPct: 22 },
-  { muscle: 'CALVES',      label: 'Calves',      topPct: 82, leftPct: 22, widthPct: 20, heightPct: 14 },
-  { muscle: 'CALVES',      label: 'Calves',      topPct: 82, leftPct: 58, widthPct: 20, heightPct: 14 },
+const BACK_REGIONS: Region[] = [
+  { muscle: 'BACK',       cx: 424, cy: 355, rx: 155, ry: 138 },
+  { muscle: 'SHOULDERS',  cx: 210, cy: 252, rx: 68,  ry: 48  },
+  { muscle: 'SHOULDERS',  cx: 638, cy: 252, rx: 68,  ry: 48  },
+  { muscle: 'TRICEPS',    cx: 173, cy: 418, rx: 42,  ry: 68  },
+  { muscle: 'TRICEPS',    cx: 675, cy: 418, rx: 42,  ry: 68  },
+  { muscle: 'FOREARMS',   cx: 155, cy: 562, rx: 38,  ry: 62  },
+  { muscle: 'FOREARMS',   cx: 693, cy: 562, rx: 38,  ry: 62  },
+  { muscle: 'GLUTES',     cx: 424, cy: 645, rx: 135, ry: 68  },
+  { muscle: 'HAMSTRINGS', cx: 326, cy: 808, rx: 75,  ry: 115 },
+  { muscle: 'HAMSTRINGS', cx: 522, cy: 808, rx: 75,  ry: 115 },
+  { muscle: 'CALVES',     cx: 315, cy: 988, rx: 52,  ry: 88  },
+  { muscle: 'CALVES',     cx: 533, cy: 988, rx: 52,  ry: 88  },
 ];
 
-// Canonical key lookup: supports both "CHEST" and "chest", and aliases
+const MUSCLE_LABELS: Record<string, string> = {
+  CHEST: 'Chest', SHOULDERS: 'Shoulders', BICEPS: 'Biceps', FOREARMS: 'Forearms',
+  CORE: 'Core', QUADS: 'Quads', BACK: 'Back', TRICEPS: 'Triceps',
+  GLUTES: 'Glutes', HAMSTRINGS: 'Hamstrings', CALVES: 'Calves',
+};
+
+// Canonical key lookup
 const MUSCLE_ALIASES: Record<string, string> = {
-  // front
-  chest: 'CHEST',
-  front_delts: 'FRONT_DELTS',
-  front_shoulders: 'FRONT_DELTS',
-  shoulders: 'FRONT_DELTS',
-  biceps: 'BICEPS',
-  abs: 'ABS',
-  core: 'ABS',
-  quads: 'QUADS',
-  // back
-  traps: 'TRAPS',
-  rear_delts: 'REAR_DELTS',
-  rear_shoulders: 'REAR_DELTS',
-  lats: 'LATS',
-  back: 'LATS',
-  triceps: 'TRICEPS',
-  glutes: 'GLUTES',
-  hamstrings: 'HAMSTRINGS',
-  calves: 'CALVES',
+  chest: 'CHEST', shoulders: 'SHOULDERS', front_delts: 'SHOULDERS', rear_delts: 'SHOULDERS',
+  biceps: 'BICEPS', forearms: 'FOREARMS', core: 'CORE', abs: 'CORE',
+  quads: 'QUADS', back: 'BACK', lats: 'BACK', traps: 'BACK',
+  triceps: 'TRICEPS', glutes: 'GLUTES', hamstrings: 'HAMSTRINGS', calves: 'CALVES',
 };
 
 function resolveKey(raw: string): string {
-  const lower = raw.toLowerCase();
-  return MUSCLE_ALIASES[lower] ?? raw.toUpperCase();
+  return MUSCLE_ALIASES[raw.toLowerCase()] ?? raw.toUpperCase();
 }
 
-function intensityToColor(intensity: number): string {
-  if (intensity <= 0) return '#1a1a1a';
-  // Blend from #1a1a1a (no work) → #6C63FF (heavy work)
-  const r = Math.round(0x1a + intensity * (0x6c - 0x1a));
-  const g = Math.round(0x1a + intensity * (0x63 - 0x1a));
-  const b = Math.round(0x1a + intensity * (0xff - 0x1a));
+function heatColor(intensity: number): string {
+  if (intensity <= 0) return 'transparent';
+  const r = Math.round(30  + intensity * (80  - 30));
+  const g = Math.round(100 + intensity * (200 - 100));
+  const b = Math.round(220 + intensity * (255 - 220));
   return `rgb(${r},${g},${b})`;
 }
 
-function intensityToBorder(intensity: number): string {
-  if (intensity <= 0) return '#2a2a2a';
-  const alpha = Math.round(80 + intensity * 175); // 80..255
-  const r = Math.round(0x6c * intensity);
-  const g = Math.round(0x63 * intensity);
-  const b = Math.round(0xff * intensity);
-  return `rgba(${r},${g},${b},${(alpha / 255).toFixed(2)})`;
+function heatOpacity(intensity: number): number {
+  if (intensity <= 0) return 0;
+  return 0.18 + intensity * 0.62;
+}
+
+// Convert SVG ellipse coords to percentage-based style for absolute positioning
+function regionToStyle(r: Region) {
+  return {
+    left:   `${((r.cx - r.rx) / IMG_W) * 100}%` as unknown as number,
+    top:    `${((r.cy - r.ry) / IMG_H) * 100}%` as unknown as number,
+    width:  `${((r.rx * 2)   / IMG_W) * 100}%` as unknown as number,
+    height: `${((r.ry * 2)   / IMG_H) * 100}%` as unknown as number,
+  };
 }
 
 interface BodyViewProps {
-  title: string;
-  regions: MuscleRegion[];
+  imageUrl: string;
+  regions: Region[];
   resolvedData: Record<string, number>;
+  title: string;
+  onPressRegion: (muscle: string) => void;
 }
 
-function BodyView({ title, regions, resolvedData }: BodyViewProps) {
-  // De-duplicate label renders: only show label once per muscle (first occurrence)
-  const seenMuscles = new Set<string>();
-
+function BodyView({ imageUrl, regions, resolvedData, title, onPressRegion }: BodyViewProps) {
   return (
-    <View style={styles.bodyViewContainer}>
-      <Text style={styles.bodyViewTitle}>{title}</Text>
-      {/* Silhouette background */}
-      <View style={styles.silhouette}>
-        {/* Head */}
-        <View style={styles.silhouetteHead} />
-        {/* Torso + limbs block */}
-        <View style={styles.silhouetteTorso} />
-        {/* Muscle regions */}
-        {regions.map((region, idx) => {
-          const intensity = resolvedData[region.muscle] ?? 0;
-          const bg = intensityToColor(intensity);
-          const border = intensityToBorder(intensity);
-          const isFirstOccurrence = !seenMuscles.has(region.muscle);
-          if (isFirstOccurrence) seenMuscles.add(region.muscle);
-
+    <View style={styles.bodyView}>
+      <Text style={styles.bodyTitle}>{title}</Text>
+      {/* Container preserving image aspect ratio */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.bodyImage}
+          resizeMode="contain"
+        />
+        {/* Muscle ellipse overlays */}
+        {regions.map((r, i) => {
+          const intensity = resolvedData[r.muscle] ?? 0;
+          if (intensity <= 0) return null;
+          const pos = regionToStyle(r);
+          const color = heatColor(intensity);
+          const opacity = heatOpacity(intensity);
           return (
-            <View
-              key={idx}
-              style={[
-                styles.muscleRegion,
-                {
-                  top: `${region.topPct}%` as any,
-                  left: `${region.leftPct}%` as any,
-                  width: `${region.widthPct}%` as any,
-                  height: `${region.heightPct}%` as any,
-                  backgroundColor: bg,
-                  borderColor: border,
-                  opacity: intensity > 0 ? 0.9 : 0.5,
-                },
-              ]}
-            >
-              {isFirstOccurrence && (
-                <Text style={styles.muscleLabel} numberOfLines={1}>
-                  {region.label}
-                </Text>
-              )}
-            </View>
+            <TouchableWithoutFeedback key={i} onPress={() => onPressRegion(r.muscle)}>
+              <View
+                style={[
+                  styles.muscleOverlay,
+                  {
+                    left:   pos.left,
+                    top:    pos.top,
+                    width:  pos.width,
+                    height: pos.height,
+                    backgroundColor: color,
+                    opacity,
+                  },
+                ]}
+              />
+            </TouchableWithoutFeedback>
           );
         })}
       </View>
@@ -143,117 +134,177 @@ function BodyView({ title, regions, resolvedData }: BodyViewProps) {
 }
 
 export function MuscleHeatmap({ muscleData }: MuscleHeatmapProps) {
-  // Normalize incoming keys to canonical form
+  const [tooltip, setTooltip] = useState<{ label: string; intensity: number } | null>(null);
+
+  // Normalize keys
   const resolvedData: Record<string, number> = {};
-  for (const [rawKey, intensity] of Object.entries(muscleData)) {
-    const canonical = resolveKey(rawKey);
-    resolvedData[canonical] = Math.min(1, Math.max(0, intensity));
+  for (const [raw, intensity] of Object.entries(muscleData)) {
+    const key = resolveKey(raw);
+    resolvedData[key] = Math.min(1, Math.max(0, intensity));
+  }
+
+  const totalSets = Object.values(muscleData).length;
+
+  function handlePress(muscle: string) {
+    const label = MUSCLE_LABELS[muscle] ?? muscle;
+    const intensity = resolvedData[muscle] ?? 0;
+    if (tooltip?.label === label) {
+      setTooltip(null);
+    } else {
+      setTooltip({ label, intensity });
+    }
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <BodyView title="Front" regions={FRONT_REGIONS} resolvedData={resolvedData} />
-        <BodyView title="Back" regions={BACK_REGIONS} resolvedData={resolvedData} />
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={styles.headerLabel}>THIS WEEK</Text>
+        <View style={styles.totalBadge}>
+          <Text style={styles.totalBadgeText}>{totalSets} muscles worked</Text>
+        </View>
       </View>
+
+      {/* Tooltip */}
+      <View style={styles.tooltipRow}>
+        {tooltip ? (
+          <View style={styles.tooltipBadge}>
+            <Text style={styles.tooltipText}>
+              {tooltip.label} — {Math.round(tooltip.intensity * 100)}% intensity
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.tooltipHint}>Tap a muscle to see details</Text>
+        )}
+      </View>
+
+      {/* Body maps side by side */}
+      <View style={styles.row}>
+        <BodyView
+          title="Front"
+          imageUrl="https://pushd.fit/body-front.png"
+          regions={FRONT_REGIONS}
+          resolvedData={resolvedData}
+          onPressRegion={handlePress}
+        />
+        <BodyView
+          title="Back"
+          imageUrl="https://pushd.fit/body-back.png"
+          regions={BACK_REGIONS}
+          resolvedData={resolvedData}
+          onPressRegion={handlePress}
+        />
+      </View>
+
       {/* Legend */}
       <View style={styles.legendRow}>
-        <Text style={styles.legendLabel}>Low</Text>
+        <Text style={styles.legendLabel}>0 sets</Text>
         <View style={styles.legendBar}>
-          {[0, 0.2, 0.4, 0.6, 0.8, 1.0].map((stop) => (
+          {[0.1, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0].map((stop) => (
             <View
               key={stop}
-              style={[styles.legendSegment, { backgroundColor: intensityToColor(stop) }]}
+              style={[styles.legendSegment, {
+                backgroundColor: heatColor(stop),
+                opacity: heatOpacity(stop),
+              }]}
             />
           ))}
         </View>
-        <Text style={styles.legendLabel}>High</Text>
+        <Text style={styles.legendLabel}>10+ sets</Text>
       </View>
+
+      {/* Active muscle chips */}
+      {Object.entries(resolvedData).length > 0 && (
+        <View style={styles.chipsRow}>
+          {Object.entries(resolvedData)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 6)
+            .map(([muscle, intensity]) => (
+              <View
+                key={muscle}
+                style={[styles.chip, {
+                  backgroundColor: `rgba(30,100,220,${0.15 + intensity * 0.35})`,
+                  borderColor: `rgba(80,200,255,${0.2 + intensity * 0.4})`,
+                }]}
+              >
+                <Text style={[styles.chipText, { color: heatColor(intensity) }]}>
+                  {MUSCLE_LABELS[muscle] ?? muscle}
+                </Text>
+              </View>
+            ))}
+        </View>
+      )}
+
+      {totalSets === 0 && (
+        <Text style={styles.emptyText}>
+          Complete workouts this week to see your muscle activation map
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  bodyViewContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  bodyViewTitle: {
-    color: '#888',
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  container: { width: '100%' },
+  headerRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     marginBottom: 6,
   },
-  silhouette: {
+  headerLabel: {
+    fontSize: 10, fontWeight: '600', color: '#718FAF', letterSpacing: 1,
+    fontFamily: 'BarlowCondensed-SemiBold',
+  },
+  totalBadge: {
+    backgroundColor: 'rgba(59,130,246,0.2)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2,
+  },
+  totalBadgeText: { fontSize: 10, fontWeight: '600', color: '#93c5fd', fontFamily: 'DMSans-SemiBold' },
+  tooltipRow: {
+    height: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 8,
+  },
+  tooltipBadge: {
+    backgroundColor: 'rgba(59,130,246,0.2)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4,
+  },
+  tooltipText: { fontSize: 12, fontWeight: '600', color: '#93c5fd', fontFamily: 'DMSans-SemiBold' },
+  tooltipHint: { fontSize: 10, color: '#4A6080', fontFamily: 'DMSans-Regular' },
+  row: { flexDirection: 'row', gap: 8 },
+  bodyView: { flex: 1, alignItems: 'center' },
+  bodyTitle: {
+    fontSize: 10, fontWeight: '700', color: '#4A6080', letterSpacing: 1.5,
+    textTransform: 'uppercase', marginBottom: 4, fontFamily: 'BarlowCondensed-Bold',
+  },
+  imageContainer: {
     width: '100%',
-    height: 200,
-    backgroundColor: '#111',
+    aspectRatio: IMG_W / IMG_H,
+    backgroundColor: '#060C1B',
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    position: 'relative',
     overflow: 'hidden',
+    position: 'relative',
   },
-  silhouetteHead: {
+  bodyImage: {
+    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+  },
+  muscleOverlay: {
     position: 'absolute',
-    width: '18%',
-    height: '10%',
     borderRadius: 100,
-    backgroundColor: '#222',
-    top: '1%',
-    left: '41%',
-  },
-  silhouetteTorso: {
-    position: 'absolute',
-    width: '50%',
-    height: '88%',
-    backgroundColor: '#1e1e1e',
-    top: '11%',
-    left: '25%',
-    borderRadius: 8,
-  },
-  muscleRegion: {
-    position: 'absolute',
-    borderRadius: 6,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  muscleLabel: {
-    color: '#ccc',
-    fontSize: 7,
-    fontWeight: '600',
-    textAlign: 'center',
   },
   legendRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 10,
-    paddingHorizontal: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingHorizontal: 4,
   },
-  legendLabel: {
-    color: '#555',
-    fontSize: 10,
-  },
+  legendLabel: { fontSize: 10, color: '#4A6080', fontFamily: 'DMSans-Regular' },
   legendBar: {
-    flex: 1,
-    height: 6,
-    flexDirection: 'row',
-    borderRadius: 3,
-    overflow: 'hidden',
+    flex: 1, height: 6, flexDirection: 'row', borderRadius: 3, overflow: 'hidden',
+    backgroundColor: 'rgba(30,100,220,0.1)',
   },
-  legendSegment: {
-    flex: 1,
-    height: '100%',
+  legendSegment: { flex: 1, height: '100%' },
+  chipsRow: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10,
+  },
+  chip: {
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, borderWidth: 1,
+  },
+  chipText: { fontSize: 10, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  emptyText: {
+    fontSize: 12, color: '#4A6080', textAlign: 'center', paddingVertical: 8, marginTop: 8,
+    fontFamily: 'DMSans-Regular',
   },
 });

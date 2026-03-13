@@ -106,7 +106,7 @@ function AiBanner() {
       activeOpacity={0.8}
     >
       <View style={bannerStyles.left}>
-        <Ionicons name="sparkles" size={20} color="#6C63FF" />
+        <Ionicons name="sparkles" size={20} color="#3B82F6" />
         <View style={bannerStyles.textWrap}>
           <Text style={bannerStyles.title}>Build a custom program</Text>
           <Text style={bannerStyles.sub}>
@@ -116,7 +116,7 @@ function AiBanner() {
       </View>
       <View style={bannerStyles.cta}>
         <Text style={bannerStyles.ctaText}>Build with AI</Text>
-        <Ionicons name="arrow-forward" size={14} color="#6C63FF" />
+        <Ionicons name="arrow-forward" size={14} color="#3B82F6" />
       </View>
     </TouchableOpacity>
   );
@@ -128,8 +128,8 @@ const bannerStyles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#6C63FF',
-    backgroundColor: 'rgba(108,99,255,0.08)',
+    borderColor: '#3B82F6',
+    backgroundColor: 'rgba(59, 130, 246,0.08)',
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
@@ -137,10 +137,11 @@ const bannerStyles = StyleSheet.create({
   },
   left: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
   textWrap: { flex: 1 },
-  title: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  sub: { color: '#888', fontSize: 12, marginTop: 2 },
+  title: { color: '#fff', fontSize: 14, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
+  sub: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   cta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  ctaText: { color: '#6C63FF', fontSize: 13, fontWeight: '700' },
+  ctaText: { color: '#3B82F6', fontSize: 13, fontWeight: '700' },
 });
 
 // ─── Program card ─────────────────────────────────────────────────────────
@@ -164,22 +165,22 @@ function ProgramCard({ item }: { item: ProgramListItem }) {
 
       <View style={cardStyles.metaRow}>
         <View style={cardStyles.metaItem}>
-          <Ionicons name="barbell-outline" size={13} color="#666" />
+          <Ionicons name="barbell-outline" size={13} color="#718FAF" />
           <Text style={cardStyles.metaText}>{item.exercises.length} exercises</Text>
         </View>
         {item.estimatedMinutes ? (
           <View style={cardStyles.metaItem}>
-            <Ionicons name="time-outline" size={13} color="#666" />
+            <Ionicons name="time-outline" size={13} color="#718FAF" />
             <Text style={cardStyles.metaText}>~{item.estimatedMinutes} min</Text>
           </View>
         ) : null}
         <View style={cardStyles.metaItem}>
-          <Ionicons name="calendar-outline" size={13} color="#666" />
+          <Ionicons name="calendar-outline" size={13} color="#718FAF" />
           <Text style={cardStyles.metaText}>{item.daysPerWeek}x / week</Text>
         </View>
         {item.durationWeeks ? (
           <View style={cardStyles.metaItem}>
-            <Ionicons name="layers-outline" size={13} color="#666" />
+            <Ionicons name="layers-outline" size={13} color="#718FAF" />
             <Text style={cardStyles.metaText}>{item.durationWeeks}w</Text>
           </View>
         ) : null}
@@ -200,20 +201,21 @@ function ProgramCard({ item }: { item: ProgramListItem }) {
 
 const cardStyles = StyleSheet.create({
   container: {
-    backgroundColor: '#1a1a1a', borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: '#2a2a2a', marginBottom: 12,
+    backgroundColor: '#0B1326', borderRadius: 16, padding: 16,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 12,
   },
   topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
-  name: { color: '#fff', fontSize: 16, fontWeight: '700', flex: 1, marginRight: 8 },
+  name: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold', flex: 1, marginRight: 8 },
   badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
   badgeText: { fontSize: 11, fontWeight: '700' },
-  desc: { color: '#888', fontSize: 13, lineHeight: 19, marginBottom: 12 },
+  desc: { color: '#718FAF', fontSize: 13, lineHeight: 19, marginBottom: 12 },
   metaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 10 },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { color: '#666', fontSize: 12 },
+  metaText: { color: '#718FAF', fontSize: 12 },
   equipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  equipChip: { backgroundColor: '#2a2a2a', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  equipText: { color: '#888', fontSize: 11 },
+  equipChip: { backgroundColor: '#162540', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  equipText: { color: '#718FAF', fontSize: 11 },
 });
 
 // ─── Main screen ──────────────────────────────────────────────────────────
@@ -286,13 +288,13 @@ export default function ProgramsScreen() {
       {isLoading ? (
         <>
           {listHeader}
-          <ActivityIndicator color="#6C63FF" style={{ marginTop: 48 }} />
+          <ActivityIndicator color="#3B82F6" style={{ marginTop: 48 }} />
         </>
       ) : isError ? (
         <>
           {listHeader}
           <View style={styles.emptyState}>
-            <Ionicons name="alert-circle-outline" size={40} color="#444" />
+            <Ionicons name="alert-circle-outline" size={40} color="#4A6080" />
             <Text style={styles.emptyText}>Failed to load programs</Text>
             <TouchableOpacity onPress={() => refetch()} style={styles.retryBtn}>
               <Text style={styles.retryText}>Try again</Text>
@@ -308,7 +310,7 @@ export default function ProgramsScreen() {
           ListHeaderComponent={listHeader}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="barbell-outline" size={40} color="#333" />
+              <Ionicons name="barbell-outline" size={40} color="#162540" />
               <Text style={styles.emptyText}>No programs match your filters</Text>
             </View>
           }
@@ -320,26 +322,28 @@ export default function ProgramsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16,
   },
   backBtn: { width: 36, height: 36, justifyContent: 'center' },
   headerText: { flex: 1 },
-  heading: { color: '#fff', fontSize: 24, fontWeight: '800' },
-  subheading: { color: '#666', fontSize: 12, marginTop: 2 },
+  heading: { color: '#fff', fontSize: 24, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold' },
+  subheading: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   filterRow: { paddingHorizontal: 20, paddingBottom: 10, gap: 8 },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
-    borderWidth: 1, borderColor: '#2a2a2a', backgroundColor: '#1a1a1a',
+    borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326',
   },
-  filterChipActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  filterText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  filterChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  filterText: { color: '#718FAF', fontSize: 13, fontWeight: '600' },
   filterTextActive: { color: '#fff' },
   list: { paddingHorizontal: 20, paddingBottom: 40 },
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingBottom: 60 },
-  emptyText: { color: '#555', fontSize: 15 },
+  emptyText: { color: '#718FAF', fontSize: 15 },
   retryBtn: { marginTop: 4 },
-  retryText: { color: '#6C63FF', fontSize: 14, fontWeight: '600' },
+  retryText: { color: '#3B82F6', fontSize: 14, fontWeight: '600' },
 });

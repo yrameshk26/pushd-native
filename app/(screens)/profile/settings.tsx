@@ -320,7 +320,7 @@ export default function SettingsScreen() {
         {/* Display Name */}
         <View style={styles.field}>
           <Text style={styles.fieldLabel}>Display Name</Text>
-          <TextInput style={styles.fieldInput} value={displayName} onChangeText={setDisplayName} placeholder="Your name" placeholderTextColor="#555" maxLength={50} />
+          <TextInput style={styles.fieldInput} value={displayName} onChangeText={setDisplayName} placeholder="Your name" placeholderTextColor="#718FAF" maxLength={50} />
         </View>
 
         {/* Bio */}
@@ -330,7 +330,7 @@ export default function SettingsScreen() {
             style={[styles.fieldInput, styles.bioInput]}
             value={bio} onChangeText={setBio}
             placeholder="Tell others about your fitness journey..."
-            placeholderTextColor="#555" maxLength={200} multiline numberOfLines={3} textAlignVertical="top"
+            placeholderTextColor="#718FAF" maxLength={200} multiline numberOfLines={3} textAlignVertical="top"
           />
           <Text style={styles.charCount}>{bio.length}/200</Text>
         </View>
@@ -378,7 +378,7 @@ export default function SettingsScreen() {
               <Text style={styles.linkLabel}>Passkeys &amp; Biometrics</Text>
               <Text style={styles.linkSub}>Set up Face ID or fingerprint login</Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color="#444" />
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
           <View style={styles.sep} />
           <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(auth)/reset-password' as never)}>
@@ -386,7 +386,7 @@ export default function SettingsScreen() {
             <View style={styles.linkTextGroup}>
               <Text style={styles.linkLabel}>Change Password</Text>
             </View>
-            <Ionicons name="chevron-forward" size={16} color="#444" />
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -405,7 +405,7 @@ export default function SettingsScreen() {
           <TouchableOpacity style={styles.linkRow} onPress={handleDeleteAccount}>
             <Ionicons name="trash-outline" size={20} color="#ef4444" style={styles.linkIcon} />
             <Text style={styles.dangerLabel}>Delete Account</Text>
-            <Ionicons name="chevron-forward" size={16} color="#444" />
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
         </View>
 
@@ -425,7 +425,7 @@ export default function SettingsScreen() {
               value={deleteConfirmText}
               onChangeText={setDeleteConfirmText}
               placeholder="Type DELETE"
-              placeholderTextColor="#555"
+              placeholderTextColor="#718FAF"
               autoCapitalize="characters"
               autoFocus
             />
@@ -455,14 +455,15 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 12,
-    borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    borderBottomWidth: 1, borderBottomColor: '#0B1326',
   },
   backBtn: { padding: 4, marginRight: 8 },
-  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff' },
+  headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   saveBtn: { backgroundColor: '#3B82F6', paddingHorizontal: 18, paddingVertical: 8, borderRadius: 10, minWidth: 68, alignItems: 'center' },
   saveBtnActive: { opacity: 0.75 },
   saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
@@ -473,37 +474,39 @@ const styles = StyleSheet.create({
   avatarWrap: { position: 'relative' },
   avatarImage: { width: 80, height: 80, borderRadius: 40 },
   avatarCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(59,130,246,0.2)', justifyContent: 'center', alignItems: 'center' },
-  avatarText: { color: '#60a5fa', fontSize: 30, fontWeight: '800' },
+  avatarText: { color: '#60a5fa', fontSize: 30, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold' },
   avatarCameraOverlay: {
     position: 'absolute', bottom: 0, right: 0,
     width: 26, height: 26, borderRadius: 13,
     backgroundColor: '#3B82F6', justifyContent: 'center', alignItems: 'center',
-    borderWidth: 2, borderColor: '#0a0a0a',
+    borderWidth: 2, borderColor: '#060C1B',
   },
   changePhotoText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
 
   field: { marginBottom: 16 },
   fieldLabel: { fontSize: 14, fontWeight: '600', color: '#fff', marginBottom: 8 },
-  fieldInput: { backgroundColor: '#1a1a1a', borderRadius: 10, borderWidth: 1, borderColor: '#2a2a2a', paddingHorizontal: 14, paddingVertical: 12, color: '#fff', fontSize: 15 },
+  fieldInput: { backgroundColor: '#0B1326', borderRadius: 10, borderWidth: 1, borderColor: '#162540', paddingHorizontal: 14, paddingVertical: 12, color: '#fff', fontSize: 15 },
   bioInput: { minHeight: 80, paddingTop: 12, textAlignVertical: 'top' },
-  charCount: { fontSize: 11, color: '#555', textAlign: 'right', marginTop: 4 },
+  charCount: { fontSize: 11, color: '#718FAF', textAlign: 'right', marginTop: 4 },
 
   segmentRow: { flexDirection: 'row', gap: 8 },
-  segmentBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: '#2a2a2a', alignItems: 'center' },
+  segmentBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: '#162540', alignItems: 'center' },
   segmentBtnActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  segmentText: { fontSize: 14, fontWeight: '600', color: '#666' },
+  segmentText: { fontSize: 14, fontWeight: '600', color: '#718FAF' },
   segmentTextActive: { color: '#fff' },
 
-  sectionLabel: { fontSize: 11, fontWeight: '700', color: '#555', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginTop: 24, marginLeft: 2 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', color: '#718FAF', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginTop: 24, marginLeft: 2 },
 
-  card: { backgroundColor: '#1a1a1a', borderRadius: 14, borderWidth: 1, borderColor: '#2a2a2a', overflow: 'hidden' },
-  sep: { height: 1, backgroundColor: '#2a2a2a', marginLeft: 16 },
+  card: { backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: '#162540', overflow: 'hidden' },
+  sep: { height: 1, backgroundColor: '#162540', marginLeft: 16 },
 
   toggleRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, minHeight: 52 },
   toggleLabelGroup: { flex: 1 },
   toggleLabel: { fontSize: 15, color: '#fff' },
-  toggleSub: { fontSize: 12, color: '#555', marginTop: 2 },
-  togglePill: { width: 44, height: 24, borderRadius: 12, backgroundColor: '#2a2a2a', justifyContent: 'center', paddingHorizontal: 2 },
+  toggleSub: { fontSize: 12, color: '#718FAF', marginTop: 2 },
+  togglePill: { width: 44, height: 24, borderRadius: 12, backgroundColor: '#162540', justifyContent: 'center', paddingHorizontal: 2 },
   togglePillOn: { backgroundColor: '#3B82F6' },
   toggleThumb: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', alignSelf: 'flex-start' },
   toggleThumbOn: { alignSelf: 'flex-end' },
@@ -512,24 +515,27 @@ const styles = StyleSheet.create({
   linkIcon: { marginRight: 12 },
   linkTextGroup: { flex: 1 },
   linkLabel: { fontSize: 15, color: '#fff' },
-  linkSub: { fontSize: 12, color: '#555', marginTop: 1 },
+  linkSub: { fontSize: 12, color: '#718FAF', marginTop: 1 },
 
   infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14 },
   infoLabel: { flex: 1, fontSize: 15, color: '#fff' },
-  infoValue: { fontSize: 15, color: '#666', maxWidth: '60%', textAlign: 'right' },
+  infoValue: { fontSize: 15, color: '#718FAF', maxWidth: '60%', textAlign: 'right' },
 
   dangerLabel: { flex: 1, fontSize: 15, color: '#ef4444' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  modalBox: { backgroundColor: '#1a1a1a', borderRadius: 16, padding: 24, width: '100%', borderWidth: 1, borderColor: '#2a2a2a' },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginBottom: 10 },
-  modalBody: { fontSize: 14, color: '#888', lineHeight: 20, marginBottom: 16 },
-  modalInput: { backgroundColor: '#0a0a0a', borderRadius: 10, borderWidth: 1, borderColor: '#ef4444', paddingHorizontal: 14, paddingVertical: 12, color: '#fff', fontSize: 16, letterSpacing: 2, marginBottom: 16 },
+  modalBox: { backgroundColor: '#0B1326', borderRadius: 16, padding: 24, width: '100%', borderWidth: 1, borderColor: '#162540' },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold', marginBottom: 10 },
+  modalBody: { fontSize: 14, color: '#718FAF', lineHeight: 20, marginBottom: 16 },
+  modalInput: { backgroundColor: '#060C1B', borderRadius: 10, borderWidth: 1, borderColor: '#ef4444', paddingHorizontal: 14, paddingVertical: 12, color: '#fff', fontSize: 16, letterSpacing: 2, marginBottom: 16 },
   modalBtns: { flexDirection: 'row', gap: 10 },
   modalBtn: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  modalBtnCancel: { backgroundColor: '#2a2a2a' },
-  modalBtnCancelText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  modalBtnCancel: { backgroundColor: '#162540' },
+  modalBtnCancelText: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
   modalBtnDelete: { backgroundColor: '#ef4444' },
-  modalBtnDeleteText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  modalBtnDeleteText: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
   modalBtnDisabled: { opacity: 0.4 },
 });

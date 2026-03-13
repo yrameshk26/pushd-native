@@ -112,10 +112,10 @@ export default function ProfileScreen() {
               style={styles.iconBtn}
               onPress={() => router.push('/(screens)/profile/settings' as never)}
             >
-              <Ionicons name="settings-outline" size={22} color="#888" />
+              <Ionicons name="settings-outline" size={22} color="#718FAF" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn} onPress={handleLogout}>
-              <Ionicons name="log-out-outline" size={22} color="#888" />
+              <Ionicons name="log-out-outline" size={22} color="#718FAF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -163,9 +163,9 @@ export default function ProfileScreen() {
                   onPress={() => router.push(item.route as never)}
                   activeOpacity={0.75}
                 >
-                  <Ionicons name={item.icon} size={18} color="#888" style={styles.linkIcon} />
+                  <Ionicons name={item.icon} size={18} color="#718FAF" style={styles.linkIcon} />
                   <Text style={styles.linkLabel}>{item.label}</Text>
-                  <Ionicons name="chevron-forward" size={16} color="#444" />
+                  <Ionicons name="chevron-forward" size={16} color="#4A6080" />
                 </TouchableOpacity>
               ))}
               <TouchableOpacity
@@ -173,9 +173,9 @@ export default function ProfileScreen() {
                 onPress={handleExport}
                 activeOpacity={0.75}
               >
-                <Ionicons name="download-outline" size={18} color="#888" style={styles.linkIcon} />
+                <Ionicons name="download-outline" size={18} color="#718FAF" style={styles.linkIcon} />
                 <Text style={styles.linkLabel}>Export Workouts (JSON)</Text>
-                <Ionicons name="chevron-forward" size={16} color="#444" />
+                <Ionicons name="chevron-forward" size={16} color="#4A6080" />
               </TouchableOpacity>
             </View>
           </>
@@ -186,7 +186,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
   center: { alignItems: 'center', paddingTop: 60 },
 
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingTop: 16, marginBottom: 24,
   },
-  heading: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  heading: { fontSize: 28, fontWeight: '800', color: '#fff', fontFamily: 'BarlowCondensed-Bold' },
   headerActions: { flexDirection: 'row', gap: 4 },
   iconBtn: { padding: 6 },
 
@@ -204,29 +204,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(59,130,246,0.2)',
     justifyContent: 'center', alignItems: 'center', flexShrink: 0,
   },
-  avatarLargeText: { color: '#60a5fa', fontSize: 28, fontWeight: '800' },
-  displayName: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 2 },
-  username: { color: '#888', fontSize: 13, marginBottom: 4 },
-  bio: { color: '#888', fontSize: 13, lineHeight: 18 },
+  avatarLargeText: { color: '#60a5fa', fontSize: 28, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold' },
+  displayName: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 2, fontFamily: 'BarlowCondensed-Bold' },
+  username: { color: '#718FAF', fontSize: 13, marginBottom: 4, fontFamily: 'DMSans-Regular' },
+  bio: { color: '#718FAF', fontSize: 13, lineHeight: 18, fontFamily: 'DMSans-Regular' },
 
   statsGrid: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a1a',
-    borderRadius: 14, borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326',
+    borderRadius: 14, borderWidth: 1, borderColor: '#162540',
     marginBottom: 24, overflow: 'hidden',
   },
   statCell: { flex: 1, alignItems: 'center', paddingVertical: 16 },
-  statCellBorder: { borderRightWidth: 1, borderRightColor: '#2a2a2a' },
-  statValue: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 3 },
-  statLabel: { color: '#666', fontSize: 11 },
+  statCellBorder: { borderRightWidth: 1, borderRightColor: '#162540' },
+  statValue: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 3, fontFamily: 'BarlowCondensed-ExtraBold' },
+  statLabel: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular' },
 
   linksList: { gap: 8 },
   linkRow: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1, borderColor: '#162540',
     padding: 16,
   },
   linkIcon: { marginRight: 12 },
-  linkLabel: { flex: 1, color: '#fff', fontSize: 14, fontWeight: '500' },
+  linkLabel: { flex: 1, color: '#fff', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
 });

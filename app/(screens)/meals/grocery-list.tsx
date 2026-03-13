@@ -139,7 +139,7 @@ export default function GroceryListScreen() {
         <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : listQuery.isError ? (
         <View style={styles.centerState}>
-          <Ionicons name="alert-circle-outline" size={40} color="#555" />
+          <Ionicons name="alert-circle-outline" size={40} color="#718FAF" />
           <Text style={styles.errorText}>Failed to load grocery list.</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={() => listQuery.refetch()}>
             <Text style={styles.retryText}>Retry</Text>
@@ -147,7 +147,7 @@ export default function GroceryListScreen() {
         </View>
       ) : totalItems === 0 ? (
         <View style={styles.centerState}>
-          <Ionicons name="cart-outline" size={48} color="#333" />
+          <Ionicons name="cart-outline" size={48} color="#162540" />
           <Text style={styles.emptyText}>No ingredients in this meal plan</Text>
         </View>
       ) : (
@@ -170,7 +170,7 @@ export default function GroceryListScreen() {
                   <View style={styles.categoryHeader}>
                     <Ionicons
                       name={(CATEGORY_ICONS[cat.name] ?? 'cube-outline') as any}
-                      size={14} color="#888"
+                      size={14} color="#718FAF"
                     />
                     <Text style={styles.categoryLabel}>{cat.name}</Text>
                     <Text style={styles.categoryCount}>{unchecked.length}/{cat.items.length}</Text>
@@ -220,7 +220,7 @@ function ItemRow({ name, checked, onToggle }: { name: string; checked: boolean; 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row', alignItems: 'center',
@@ -228,23 +228,24 @@ const styles = StyleSheet.create({
   },
   backBtn: { padding: 4 },
   headerCenter: { flex: 1 },
-  heading: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  subheading: { color: '#666', fontSize: 12, marginTop: 1 },
+  heading: { color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold' },
+  subheading: { color: '#718FAF', fontSize: 12, marginTop: 1 },
   headerActions: { flexDirection: 'row', gap: 4 },
   headerActionBtn: { padding: 8 },
 
   progressWrap: { paddingHorizontal: 16, paddingBottom: 12, gap: 6 },
-  progressText: { color: '#666', fontSize: 12 },
-  progressTrack: { height: 4, backgroundColor: '#2a2a2a', borderRadius: 2, overflow: 'hidden' },
+  progressText: { color: '#718FAF', fontSize: 12 },
+  progressTrack: { height: 4, backgroundColor: '#162540', borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: '#3B82F6', borderRadius: 2 },
 
   content: { paddingHorizontal: 16, paddingTop: 4 },
 
   centerState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingHorizontal: 32 },
-  errorText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  errorText: { color: '#718FAF', fontSize: 15, textAlign: 'center' },
   retryBtn: { backgroundColor: '#3B82F6', borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10 },
   retryText: { color: '#fff', fontWeight: '600' },
-  emptyText: { color: '#555', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: '#718FAF', fontSize: 15, textAlign: 'center' },
 
   categorySection: { marginBottom: 20 },
   categoryHeader: {
@@ -252,25 +253,26 @@ const styles = StyleSheet.create({
     marginBottom: 8, paddingHorizontal: 4,
   },
   categoryLabel: {
-    flex: 1, color: '#888', fontSize: 11, fontWeight: '700',
-    textTransform: 'uppercase', letterSpacing: 0.8,
+    flex: 1, color: '#718FAF', fontSize: 11, fontWeight: '700',
+    textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold', letterSpacing: 0.8,
   },
-  categoryCount: { color: '#555', fontSize: 11, fontWeight: '600' },
+  categoryCount: { color: '#718FAF', fontSize: 11, fontWeight: '600' },
 
   itemRow: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1a1a1a', borderRadius: 12,
+    backgroundColor: '#0B1326', borderRadius: 12,
     paddingHorizontal: 14, paddingVertical: 13,
-    marginBottom: 6, borderWidth: 1, borderColor: '#2a2a2a', gap: 12,
+    marginBottom: 6, borderWidth: 1, borderColor: '#162540', gap: 12,
   },
-  itemRowChecked: { opacity: 0.45, backgroundColor: '#141414' },
+  itemRowChecked: { opacity: 0.45, backgroundColor: '#060C1B' },
   checkbox: {
     width: 22, height: 22, borderRadius: 6,
-    borderWidth: 2, borderColor: '#3a3a3a',
+    borderWidth: 2, borderColor: '#162540',
     alignItems: 'center', justifyContent: 'center',
     flexShrink: 0,
   },
   checkboxChecked: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
   itemName: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '500' },
-  itemNameChecked: { textDecorationLine: 'line-through', color: '#555' },
+  itemNameChecked: { textDecorationLine: 'line-through', color: '#718FAF' },
 });

@@ -91,11 +91,11 @@ function WorkoutCard({ workout }: { workout: PublicWorkout }) {
       </View>
       <View style={styles.workoutMeta}>
         <View style={styles.workoutMetaItem}>
-          <Ionicons name="barbell-outline" size={13} color="#666" />
+          <Ionicons name="barbell-outline" size={13} color="#718FAF" />
           <Text style={styles.workoutMetaText}>{workout.exerciseCount} exercises</Text>
         </View>
         <View style={styles.workoutMetaItem}>
-          <Ionicons name="stats-chart-outline" size={13} color="#666" />
+          <Ionicons name="stats-chart-outline" size={13} color="#718FAF" />
           <Text style={styles.workoutMetaText}>{formatVolume(workout.totalVolume)}</Text>
         </View>
         {workout.likeCount > 0 && (
@@ -140,7 +140,7 @@ export default function PublicProfileScreen() {
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       </SafeAreaView>
     );
   }
@@ -154,7 +154,7 @@ export default function PublicProfileScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.centered}>
-          <Ionicons name="person-outline" size={48} color="#333" />
+          <Ionicons name="person-outline" size={48} color="#162540" />
           <Text style={styles.emptyText}>User not found</Text>
           <Text style={styles.emptySubText}>@{username} doesn't exist or is private.</Text>
         </View>
@@ -224,7 +224,7 @@ export default function PublicProfileScreen() {
 
         {data.recentWorkouts.length === 0 ? (
           <View style={styles.emptyWorkouts}>
-            <Ionicons name="barbell-outline" size={36} color="#333" />
+            <Ionicons name="barbell-outline" size={36} color="#162540" />
             <Text style={styles.emptyText}>No public workouts yet</Text>
           </View>
         ) : (
@@ -240,7 +240,7 @@ export default function PublicProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   backBtn: { width: 40, padding: 4 },
   headerTitle: { flex: 1, fontSize: 16, fontWeight: '700', color: '#fff', textAlign: 'center' },
@@ -265,16 +265,19 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
   },
-  avatarText: { color: '#fff', fontSize: 26, fontWeight: '800' },
+  avatarText: { color: '#fff', fontSize: 26, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold' },
   profileInfo: { flex: 1, paddingTop: 4 },
-  displayName: { fontSize: 20, fontWeight: '700', color: '#fff', marginBottom: 2 },
-  usernameText: { fontSize: 14, color: '#6C63FF', marginBottom: 6 },
-  bioText: { fontSize: 13, color: '#aaa', lineHeight: 18 },
+  displayName: { fontSize: 20, fontWeight: '700', color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold', marginBottom: 2 },
+  usernameText: { fontSize: 14, color: '#3B82F6', marginBottom: 6 },
+  bioText: { fontSize: 13, color: '#A8BDD4', lineHeight: 18 },
 
   statsRow: {
     flexDirection: 'row',
@@ -283,18 +286,18 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingVertical: 10,
     alignItems: 'center',
   },
   statValue: { fontSize: 16, fontWeight: '700', color: '#fff', marginBottom: 2 },
-  statLabel: { fontSize: 11, color: '#666' },
+  statLabel: { fontSize: 11, color: '#718FAF' },
 
   followBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
     paddingVertical: 12,
     flexDirection: 'row',
@@ -302,7 +305,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  followingBtn: { backgroundColor: '#2a2a2a', borderWidth: 1, borderColor: '#3a3a3a' },
+  followingBtn: { backgroundColor: '#162540', borderWidth: 1, borderColor: '#162540' },
   followBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 
   sectionTitle: {
@@ -313,10 +316,10 @@ const styles = StyleSheet.create({
   },
 
   workoutCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     padding: 14,
     marginBottom: 10,
   },
@@ -327,15 +330,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   workoutTitle: { flex: 1, fontSize: 15, fontWeight: '600', color: '#fff', marginRight: 8 },
-  workoutTime: { fontSize: 12, color: '#555', flexShrink: 0 },
+  workoutTime: { fontSize: 12, color: '#718FAF', flexShrink: 0 },
   workoutMeta: { flexDirection: 'row', gap: 14 },
   workoutMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  workoutMetaText: { fontSize: 12, color: '#666' },
+  workoutMetaText: { fontSize: 12, color: '#718FAF' },
 
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
   emptyWorkouts: { alignItems: 'center', paddingVertical: 40 },
-  emptyText: { color: '#666', fontSize: 15, fontWeight: '600', marginTop: 12 },
-  emptySubText: { color: '#444', fontSize: 13, marginTop: 4, textAlign: 'center' },
+  emptyText: { color: '#718FAF', fontSize: 15, fontWeight: '600', marginTop: 12 },
+  emptySubText: { color: '#4A6080', fontSize: 13, marginTop: 4, textAlign: 'center' },
 
   bottomPad: { height: 40 },
 });

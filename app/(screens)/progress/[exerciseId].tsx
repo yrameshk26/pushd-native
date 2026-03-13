@@ -214,7 +214,7 @@ function StrengthLevelCard({ exerciseName, estimated1RM, bodyWeightKg }: Strengt
             style={[
               stdStyles.barSegment,
               {
-                backgroundColor: i <= levelIdx ? LEVEL_COLORS[lvl] : '#2a2a2a',
+                backgroundColor: i <= levelIdx ? LEVEL_COLORS[lvl] : '#162540',
               },
             ]}
           />
@@ -226,7 +226,7 @@ function StrengthLevelCard({ exerciseName, estimated1RM, bodyWeightKg }: Strengt
             key={lvl}
             style={[
               stdStyles.legendItem,
-              { color: lvl === level ? LEVEL_COLORS[lvl] : '#555' },
+              { color: lvl === level ? LEVEL_COLORS[lvl] : '#4A6080' },
             ]}
           >
             {lvl}
@@ -269,10 +269,10 @@ export default function ExerciseProgressScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       ) : isError ? (
         <View style={styles.errorWrap}>
-          <Ionicons name="alert-circle-outline" size={48} color="#888" />
+          <Ionicons name="alert-circle-outline" size={48} color="#718FAF" />
           <Text style={styles.errorText}>Could not load progress data.</Text>
         </View>
       ) : (
@@ -299,7 +299,7 @@ export default function ExerciseProgressScreen() {
               <Text style={styles.statLabel}>Best Volume</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={[styles.statValue, { color: '#6C63FF' }]}>
+              <Text style={[styles.statValue, { color: '#3B82F6' }]}>
                 {(summary?.estimated1RM ?? 0) > 0 ? `${summary!.estimated1RM}kg` : '—'}
               </Text>
               <Text style={styles.statLabel}>Est. 1RM</Text>
@@ -346,7 +346,7 @@ export default function ExerciseProgressScreen() {
                   <View style={styles.sessionRight}>
                     <Text style={styles.sessionVolume}>{formatVolume(session.totalVolume)}</Text>
                     <Text style={styles.sessionVolumeLabel}>volume</Text>
-                    <Ionicons name="chevron-forward" size={14} color="#555" style={{ marginTop: 2 }} />
+                    <Ionicons name="chevron-forward" size={14} color="#718FAF" style={{ marginTop: 2 }} />
                   </View>
                 </TouchableOpacity>
             ))
@@ -358,7 +358,7 @@ export default function ExerciseProgressScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   header: {
     flexDirection: 'row',
@@ -366,18 +366,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  headerTitle: { flex: 1, color: '#fff', fontSize: 17, fontFamily: 'BarlowCondensed-Bold', textAlign: 'center' },
   headerRight: { width: 40 },
 
   content: { padding: 20, paddingBottom: 40 },
 
   sectionTitle: {
-    color: '#888',
-    fontSize: 12,
-    fontWeight: '600',
+    color: '#718FAF',
+    fontSize: 11,
+    fontFamily: 'BarlowCondensed-SemiBold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -392,20 +392,20 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '44%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignItems: 'center',
   },
   statValue: {
     color: '#fff',
     fontSize: 22,
-    fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
     marginBottom: 4,
   },
-  statLabel: { color: '#888', fontSize: 11, fontWeight: '500', textTransform: 'uppercase', letterSpacing: 0.5 },
+  statLabel: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Medium', textTransform: 'uppercase', letterSpacing: 0.5 },
 
   standardsWrap: { marginBottom: 24 },
 
@@ -413,36 +413,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   sessionLeft: { flex: 1 },
   sessionDateRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 },
-  sessionDate: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  sessionSet: { color: '#888', fontSize: 13 },
+  sessionDate: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
+  sessionSet: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
   sessionRight: { alignItems: 'flex-end', gap: 2 },
-  sessionVolume: { color: '#6C63FF', fontSize: 15, fontWeight: '700' },
-  sessionVolumeLabel: { color: '#555', fontSize: 11 },
+  sessionVolume: { color: '#3B82F6', fontSize: 15, fontFamily: 'DMSans-Bold' },
+  sessionVolumeLabel: { color: '#4A6080', fontSize: 11, fontFamily: 'DMSans-Regular' },
 
   errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { color: '#888', fontSize: 15 },
+  errorText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
 
   emptyWrap: { alignItems: 'center', paddingVertical: 32 },
-  emptyText: { color: '#555', fontSize: 15 },
+  emptyText: { color: '#4A6080', fontSize: 15, fontFamily: 'DMSans-Regular' },
 });
 
 const stdStyles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -450,16 +450,16 @@ const stdStyles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 6,
   },
-  cardTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  cardSub: { color: '#555', fontSize: 12, marginBottom: 12 },
+  cardTitle: { color: '#fff', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
+  cardSub: { color: '#4A6080', fontSize: 12, marginBottom: 12, fontFamily: 'DMSans-Regular' },
   levelBadge: {
     borderRadius: 6,
     borderWidth: 1,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  levelBadgeText: { fontSize: 12, fontWeight: '700' },
-  ratioText: { color: '#888', fontSize: 13, marginBottom: 12 },
+  levelBadgeText: { fontSize: 12, fontFamily: 'DMSans-Bold' },
+  ratioText: { color: '#718FAF', fontSize: 13, marginBottom: 12, fontFamily: 'DMSans-Regular' },
   barWrap: {
     flexDirection: 'row',
     height: 8,
@@ -473,5 +473,5 @@ const stdStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  legendItem: { fontSize: 9, fontWeight: '600' },
+  legendItem: { fontSize: 9, fontFamily: 'DMSans-SemiBold' },
 });

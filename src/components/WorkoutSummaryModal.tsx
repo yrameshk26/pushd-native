@@ -69,19 +69,19 @@ export function WorkoutSummaryModal({ visible, workout, elapsedSeconds, onSave, 
         {/* Stats grid */}
         <View style={styles.statsGrid}>
           <View style={styles.statCell}>
-            <Ionicons name="time-outline" size={22} color="#6C63FF" />
+            <Ionicons name="time-outline" size={22} color="#3B82F6" />
             <Text style={styles.statValue}>{formatDuration(elapsedSeconds)}</Text>
             <Text style={styles.statLabel}>Duration</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statCell}>
-            <Ionicons name="barbell-outline" size={22} color="#6C63FF" />
+            <Ionicons name="barbell-outline" size={22} color="#3B82F6" />
             <Text style={styles.statValue}>{formatVolume(volume)}</Text>
             <Text style={styles.statLabel}>Volume</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statCell}>
-            <Ionicons name="layers-outline" size={22} color="#6C63FF" />
+            <Ionicons name="layers-outline" size={22} color="#3B82F6" />
             <Text style={styles.statValue}>{totalSets}</Text>
             <Text style={styles.statLabel}>Sets</Text>
           </View>
@@ -89,7 +89,7 @@ export function WorkoutSummaryModal({ visible, workout, elapsedSeconds, onSave, 
 
         <View style={styles.statsGrid}>
           <View style={styles.statCell}>
-            <Ionicons name="body-outline" size={22} color="#6C63FF" />
+            <Ionicons name="body-outline" size={22} color="#3B82F6" />
             <Text style={styles.statValue}>{workout.exercises.length}</Text>
             <Text style={styles.statLabel}>Exercises</Text>
           </View>
@@ -132,7 +132,7 @@ export function WorkoutSummaryModal({ visible, workout, elapsedSeconds, onSave, 
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, backgroundColor: '#0a0a0a',
+    flex: 1, backgroundColor: '#060C1B',
     alignItems: 'center', padding: 32, paddingTop: 60,
   },
   iconWrap: {
@@ -140,40 +140,40 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1500', justifyContent: 'center', alignItems: 'center',
     marginBottom: 20, borderWidth: 1, borderColor: '#3a3000',
   },
-  heading: { color: '#fff', fontSize: 30, fontWeight: '800', marginBottom: 8 },
-  message: { color: '#888', fontSize: 15, textAlign: 'center', marginBottom: 20, lineHeight: 22 },
-  workoutTitle: { color: '#6C63FF', fontSize: 18, fontWeight: '700', marginBottom: 28 },
+  heading: { color: '#fff', fontSize: 30, fontWeight: '800', fontFamily: 'BarlowCondensed-Bold', marginBottom: 8 },
+  message: { color: '#718FAF', fontSize: 15, textAlign: 'center', marginBottom: 20, lineHeight: 22, fontFamily: 'DMSans-Regular' },
+  workoutTitle: { color: '#3B82F6', fontSize: 18, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold', marginBottom: 28 },
   statsGrid: {
     flexDirection: 'row', width: '100%',
-    backgroundColor: '#1a1a1a', borderRadius: 16,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 16,
+    borderWidth: 1, borderColor: '#162540',
     marginBottom: 12, overflow: 'hidden',
   },
   statCell: { flex: 1, alignItems: 'center', paddingVertical: 18, gap: 4 },
-  statDivider: { width: 1, backgroundColor: '#2a2a2a', marginVertical: 14 },
-  statValue: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  statLabel: { color: '#666', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 },
+  statDivider: { width: 1, backgroundColor: '#162540', marginVertical: 14 },
+  statValue: { color: '#fff', fontSize: 22, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold' },
+  statLabel: { color: '#718FAF', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, fontFamily: 'BarlowCondensed-SemiBold' },
   exerciseList: {
-    width: '100%', backgroundColor: '#1a1a1a', borderRadius: 14,
-    borderWidth: 1, borderColor: '#2a2a2a', marginBottom: 32, overflow: 'hidden',
+    width: '100%', backgroundColor: '#0B1326', borderRadius: 14,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 32, overflow: 'hidden',
   },
   exerciseRow: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     paddingHorizontal: 16, paddingVertical: 12,
-    borderBottomWidth: 1, borderBottomColor: '#222',
+    borderBottomWidth: 1, borderBottomColor: '#162540',
   },
-  exerciseName: { color: '#ccc', fontSize: 14, flex: 1 },
-  exerciseSets: { color: '#888', fontSize: 13 },
+  exerciseName: { color: '#A8BDD4', fontSize: 14, flex: 1, fontFamily: 'DMSans-Regular' },
+  exerciseSets: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
   actions: { width: '100%', gap: 12 },
   saveBtn: {
-    backgroundColor: '#6C63FF', borderRadius: 14,
+    backgroundColor: '#3B82F6', borderRadius: 14,
     paddingVertical: 16, flexDirection: 'row',
     alignItems: 'center', justifyContent: 'center', gap: 8,
   },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   discardBtn: {
     borderRadius: 14, paddingVertical: 14,
     alignItems: 'center', justifyContent: 'center',
   },
-  discardBtnText: { color: '#555', fontSize: 15, fontWeight: '500' },
+  discardBtnText: { color: '#4A6080', fontSize: 15, fontWeight: '500', fontFamily: 'DMSans-Medium' },
 });

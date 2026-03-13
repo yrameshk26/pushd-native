@@ -156,7 +156,7 @@ export default function EditExerciseScreen() {
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.centeredState}>
-          <ActivityIndicator color="#6C63FF" size="large" />
+          <ActivityIndicator color="#3B82F6" size="large" />
         </View>
       </SafeAreaView>
     );
@@ -214,7 +214,7 @@ export default function EditExerciseScreen() {
             value={form.name}
             onChangeText={(v) => setField('name', v)}
             placeholder="e.g. Barbell Back Squat"
-            placeholderTextColor="#444"
+            placeholderTextColor="#4A6080"
             autoCapitalize="words"
             returnKeyType="next"
           />
@@ -282,7 +282,7 @@ export default function EditExerciseScreen() {
             value={form.description}
             onChangeText={(v) => setField('description', v)}
             placeholder="Brief description of the exercise..."
-            placeholderTextColor="#444"
+            placeholderTextColor="#4A6080"
             multiline
             numberOfLines={3}
             textAlignVertical="top"
@@ -300,7 +300,7 @@ export default function EditExerciseScreen() {
             value={form.instructions}
             onChangeText={(v) => setField('instructions', v)}
             placeholder={'Stand with feet shoulder-width apart\nGrip the bar with hands just outside your legs'}
-            placeholderTextColor="#444"
+            placeholderTextColor="#4A6080"
             multiline
             numberOfLines={6}
             textAlignVertical="top"
@@ -338,7 +338,7 @@ export default function EditExerciseScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -346,12 +346,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#0B1326',
   },
   headerBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  heading: { flex: 1, color: '#fff', fontSize: 18, fontWeight: '700', textAlign: 'center', marginHorizontal: 8 },
+  heading: { flex: 1, color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', textAlign: 'center', marginHorizontal: 8 },
   saveBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 18,
     paddingVertical: 8,
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
   content: { padding: 20, paddingBottom: 60 },
   fieldSection: { marginBottom: 24 },
   fieldLabel: {
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -371,27 +372,27 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   fieldLabelHint: {
-    color: '#555',
+    color: '#718FAF',
     fontWeight: '400',
     fontSize: 12,
     textTransform: 'none',
     letterSpacing: 0,
   },
   textInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 15,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   textareaInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 14,
     paddingHorizontal: 16,
@@ -404,26 +405,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  pillActive: { backgroundColor: '#6C63FF22', borderColor: '#6C63FF' },
-  pillText: { color: '#666', fontSize: 13, fontWeight: '500' },
-  pillTextActive: { color: '#6C63FF', fontWeight: '700' },
+  pillActive: { backgroundColor: '#3B82F622', borderColor: '#3B82F6' },
+  pillText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
+  pillTextActive: { color: '#3B82F6', fontWeight: '700' },
   difficultyRow: { flexDirection: 'row', gap: 10 },
   difficultyChip: {
     flex: 1,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     alignItems: 'center',
   },
-  difficultyChipActive: { backgroundColor: '#6C63FF22', borderColor: '#6C63FF' },
-  difficultyChipText: { color: '#666', fontSize: 13, fontWeight: '500' },
-  difficultyChipTextActive: { color: '#6C63FF', fontWeight: '700' },
+  difficultyChipActive: { backgroundColor: '#3B82F622', borderColor: '#3B82F6' },
+  difficultyChipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
+  difficultyChipTextActive: { color: '#3B82F6', fontWeight: '700' },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',

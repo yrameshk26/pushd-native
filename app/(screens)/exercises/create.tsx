@@ -227,7 +227,7 @@ export default function CreateExerciseScreen() {
               value={form.name}
               onChangeText={setName}
               placeholder="e.g. Barbell Back Squat"
-              placeholderTextColor="#555"
+              placeholderTextColor="#718FAF"
               returnKeyType="next"
               maxLength={120}
             />
@@ -286,7 +286,7 @@ export default function CreateExerciseScreen() {
               placeholder={
                 'Stand with feet shoulder-width apart\nGrip the bar firmly\nDrive through your heels to stand up'
               }
-              placeholderTextColor="#444"
+              placeholderTextColor="#4A6080"
               multiline
               numberOfLines={6}
               textAlignVertical="top"
@@ -326,7 +326,7 @@ export default function CreateExerciseScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
 
   // Header
   header: {
@@ -335,10 +335,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  heading: { flex: 1, color: '#fff', fontSize: 20, fontWeight: '800', textAlign: 'center' },
+  heading: { flex: 1, color: '#fff', fontSize: 20, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center' },
 
   // Scroll
   scrollContent: { padding: 20, paddingBottom: 60 },
@@ -347,22 +348,22 @@ const styles = StyleSheet.create({
   formSection: { marginBottom: 28 },
   sectionLabelRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   sectionLabel: {
-    color: '#ccc',
+    color: '#A8BDD4',
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.7,
   },
-  requiredMark: { color: '#6C63FF', fontWeight: '700', fontSize: 14 },
-  sectionHint: { color: '#555', fontSize: 12, marginBottom: 8, marginTop: -4 },
+  requiredMark: { color: '#3B82F6', fontWeight: '700', fontSize: 14 },
+  sectionHint: { color: '#718FAF', fontSize: 12, marginBottom: 8, marginTop: -4 },
   fieldError: { color: '#e74c3c', fontSize: 12, marginTop: 6 },
 
   // Text inputs
   textInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     color: '#fff',
     fontSize: 15,
     paddingHorizontal: 14,
@@ -384,16 +385,16 @@ const styles = StyleSheet.create({
   chip: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     paddingHorizontal: 14,
     paddingVertical: 8,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
   },
   chipSelected: {
-    backgroundColor: '#6C63FF',
-    borderColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
   },
-  chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
+  chipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   chipTextSelected: { color: '#fff', fontWeight: '600' },
 
   // API error
@@ -415,16 +416,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 14,
     paddingVertical: 16,
     gap: 8,
-    shadowColor: '#6C63FF',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 10,
     elevation: 6,
   },
-  submitBtnDisabled: { backgroundColor: '#2a2a2a', shadowOpacity: 0 },
-  submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  submitBtnDisabled: { backgroundColor: '#162540', shadowOpacity: 0 },
+  submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });

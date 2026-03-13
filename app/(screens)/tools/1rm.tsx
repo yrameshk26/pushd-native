@@ -33,11 +33,11 @@ export default function OneRMCalculator() {
         <View style={styles.inputs}>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Weight (kg)</Text>
-            <TextInput style={styles.input} keyboardType="numeric" placeholder="100" placeholderTextColor="#444" value={weight} onChangeText={setWeight} />
+            <TextInput style={styles.input} keyboardType="numeric" placeholder="100" placeholderTextColor="#4A6080" value={weight} onChangeText={setWeight} />
           </View>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Reps</Text>
-            <TextInput style={styles.input} keyboardType="numeric" placeholder="5" placeholderTextColor="#444" value={reps} onChangeText={setReps} />
+            <TextInput style={styles.input} keyboardType="numeric" placeholder="5" placeholderTextColor="#4A6080" value={reps} onChangeText={setReps} />
           </View>
         </View>
 
@@ -73,24 +73,27 @@ export default function OneRMCalculator() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20 },
-  heading: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  heading: { fontSize: 18, fontWeight: '700', color: '#fff' ,
+    fontFamily: 'BarlowCondensed-Bold'},
   content: { padding: 20 },
   inputs: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   inputGroup: { flex: 1 },
-  label: { color: '#888', fontSize: 13, marginBottom: 8 },
-  input: { backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 12, padding: 16, fontSize: 20, fontWeight: '700', borderWidth: 1, borderColor: '#2a2a2a', textAlign: 'center' },
-  result: { backgroundColor: '#1a1a1a', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: '#6C63FF' },
-  resultLabel: { color: '#888', fontSize: 14, marginBottom: 8 },
-  resultValue: { color: '#6C63FF', fontSize: 48, fontWeight: '800' },
-  formulas: { backgroundColor: '#1a1a1a', borderRadius: 14, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: '#2a2a2a' },
-  formulaRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#2a2a2a' },
-  formulaName: { color: '#888', fontSize: 14 },
+  label: { color: '#718FAF', fontSize: 13, marginBottom: 8 },
+  input: { backgroundColor: '#0B1326', color: '#fff', borderRadius: 12, padding: 16, fontSize: 20, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', borderWidth: 1, borderColor: '#162540', textAlign: 'center' },
+  result: { backgroundColor: '#0B1326', borderRadius: 16, padding: 24, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: '#3B82F6' },
+  resultLabel: { color: '#718FAF', fontSize: 14, marginBottom: 8 },
+  resultValue: { color: '#3B82F6', fontSize: 48, fontWeight: '800' },
+  formulas: { backgroundColor: '#0B1326', borderRadius: 14, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: '#162540' },
+  formulaRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#162540' },
+  formulaName: { color: '#718FAF', fontSize: 14 },
   formulaVal: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  tableHeader: { color: '#888', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 },
-  tableRow: { flexDirection: 'row', backgroundColor: '#1a1a1a', borderRadius: 10, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: '#2a2a2a' },
-  tableLabel: { color: '#6C63FF', fontWeight: '700', width: 50, fontSize: 14 },
+  tableHeader: { color: '#718FAF', fontSize: 12, fontWeight: '700', textTransform: 'uppercase',
+    fontFamily: 'BarlowCondensed-SemiBold', letterSpacing: 1, marginBottom: 12 },
+  tableRow: { flexDirection: 'row', backgroundColor: '#0B1326', borderRadius: 10, padding: 12, marginBottom: 6, borderWidth: 1, borderColor: '#162540' },
+  tableLabel: { color: '#3B82F6', fontWeight: '700', width: 50, fontSize: 14 },
   tableVal: { color: '#fff', fontWeight: '600', flex: 1, fontSize: 14 },
-  tableReps: { color: '#666', fontSize: 13 },
+  tableReps: { color: '#718FAF', fontSize: 13 },
 });

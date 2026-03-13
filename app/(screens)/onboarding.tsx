@@ -241,7 +241,7 @@ function StepGoal({
             <Ionicons
               name={icon as keyof typeof Ionicons.glyphMap}
               size={28}
-              color={data.goal === label ? '#6C63FF' : '#555'}
+              color={data.goal === label ? '#3B82F6' : '#718FAF'}
               style={{ marginBottom: 10 }}
             />
             <Text style={[goalStyles.cardText, data.goal === label && goalStyles.cardTextActive]}>
@@ -281,7 +281,7 @@ function StepTrainingLevel({
             <Text style={levelStyles.cardDesc}>{description}</Text>
           </View>
           {data.trainingLevel === label && (
-            <Ionicons name="checkmark-circle" size={22} color="#6C63FF" />
+            <Ionicons name="checkmark-circle" size={22} color="#3B82F6" />
           )}
         </TouchableOpacity>
       ))}
@@ -363,7 +363,7 @@ function StepEquipment({
               onPress={() => toggle(item)}
             >
               {selected && (
-                <Ionicons name="checkmark-circle" size={14} color="#6C63FF" style={{ marginRight: 6 }} />
+                <Ionicons name="checkmark-circle" size={14} color="#3B82F6" style={{ marginRight: 6 }} />
               )}
               <Text style={[equipStyles.chipText, selected && equipStyles.chipTextActive]}>
                 {item}
@@ -471,7 +471,7 @@ export default function OnboardingScreen() {
           style={[styles.headerBack, step === 1 && styles.headerBackHidden]}
           disabled={step === 1}
         >
-          <Ionicons name="arrow-back" size={22} color="#888" />
+          <Ionicons name="arrow-back" size={22} color="#718FAF" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.stepLabel}>{stepLabel}</Text>
@@ -514,7 +514,7 @@ export default function OnboardingScreen() {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20,
     paddingTop: Platform.OS === 'android' ? 8 : 0, paddingBottom: 8,
@@ -523,16 +523,18 @@ const styles = StyleSheet.create({
   headerBackHidden: { opacity: 0 },
   headerCenter: { flex: 1, alignItems: 'center' },
   headerSpacer: { width: 40 },
-  stepLabel: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  stepCount: { color: '#555', fontSize: 12, marginTop: 2 },
+  stepLabel: { color: '#fff', fontSize: 15, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
+  stepCount: { color: '#718FAF', fontSize: 12, marginTop: 2 },
   content: { flex: 1, paddingHorizontal: 24, paddingTop: 8 },
   footer: { paddingHorizontal: 24, paddingBottom: 16, paddingTop: 12 },
   nextButton: {
-    backgroundColor: '#6C63FF', borderRadius: 14,
+    backgroundColor: '#3B82F6', borderRadius: 14,
     paddingVertical: 16, alignItems: 'center',
   },
   nextButtonDisabled: { opacity: 0.6 },
-  nextButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  nextButtonText: { color: '#fff', fontSize: 16, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 });
 
 const progressStyles = StyleSheet.create({
@@ -541,41 +543,44 @@ const progressStyles = StyleSheet.create({
     marginBottom: 16,
   },
   segment: {
-    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#1a1a1a',
+    flex: 1, height: 4, borderRadius: 2, backgroundColor: '#0B1326',
   },
-  segmentActive: { backgroundColor: '#6C63FF' },
+  segmentActive: { backgroundColor: '#3B82F6' },
 });
 
 const stepStyles = StyleSheet.create({
-  heading: { fontSize: 24, fontWeight: '800', color: '#fff', marginBottom: 6 },
-  subheading: { fontSize: 14, color: '#888', marginBottom: 24, lineHeight: 20 },
+  heading: { fontSize: 24, fontWeight: '800',
+    fontFamily: 'BarlowCondensed-ExtraBold',
+    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff', marginBottom: 6 },
+  subheading: { fontSize: 14, color: '#718FAF', marginBottom: 24, lineHeight: 20 },
   label: {
-    fontSize: 12, fontWeight: '600', color: '#888', marginBottom: 10,
+    fontSize: 12, fontWeight: '600', color: '#718FAF', marginBottom: 10,
     textTransform: 'uppercase', letterSpacing: 0.5,
   },
   row: { flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' },
   chipButton: {
     paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10,
-    backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
   },
-  chipButtonActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.1)' },
-  chipText: { color: '#888', fontSize: 14, fontWeight: '600' },
-  chipTextActive: { color: '#6C63FF' },
+  chipButtonActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.1)' },
+  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
+  chipTextActive: { color: '#3B82F6' },
 });
 
 const stepperStyles = StyleSheet.create({
   container: { marginBottom: 0 },
-  label: { color: '#888', fontSize: 12, marginBottom: 4 },
+  label: { color: '#718FAF', fontSize: 12, marginBottom: 4 },
   controls: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: '#1a1a1a', borderRadius: 12,
-    borderWidth: 1, borderColor: '#2a2a2a', padding: 4,
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1, borderColor: '#162540', padding: 4,
   },
   btn: {
-    width: 40, height: 40, borderRadius: 8, backgroundColor: '#2a2a2a',
+    width: 40, height: 40, borderRadius: 8, backgroundColor: '#162540',
     alignItems: 'center', justifyContent: 'center',
   },
-  value: { color: '#fff', fontSize: 18, fontWeight: '700', flex: 1, textAlign: 'center' },
+  value: { color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', flex: 1, textAlign: 'center' },
 });
 
 const goalStyles = StyleSheet.create({
@@ -583,25 +588,25 @@ const goalStyles = StyleSheet.create({
     flexDirection: 'row', flexWrap: 'wrap', gap: 12,
   },
   card: {
-    width: '47%', backgroundColor: '#1a1a1a', borderRadius: 14,
-    padding: 20, alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a',
+    width: '47%', backgroundColor: '#0B1326', borderRadius: 14,
+    padding: 20, alignItems: 'center', borderWidth: 1, borderColor: '#162540',
   },
-  cardActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.08)' },
-  cardText: { color: '#888', fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  cardActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.08)' },
+  cardText: { color: '#718FAF', fontSize: 13, fontWeight: '600', textAlign: 'center' },
   cardTextActive: { color: '#fff' },
 });
 
 const levelStyles = StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a1a', borderRadius: 14, padding: 20,
+    backgroundColor: '#0B1326', borderRadius: 14, padding: 20,
     marginBottom: 12, flexDirection: 'row', alignItems: 'center',
-    borderWidth: 1, borderColor: '#2a2a2a',
+    borderWidth: 1, borderColor: '#162540',
   },
-  cardActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.08)' },
+  cardActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.08)' },
   cardContent: { flex: 1 },
-  cardTitle: { fontSize: 17, fontWeight: '700', color: '#888', marginBottom: 4 },
+  cardTitle: { fontSize: 17, fontWeight: '700', color: '#718FAF', marginBottom: 4 },
   cardTitleActive: { color: '#fff' },
-  cardDesc: { fontSize: 13, color: '#555', lineHeight: 18 },
+  cardDesc: { fontSize: 13, color: '#718FAF', lineHeight: 18 },
 });
 
 const scheduleStyles = StyleSheet.create({
@@ -610,16 +615,17 @@ const scheduleStyles = StyleSheet.create({
   },
   dayButton: {
     width: '12%', minWidth: 44, aspectRatio: 1,
-    backgroundColor: '#1a1a1a', borderRadius: 12,
+    backgroundColor: '#0B1326', borderRadius: 12,
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: '#2a2a2a', flex: 1,
+    borderWidth: 1, borderColor: '#162540', flex: 1,
   },
-  dayButtonActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.1)' },
-  dayNumber: { fontSize: 18, fontWeight: '800', color: '#555' },
-  dayNumberActive: { color: '#6C63FF' },
-  dayLabel: { fontSize: 10, color: '#444' },
-  dayLabelActive: { color: '#6C63FF' },
-  hint: { color: '#555', fontSize: 14, lineHeight: 20, backgroundColor: '#111', padding: 16, borderRadius: 12 },
+  dayButtonActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.1)' },
+  dayNumber: { fontSize: 18, fontWeight: '800', color: '#718FAF' ,
+    fontFamily: 'BarlowCondensed-ExtraBold'},
+  dayNumberActive: { color: '#3B82F6' },
+  dayLabel: { fontSize: 10, color: '#4A6080' },
+  dayLabelActive: { color: '#3B82F6' },
+  hint: { color: '#718FAF', fontSize: 14, lineHeight: 20, backgroundColor: '#0B1326', padding: 16, borderRadius: 12 },
 });
 
 const equipStyles = StyleSheet.create({
@@ -627,10 +633,10 @@ const equipStyles = StyleSheet.create({
   chip: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 14, paddingVertical: 10,
-    backgroundColor: '#1a1a1a', borderRadius: 100,
-    borderWidth: 1, borderColor: '#2a2a2a',
+    backgroundColor: '#0B1326', borderRadius: 100,
+    borderWidth: 1, borderColor: '#162540',
   },
-  chipActive: { borderColor: '#6C63FF', backgroundColor: 'rgba(108,99,255,0.08)' },
-  chipText: { fontSize: 14, color: '#555', fontWeight: '500' },
+  chipActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.08)' },
+  chipText: { fontSize: 14, color: '#718FAF', fontWeight: '500' },
   chipTextActive: { color: '#fff' },
 });

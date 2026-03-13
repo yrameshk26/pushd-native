@@ -115,7 +115,7 @@ export default function MealPlanDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <Header onBack={() => router.back()} title="Meal Plan" />
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 60 }} />
+        <ActivityIndicator color="#3B82F6" style={{ marginTop: 60 }} />
       </SafeAreaView>
     );
   }
@@ -125,7 +125,7 @@ export default function MealPlanDetailScreen() {
       <SafeAreaView style={styles.container}>
         <Header onBack={() => router.back()} title="Meal Plan" />
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={40} color="#555" />
+          <Ionicons name="alert-circle-outline" size={40} color="#718FAF" />
           <Text style={styles.errorText}>Failed to load meal plan.</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={() => planQuery.refetch()}>
             <Text style={styles.retryText}>Retry</Text>
@@ -158,7 +158,7 @@ export default function MealPlanDetailScreen() {
         title={plan.name}
         rightAction={
           <TouchableOpacity style={styles.groceryBtn} onPress={handleViewGroceryList}>
-            <Ionicons name="cart-outline" size={16} color="#6C63FF" />
+            <Ionicons name="cart-outline" size={16} color="#3B82F6" />
             <Text style={styles.groceryBtnText}>Grocery List</Text>
           </TouchableOpacity>
         }
@@ -208,7 +208,7 @@ export default function MealPlanDetailScreen() {
         {/* Day-by-day Schedule */}
         {plan.days.length === 0 ? (
           <View style={styles.emptyDays}>
-            <Ionicons name="calendar-outline" size={36} color="#333" />
+            <Ionicons name="calendar-outline" size={36} color="#162540" />
             <Text style={styles.emptyText}>No days scheduled yet</Text>
           </View>
         ) : (
@@ -286,7 +286,7 @@ function SummaryChip({
       <Ionicons
         name={icon as any}
         size={14}
-        color={accent ? '#6C63FF' : '#888'}
+        color={accent ? '#3B82F6' : '#718FAF'}
       />
       <Text style={[styles.summaryChipText, accent && styles.summaryChipTextAccent]}>
         {label}
@@ -402,7 +402,7 @@ function MacroChip({ label, color }: { label: string; color: string }) {
 // ─── Styles ────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
+  container: { flex: 1, backgroundColor: '#060C1B' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -416,6 +416,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#fff',
+    fontFamily: 'BarlowCondensed-Bold',
     textAlign: 'center',
     marginHorizontal: 8,
   },
@@ -424,56 +425,56 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  groceryBtnText: { color: '#6C63FF', fontSize: 12, fontWeight: '600' },
+  groceryBtnText: { color: '#3B82F6', fontSize: 12, fontWeight: '600' },
   content: { paddingHorizontal: 16, paddingTop: 8 },
 
   // Summary card
   summaryCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     borderRadius: 16,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     gap: 12,
   },
-  planDescription: { color: '#888', fontSize: 14, lineHeight: 20 },
+  planDescription: { color: '#718FAF', fontSize: 14, lineHeight: 20 },
   summaryRow: { flexDirection: 'row', gap: 10 },
   summaryChip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#111',
+    backgroundColor: '#0B1326',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
   },
-  summaryChipAccent: { borderColor: '#6C63FF44', backgroundColor: '#6C63FF11' },
-  summaryChipText: { color: '#888', fontSize: 13, fontWeight: '500' },
-  summaryChipTextAccent: { color: '#6C63FF', fontWeight: '600' },
+  summaryChipAccent: { borderColor: '#3B82F644', backgroundColor: '#3B82F611' },
+  summaryChipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
+  summaryChipTextAccent: { color: '#3B82F6', fontWeight: '600' },
   macroSummaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    borderTopColor: '#162540',
   },
   macroSummaryItem: { alignItems: 'center', gap: 2 },
   macroSummaryValue: { fontSize: 16, fontWeight: '700' },
-  macroSummaryLabel: { color: '#555', fontSize: 11 },
+  macroSummaryLabel: { color: '#718FAF', fontSize: 11 },
 
   // Day section
   daySection: {
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#2a2a2a',
+    borderColor: '#162540',
     borderRadius: 14,
     overflow: 'hidden',
   },
@@ -481,39 +482,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#141414',
+    backgroundColor: '#060C1B',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
-  dayLabel: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  dayCalories: { color: '#6C63FF', fontSize: 13, fontWeight: '600' },
-  noMealsText: { color: '#555', fontSize: 13, padding: 14 },
+  dayLabel: { color: '#fff', fontSize: 14, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
+  dayCalories: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
+  noMealsText: { color: '#718FAF', fontSize: 13, padding: 14 },
 
   // Meal row
   mealRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#0B1326',
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    borderBottomColor: '#162540',
   },
   mealRowLeft: { flex: 1, gap: 4 },
   mealTypeTag: {
     alignSelf: 'flex-start',
-    backgroundColor: '#6C63FF22',
+    backgroundColor: '#3B82F622',
     borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  mealTypeText: { color: '#6C63FF', fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
-  mealRowName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  mealRowDesc: { color: '#555', fontSize: 12 },
+  mealTypeText: { color: '#3B82F6', fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
+  mealRowName: { color: '#fff', fontSize: 15, fontWeight: '600',
+    fontFamily: 'DMSans-SemiBold' },
+  mealRowDesc: { color: '#718FAF', fontSize: 12 },
   mealMacroChips: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 2 },
-  mealCalChip: { color: '#6C63FF', fontSize: 12, fontWeight: '700' },
+  mealCalChip: { color: '#3B82F6', fontSize: 12, fontWeight: '700' },
   macroChip: {
     borderRadius: 6,
     borderWidth: 1,
@@ -522,7 +525,7 @@ const styles = StyleSheet.create({
   },
   macroChipText: { fontSize: 11, fontWeight: '600' },
   logBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -531,7 +534,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logBtnDisabled: { opacity: 0.5 },
-  logBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  logBtnText: { color: '#fff', fontSize: 13, fontWeight: '700',
+    fontFamily: 'DMSans-Bold' },
 
   // Error / empty
   errorContainer: {
@@ -541,16 +545,16 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingHorizontal: 32,
   },
-  errorText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  errorText: { color: '#718FAF', fontSize: 15, textAlign: 'center' },
   retryBtn: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#3B82F6',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
   retryText: { color: '#fff', fontWeight: '600' },
   emptyDays: { alignItems: 'center', paddingVertical: 40, gap: 12 },
-  emptyText: { color: '#555', fontSize: 15 },
+  emptyText: { color: '#718FAF', fontSize: 15 },
 
   // Delete
   deletePlanBtn: {
