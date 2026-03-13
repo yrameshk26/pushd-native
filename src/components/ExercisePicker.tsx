@@ -98,7 +98,7 @@ export function ExercisePicker({ visible, onSelect, onClose }: Props) {
                   styles.chip,
                   isActive && { backgroundColor: color, borderColor: color },
                 ]}
-                onPress={() => setMuscle(item)}
+                onPress={() => setMuscle(muscle === item ? '' : item)}
               >
                 <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
                   {MUSCLE_LABELS[item]}
