@@ -223,8 +223,8 @@ export default function ProgramsScreen() {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const { data: programs, isLoading, isError, refetch } = usePrograms(levelFilter, categoryFilter);
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const listHeader = (
+    <>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -263,7 +263,7 @@ export default function ProgramsScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterRow}
+        contentContainerStyle={[styles.filterRow, { marginBottom: 8 }]}
       >
         {CATEGORY_FILTERS.map(({ value, label }) => (
           <TouchableOpacity
@@ -278,29 +278,40 @@ export default function ProgramsScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
+    </>
+  );
 
-      {/* Content */}
+  return (
+    <SafeAreaView style={styles.container}>
       {isLoading ? (
-        <ActivityIndicator color="#6C63FF" style={{ marginTop: 48 }} />
+        <>
+          {listHeader}
+          <ActivityIndicator color="#6C63FF" style={{ marginTop: 48 }} />
+        </>
       ) : isError ? (
-        <View style={styles.emptyState}>
-          <Ionicons name="alert-circle-outline" size={40} color="#444" />
-          <Text style={styles.emptyText}>Failed to load programs</Text>
-          <TouchableOpacity onPress={() => refetch()} style={styles.retryBtn}>
-            <Text style={styles.retryText}>Try again</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (programs ?? []).length === 0 ? (
-        <View style={styles.emptyState}>
-          <Ionicons name="barbell-outline" size={40} color="#333" />
-          <Text style={styles.emptyText}>No programs match your filters</Text>
-        </View>
+        <>
+          {listHeader}
+          <View style={styles.emptyState}>
+            <Ionicons name="alert-circle-outline" size={40} color="#444" />
+            <Text style={styles.emptyText}>Failed to load programs</Text>
+            <TouchableOpacity onPress={() => refetch()} style={styles.retryBtn}>
+              <Text style={styles.retryText}>Try again</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       ) : (
         <FlatList
-          data={programs}
+          data={programs ?? []}
           keyExtractor={(p) => p.id}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          ListHeaderComponent={listHeader}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="barbell-outline" size={40} color="#333" />
+              <Text style={styles.emptyText}>No programs match your filters</Text>
+            </View>
+          }
           renderItem={({ item }) => <ProgramCard item={item} />}
         />
       )}
