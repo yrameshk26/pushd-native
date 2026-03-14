@@ -600,37 +600,48 @@ export default function AIPlannerScreen() {
         throw new Error(msg);
       }
 
-      if (!res.body) throw new Error('No response stream');
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done: streamDone, value } = await reader.read();
-        if (streamDone) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split('\n\n');
-        buffer = lines.pop() ?? '';
-
+      function parseSseText(text: string) {
+        const lines = text.split('\n\n');
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
-          const json = JSON.parse(line.slice(6));
-
-          if (json.type === 'status') {
-            setStatus(json.message);
-          } else if (json.type === 'error') {
-            throw new Error(json.message);
-          } else if (json.type === 'done') {
-            setPlan({
-              planName: json.planName,
-              planDescription: json.planDescription,
-              weeklySchedule: json.weeklySchedule,
-              routines: json.routines ?? [],
-            });
-            queryClient.invalidateQueries({ queryKey: ['routines'] });
+          try {
+            const json = JSON.parse(line.slice(6));
+            if (json.type === 'status') {
+              setStatus(json.message);
+            } else if (json.type === 'error') {
+              throw new Error(json.message);
+            } else if (json.type === 'done') {
+              setPlan({
+                planName: json.planName,
+                planDescription: json.planDescription,
+                weeklySchedule: json.weeklySchedule,
+                routines: json.routines ?? [],
+              });
+              queryClient.invalidateQueries({ queryKey: ['routines'] });
+            }
+          } catch (parseErr) {
+            // skip malformed event
           }
+        }
+      }
+
+      // React Native fetch may not support ReadableStream — fall back to res.text()
+      if (!res.body) {
+        const text = await res.text();
+        parseSseText(text);
+      } else {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done: streamDone, value } = await reader.read();
+          if (streamDone) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const chunks = buffer.split('\n\n');
+          buffer = chunks.pop() ?? '';
+          parseSseText(chunks.join('\n\n'));
         }
       }
     } catch (err: any) {
