@@ -542,6 +542,18 @@ function StepEquipment({
       <Text style={stepStyles.heading}>Available equipment</Text>
       <Text style={stepStyles.subheading}>Select everything available to you. You can change this later.</Text>
 
+      <TouchableOpacity
+        style={[equipStyles.chip, equipStyles.fullGymChip, data.equipment.length === EQUIPMENT_OPTIONS.length && equipStyles.chipActive]}
+        onPress={() => onChange({ equipment: data.equipment.length === EQUIPMENT_OPTIONS.length ? [] : [...EQUIPMENT_OPTIONS] })}
+      >
+        {data.equipment.length === EQUIPMENT_OPTIONS.length && (
+          <Ionicons name="checkmark-circle" size={14} color="#3B82F6" style={{ marginRight: 6 }} />
+        )}
+        <Text style={[equipStyles.chipText, data.equipment.length === EQUIPMENT_OPTIONS.length && equipStyles.chipTextActive]}>
+          🏋️ Everything (Full Gym)
+        </Text>
+      </TouchableOpacity>
+
       <View style={equipStyles.grid}>
         {EQUIPMENT_OPTIONS.map((item) => {
           const selected = data.equipment.includes(item);
@@ -848,4 +860,5 @@ const equipStyles = StyleSheet.create({
   chipActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.08)' },
   chipText: { fontSize: 14, color: '#718FAF', fontWeight: '500' },
   chipTextActive: { color: '#fff' },
+  fullGymChip: { marginBottom: 12, alignSelf: 'flex-start' },
 });

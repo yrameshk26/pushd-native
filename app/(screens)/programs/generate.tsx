@@ -248,6 +248,15 @@ export default function BuildRoutineScreen() {
           <View>
             <Text style={styles.stepTitle}>Available equipment</Text>
             <Text style={styles.stepSub}>Select everything you have access to.</Text>
+            <TouchableOpacity
+              style={[styles.pill, styles.fullGymPill, equipment.length === EQUIPMENT_OPTIONS.length && styles.pillActive]}
+              onPress={() => setEquipment(equipment.length === EQUIPMENT_OPTIONS.length ? [] : EQUIPMENT_OPTIONS.map((e) => e.value))}
+            >
+              <Ionicons name="fitness" size={14} color={equipment.length === EQUIPMENT_OPTIONS.length ? '#3B82F6' : '#718FAF'} />
+              <Text style={[styles.pillText, equipment.length === EQUIPMENT_OPTIONS.length && styles.pillTextActive]}>
+                Everything (Full Gym)
+              </Text>
+            </TouchableOpacity>
             <View style={styles.pillsRow}>
               {EQUIPMENT_OPTIONS.map(({ value, label }) => (
                 <TouchableOpacity key={value} style={[styles.pill, equipment.includes(value) && styles.pillActive]} onPress={() => toggleEquipment(value)}>
@@ -416,6 +425,7 @@ const styles = StyleSheet.create({
 
   pillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   pill: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 999, borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326' },
+  fullGymPill: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10, alignSelf: 'flex-start' },
   pillActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
   pillText: { color: '#718FAF', fontSize: 13, fontWeight: '500', fontFamily: 'DMSans-Medium' },
   pillTextActive: { color: '#3B82F6' },
