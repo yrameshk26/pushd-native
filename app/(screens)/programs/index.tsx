@@ -102,7 +102,7 @@ function AiBanner() {
   return (
     <TouchableOpacity
       style={bannerStyles.container}
-      onPress={() => router.push('/(screens)/ai-planner' as any)}
+      onPress={() => router.push('/(screens)/programs/generate' as any)}
       activeOpacity={0.8}
     >
       <View style={bannerStyles.left}>
