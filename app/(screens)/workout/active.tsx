@@ -183,7 +183,16 @@ export default function ActiveWorkoutScreen() {
     setIsSaving(true);
     try {
       await finishWorkout();
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
+      // Invalidate all caches affected by a completed workout
+      const keys = [
+        ['workouts'], ['recent-workouts'], ['workout'],
+        ['progress-summary'], ['progress-volume'], ['volume-8w'],
+        ['exercise-progress'], ['exercise-1rm'],
+        ['strength-standards'], ['muscle-heatmap'],
+        ['user-stats'], ['user-streak'],
+        ['routines-dashboard'],
+      ];
+      keys.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
       setSummaryVisible(false);
       router.replace('/(screens)/workout/history');
     } catch {
