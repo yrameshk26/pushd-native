@@ -381,7 +381,7 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
           <View style={styles.sep} />
-          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(auth)/reset-password' as never)}>
+          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/settings/change-password' as never)}>
             <Ionicons name="lock-closed-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
             <View style={styles.linkTextGroup}>
               <Text style={styles.linkLabel}>Change Password</Text>

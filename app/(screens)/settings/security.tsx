@@ -431,7 +431,7 @@ export default function SecurityScreen() {
 
         <Text style={styles.sectionLabel}>Password</Text>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.actionRow} onPress={() => router.push('/(auth)/reset-password' as never)}>
+          <TouchableOpacity style={styles.actionRow} onPress={() => router.push('/(screens)/settings/change-password' as never)}>
             <Ionicons name="lock-closed-outline" size={20} color="#60a5fa" style={{ marginRight: 12 }} />
             <Text style={styles.actionLabel}>Change Password</Text>
             <Ionicons name="chevron-forward" size={18} color="#4A6080" />
