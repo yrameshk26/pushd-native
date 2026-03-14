@@ -212,7 +212,14 @@ export default function NewMealPlanScreen() {
             })}
           </View>
 
-          {/* Generate Button */}
+          <View style={{ height: 16 }} />
+        </ScrollView>
+
+        {/* Generate Button — pinned above tab bar */}
+        <View style={styles.footer}>
+          <Text style={styles.hint}>
+            AI will create a personalized {days}-day meal plan based on your preferences.
+          </Text>
           <TouchableOpacity
             style={[styles.generateBtn, generateMutation.isPending && styles.generateBtnDisabled]}
             onPress={handleGenerate}
@@ -231,13 +238,7 @@ export default function NewMealPlanScreen() {
               </View>
             )}
           </TouchableOpacity>
-
-          <Text style={styles.hint}>
-            AI will create a personalized {days}-day meal plan based on your preferences.
-          </Text>
-
-          <View style={{ height: 60 }} />
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -304,9 +305,14 @@ const styles = StyleSheet.create({
   chipText: { color: '#718FAF', fontSize: 13, fontWeight: '500' },
   chipTextActive: { color: '#3B82F6', fontWeight: '600' },
 
+  footer: {
+    paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8,
+    borderTopWidth: 1, borderTopColor: '#0F1B2D',
+    backgroundColor: '#060C1B',
+  },
   generateBtn: {
     backgroundColor: '#3B82F6', borderRadius: 16,
-    paddingVertical: 16, alignItems: 'center', marginTop: 32,
+    paddingVertical: 16, alignItems: 'center', marginTop: 8,
   },
   generateBtnDisabled: { opacity: 0.65 },
   generateBtnContent: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -315,6 +321,6 @@ const styles = StyleSheet.create({
 
   hint: {
     color: '#4A6080', fontSize: 12, textAlign: 'center',
-    marginTop: 10, lineHeight: 18,
+    marginTop: 0, lineHeight: 18,
   },
 });
