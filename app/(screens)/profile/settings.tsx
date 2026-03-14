@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Platform,
   Image,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -385,6 +386,31 @@ export default function SettingsScreen() {
             <Ionicons name="lock-closed-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
             <View style={styles.linkTextGroup}>
               <Text style={styles.linkLabel}>Change Password</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
+          </TouchableOpacity>
+          <View style={styles.sep} />
+          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/settings/security-report' as never)}>
+            <Ionicons name="shield-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Security &amp; Privacy Report</Text>
+              <Text style={styles.linkSub}>How we protect your data</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Support */}
+        <Text style={styles.sectionLabel}>Support</Text>
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.linkRow}
+            onPress={() => Linking.openURL('mailto:support@pushd.fit?subject=Feedback%20%2F%20Support')}
+          >
+            <Ionicons name="mail-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Contact Us</Text>
+              <Text style={styles.linkSub}>Feedback, questions or bug reports</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
