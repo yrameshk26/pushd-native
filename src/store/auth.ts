@@ -38,6 +38,8 @@ interface AuthState {
   ) => Promise<void>;
   /** Use stored refresh token to silently log in (called after biometric success). */
   loginWithBiometric: () => Promise<void>;
+  /** Store passkey-issued tokens and mark authenticated (called after passkey success). */
+  loginWithPasskey: (accessToken: string, refreshToken: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -145,6 +147,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     await storage.setItemAsync(TOKEN_STORAGE_KEY, data.access_token);
     await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, data.refresh_token);
+    set({ isAuthenticated: true });
+  },
+
+  loginWithPasskey: async (accessToken: string, refreshToken: string) => {
+    await storage.setItemAsync(TOKEN_STORAGE_KEY, accessToken);
+    await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, refreshToken);
     set({ isAuthenticated: true });
   },
 

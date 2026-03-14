@@ -8,6 +8,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
 import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
 import { useBiometricStore } from '../../src/store/biometric';
+import { usePasskeyAuth } from '../../src/hooks/usePasskeyAuth';
 import { storage } from '../../src/utils/storage';
 import { REFRESH_TOKEN_STORAGE_KEY } from '../../src/constants/config';
 
@@ -24,6 +25,7 @@ export default function LoginScreen() {
   const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   const { isAvailable, isEnabled, biometricType, hydrate, authenticate } = useBiometricStore();
+  const { loginWithPasskey, loading: passkeyLoading, error: passkeyError, isSupported: passkeySupported } = usePasskeyAuth();
 
   useEffect(() => {
     hydrate();
@@ -43,6 +45,17 @@ export default function LoginScreen() {
       router.replace('/(app)/dashboard');
     } catch (e: any) {
       Alert.alert('Biometric Login Failed', e?.message ?? 'Please sign in with your password.');
+    }
+  };
+
+  const handlePasskeyLogin = async () => {
+    try {
+      await loginWithPasskey();
+    } catch {
+      // error is set in hook state — show if needed
+    }
+    if (passkeyError) {
+      Alert.alert('Passkey Login Failed', passkeyError);
     }
   };
 
@@ -104,20 +117,38 @@ export default function LoginScreen() {
           </View>
         ) : null}
 
-        {/* Biometric login button — shown when enabled and a session exists */}
+        {/* Biometric login — shown when device has biometrics + stored session */}
         {showBiometricButton && (
-          <>
-            <TouchableOpacity style={styles.biometricButton} onPress={handleBiometricLogin}>
-              <Ionicons name={biometricIcon as any} size={22} color="#3B82F6" />
-              <Text style={styles.biometricButtonText}>{biometricLabel}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.biometricButton} onPress={handleBiometricLogin}>
+            <Ionicons name={biometricIcon as any} size={22} color="#3B82F6" />
+            <Text style={styles.biometricButtonText}>{biometricLabel}</Text>
+          </TouchableOpacity>
+        )}
 
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or sign in with password</Text>
-              <View style={styles.dividerLine} />
-            </View>
-          </>
+        {/* Passkey login — shown when device supports passkeys */}
+        {passkeySupported && (
+          <TouchableOpacity
+            style={[styles.passkeyButton, passkeyLoading && { opacity: 0.6 }]}
+            onPress={handlePasskeyLogin}
+            disabled={passkeyLoading}
+          >
+            {passkeyLoading ? (
+              <ActivityIndicator size="small" color="#A78BFA" />
+            ) : (
+              <>
+                <Ionicons name="key-outline" size={20} color="#A78BFA" />
+                <Text style={styles.passkeyButtonText}>Sign in with Passkey</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
+
+        {(showBiometricButton || passkeySupported) && (
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or sign in with password</Text>
+            <View style={styles.dividerLine} />
+          </View>
         )}
 
         <TextInput
@@ -214,9 +245,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, backgroundColor: 'rgba(59,130,246,0.1)', borderRadius: 14,
     paddingVertical: 18, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)',
-    marginBottom: 20,
+    marginBottom: 12,
   },
   biometricButtonText: { color: '#3B82F6', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+
+  passkeyButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, backgroundColor: 'rgba(167,139,250,0.1)', borderRadius: 14,
+    paddingVertical: 18, borderWidth: 1, borderColor: 'rgba(167,139,250,0.3)',
+    marginBottom: 20,
+  },
+  passkeyButtonText: { color: '#A78BFA', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 
   input: {
     backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,

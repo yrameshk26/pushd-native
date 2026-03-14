@@ -19,6 +19,7 @@ import { api } from '../../../src/api/client';
 import { storage } from '../../../src/utils/storage';
 import { TOKEN_STORAGE_KEY } from '../../../src/constants/config';
 import { useBiometricStore } from '../../../src/store/biometric';
+import { usePasskeyAuth } from '../../../src/hooks/usePasskeyAuth';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -246,6 +247,7 @@ function PasskeysSection() {
   const [registerError, setRegisterError] = useState('');
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { registerPasskey, isSupported: passkeySupported } = usePasskeyAuth();
 
   const { data: passkeys, isLoading, isError, refetch } = useQuery<Passkey[]>({
     queryKey: ['passkeys'],
@@ -276,17 +278,27 @@ function PasskeysSection() {
   }, [queryClient]);
 
   async function handleRegister() {
-    if (Platform.OS !== 'web') {
-      Linking.openURL('https://pushd.fit/profile/settings');
-      return;
-    }
-
     setRegistering(true);
     setRegisterError('');
     setRegisterSuccess('');
 
     try {
-      // Get registration options from server
+      if (Platform.OS !== 'web') {
+        // Native: use react-native-passkeys directly
+        if (!passkeySupported) {
+          Linking.openURL('https://pushd.fit/profile/settings');
+          return;
+        }
+        const name = newKeyName.trim() || getDefaultPasskeyName();
+        const result = await registerPasskey(name);
+        setRegisterSuccess(`"${result.name}" registered successfully!`);
+        setNewKeyName('');
+        setShowNameInput(false);
+        refetch();
+        return;
+      }
+
+      // Web: use @simplewebauthn/browser
       const optRes = await fetch(`${api.defaults.baseURL}/api/auth/passkey/register/options`, {
         method: 'POST',
         headers: await (async () => {
@@ -297,7 +309,6 @@ function PasskeysSection() {
       if (!optRes.ok) { setRegisterError('Failed to start registration'); return; }
       const options = await optRes.json();
 
-      // Dynamically import to avoid bundling on native
       const { startRegistration } = await import('@simplewebauthn/browser');
 
       let credential;
@@ -331,6 +342,8 @@ function PasskeysSection() {
       setNewKeyName('');
       setShowNameInput(false);
       refetch();
+    } catch (e: any) {
+      setRegisterError(e?.message ?? 'Registration failed');
     } finally {
       setRegistering(false);
     }
@@ -366,27 +379,8 @@ function PasskeysSection() {
           </TouchableOpacity>
         </View>
 
-        {/* Native: show inline notice with link instead of form */}
-        {showNameInput && Platform.OS !== 'web' && (
-          <>
-            <View style={styles.sep} />
-            <View style={styles.nativePasskeyNotice}>
-              <Ionicons name="information-circle-outline" size={18} color="#60a5fa" style={{ marginTop: 1 }} />
-              <View style={{ flex: 1, gap: 8 }}>
-                <Text style={styles.nativePasskeyNoticeText}>
-                  Passkey registration requires your web browser. Tap below to open the web app and register your biometric.
-                </Text>
-                <TouchableOpacity style={styles.openWebBtn} onPress={() => Linking.openURL('https://pushd.fit/profile/settings')}>
-                  <Ionicons name="open-outline" size={14} color="#fff" />
-                  <Text style={styles.openWebBtnText}>Open pushd.fit to register</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* Add passkey form (web only) */}
-        {showNameInput && Platform.OS === 'web' && (
+        {/* Add passkey form */}
+        {showNameInput && (
           <>
             <View style={styles.sep} />
             <View style={styles.addPasskeyForm}>
