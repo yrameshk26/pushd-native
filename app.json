@@ -19,10 +19,13 @@
         "UIBackgroundModes": [
           "fetch",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       },
       "entitlements": {
-        "com.apple.developer.associated-domains": ["webcredentials:pushd.fit"]
+        "com.apple.developer.associated-domains": [
+          "webcredentials:pushd.fit"
+        ]
       }
     },
     "android": {
