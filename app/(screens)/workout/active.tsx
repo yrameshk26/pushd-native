@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Alert, ActivityIndicator, Platform, KeyboardAvoidingView, Image,
@@ -17,6 +17,22 @@ import { NLWorkoutInput, ParsedExercise } from '../../../src/components/NLWorkou
 import { FormAnalysisSheet } from '../../../src/components/FormAnalysisSheet';
 import { ExerciseDetailSheet } from '../../../src/components/ExerciseDetailSheet';
 import { Exercise } from '../../../src/types';
+import { api } from '../../../src/api/client';
+
+// Weight unit helpers
+const kgToLbs = (kg: number) => Math.round(kg * 2.20462 * 10) / 10;
+const lbsToKg = (lbs: number) => Math.round(lbs / 2.20462 * 100) / 100;
+
+function useWeightUnit() {
+  const [unit, setUnit] = useState<'KG' | 'LBS'>('KG');
+  useEffect(() => {
+    api.get('/api/users/me').then(({ data }) => {
+      const u = data?.data ?? data;
+      if (u?.weightUnit === 'LBS') setUnit('LBS');
+    }).catch(() => {});
+  }, []);
+  return unit;
+}
 
 const DEFAULT_REST_SECONDS = 90;
 
@@ -45,6 +61,9 @@ export default function ActiveWorkoutScreen() {
 
   // Exercise detail sheet state
   const [detailExerciseId, setDetailExerciseId] = useState<string | null>(null);
+
+  const weightUnit = useWeightUnit();
+  const isLbs = weightUnit === 'LBS';
 
   // Rest timer state
   const [restVisible, setRestVisible] = useState(false);
@@ -304,7 +323,7 @@ export default function ActiveWorkoutScreen() {
               {/* Set headers */}
               <View style={styles.setHeader}>
                 <Text style={[styles.setCol, { flex: 0.5 }]}>SET</Text>
-                <Text style={styles.setCol}>KG</Text>
+                <Text style={styles.setCol}>{weightUnit}</Text>
                 <Text style={styles.setCol}>REPS</Text>
                 <Text style={[styles.setCol, { flex: 0.5 }]}></Text>
               </View>
@@ -318,8 +337,11 @@ export default function ActiveWorkoutScreen() {
                     keyboardType="numeric"
                     placeholder="–"
                     placeholderTextColor="#4A6080"
-                    value={s.weight !== undefined ? String(s.weight) : ''}
-                    onChangeText={(v) => updateSet(exercise.localId, i, { weight: v ? parseFloat(v) : undefined })}
+                    value={s.weight !== undefined ? String(isLbs ? kgToLbs(s.weight) : s.weight) : ''}
+                    onChangeText={(v) => {
+                      const num = v ? parseFloat(v) : undefined;
+                      updateSet(exercise.localId, i, { weight: num !== undefined && isLbs ? lbsToKg(num) : num });
+                    }}
                   />
                   <TextInput
                     style={styles.setInput}
