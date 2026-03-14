@@ -3,13 +3,13 @@ import { useWorkoutStore } from '../store/workout';
 
 export function useWorkoutTimer() {
   const tick = useWorkoutStore((s) => s.tick);
-  const active = useWorkoutStore((s) => s.active);
+  const timerRunning = useWorkoutStore((s) => s.active?.startTime != null);
 
   useEffect(() => {
-    if (!active) return;
+    if (!timerRunning) return;
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [active, tick]);
+  }, [timerRunning, tick]);
 }
 
 export function formatDuration(seconds: number): string {

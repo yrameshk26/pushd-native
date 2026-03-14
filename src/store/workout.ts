@@ -39,7 +39,7 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
 
   startWorkout: (title) => {
     set({
-      active: { title, startTime: new Date(), exercises: [] },
+      active: { title, startTime: null, exercises: [] },
       elapsedSeconds: 0,
     });
   },
@@ -62,9 +62,11 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
   addExercise: (exercise) => {
     const active = get().active;
     if (!active) return;
+    const isFirst = active.exercises.length === 0;
     set({
       active: {
         ...active,
+        startTime: active.startTime ?? (isFirst ? new Date() : null),
         exercises: [
           ...active.exercises,
           { ...exercise, localId: newLocalId(), sets: [defaultSet(0)] },
@@ -187,7 +189,7 @@ export const useWorkoutStore = create<WorkoutStore>((set, get) => ({
 
     const createRes = await api.post('/api/workouts', {
       title: active.title,
-      startTime: active.startTime.toISOString(),
+      startTime: (active.startTime ?? new Date()).toISOString(),
       exercises: active.exercises.map((e, ei) => ({
         exerciseId: e.exerciseId,
         order: ei,

@@ -31,7 +31,7 @@ export interface WorkoutExercise {
 export interface ActiveWorkout {
   id?: string; // set after API creates it
   title: string;
-  startTime: Date;
+  startTime: Date | null; // null until first exercise is added (empty workout)
   exercises: WorkoutExercise[];
 }
 
