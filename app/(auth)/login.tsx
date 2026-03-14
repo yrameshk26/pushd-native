@@ -26,7 +26,7 @@ export default function LoginScreen() {
   const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
   const { isSupported: appleSupported, loading: appleLoading, signInWithApple } = useAppleAuth();
 
-  const { isAvailable, isEnabled, biometricType, hydrate, authenticate } = useBiometricStore();
+  const { isAvailable, isEnabled, hasBeenPrompted, biometricType, hydrate, enable, markPrompted, authenticate } = useBiometricStore();
   const { loginWithPasskey, loading: passkeyLoading, error: passkeyError, isSupported: passkeySupported } = usePasskeyAuth();
 
   useEffect(() => {
@@ -34,8 +34,21 @@ export default function LoginScreen() {
     storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY).then((t) => setHasStoredSession(!!t));
   }, []);
 
-  // Show if device has biometrics + a previous session exists + user hasn't disabled it
+  // Show if device has biometrics + a previous session exists + user opted in
   const showBiometricButton = isAvailable && isEnabled && hasStoredSession;
+
+  const promptBiometricSetup = () => {
+    if (!isAvailable || hasBeenPrompted) return;
+    const label = biometricType === 'face' ? 'Face ID' : 'Fingerprint';
+    Alert.alert(
+      `Enable ${label}?`,
+      `Use ${label} to sign in faster next time.`,
+      [
+        { text: 'Not Now', style: 'cancel', onPress: markPrompted },
+        { text: `Enable ${label}`, onPress: enable },
+      ],
+    );
+  };
 
   const handleBiometricLogin = async () => {
     try {
@@ -69,6 +82,7 @@ export default function LoginScreen() {
       const result = await sendOtp(trimmed, password);
 
       if (result.next === 'dashboard') {
+        promptBiometricSetup();
         router.replace('/(app)/dashboard');
       } else if (result.next === 'verify-email') {
         router.push(`/(auth)/verify-email?email=${encodeURIComponent(trimmed)}&sessionId=${result.sessionId}`);

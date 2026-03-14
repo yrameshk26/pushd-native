@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useAuthStore } from '../store/auth';
+import { useBiometricStore } from '../store/biometric';
 import {
   exchangeGoogleToken,
   GOOGLE_CLIENT_ID_IOS,
@@ -42,6 +44,7 @@ function useGoogleAuthWithPackage(): UseGoogleAuthReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const setGoogleUser = useAuthStore((s) => s.setGoogleUser);
+  const { isAvailable, hasBeenPrompted, biometricType, enable, markPrompted } = useBiometricStore();
 
   // useAuthRequest is always defined inside this branch
   const [, response, promptAsyncInternal] =
@@ -83,6 +86,19 @@ function useGoogleAuthWithPackage(): UseGoogleAuthReturn {
           authResult.accessToken,
           authResult.refreshToken,
         );
+
+        // Prompt biometric setup on first login if available and not yet asked
+        if (isAvailable && !hasBeenPrompted) {
+          const label = biometricType === 'face' ? 'Face ID' : 'Fingerprint';
+          Alert.alert(
+            `Enable ${label}?`,
+            `Use ${label} to sign in faster next time.`,
+            [
+              { text: 'Not Now', style: 'cancel', onPress: markPrompted },
+              { text: `Enable ${label}`, onPress: enable },
+            ],
+          );
+        }
 
         // Navigate to main app
         router.replace('/(app)/dashboard');

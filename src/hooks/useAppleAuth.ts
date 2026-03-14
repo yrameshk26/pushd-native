@@ -1,7 +1,8 @@
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import { useState } from 'react';
 import { api } from '../api/client';
 import { useAuthStore } from '../store/auth';
+import { useBiometricStore } from '../store/biometric';
 import { storage } from '../utils/storage';
 import { TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from '../constants/config';
 import { router } from 'expo-router';
@@ -26,6 +27,7 @@ export function useAppleAuth(): UseAppleAuthReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const setAuthenticated = useAuthStore((s) => s.loginWithPasskey); // reuse token-store helper
+  const { isAvailable, hasBeenPrompted, biometricType, enable, markPrompted } = useBiometricStore();
 
   const isSupported =
     Platform.OS === 'ios' &&
@@ -63,6 +65,19 @@ export function useAppleAuth(): UseAppleAuthReturn {
       await storage.setItemAsync(TOKEN_STORAGE_KEY, data.accessToken);
       await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, data.refreshToken);
       await setAuthenticated(data.accessToken, data.refreshToken);
+
+      if (isAvailable && !hasBeenPrompted) {
+        const label = biometricType === 'face' ? 'Face ID' : 'Fingerprint';
+        Alert.alert(
+          `Enable ${label}?`,
+          `Use ${label} to sign in faster next time.`,
+          [
+            { text: 'Not Now', style: 'cancel', onPress: markPrompted },
+            { text: `Enable ${label}`, onPress: enable },
+          ],
+        );
+      }
+
       router.replace('/(app)/dashboard');
     } catch (e: any) {
       // ERR_CANCELED means the user dismissed the sheet — not an error

@@ -5,18 +5,31 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
+import { useBiometricStore } from '../../src/store/biometric';
 
 export default function VerifyOtpScreen() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const verifyOtp = useAuthStore((s) => s.verifyOtp);
+  const { isAvailable, hasBeenPrompted, biometricType, enable, markPrompted } = useBiometricStore();
 
   const handleVerify = async () => {
     if (code.length !== 6) return;
     setLoading(true);
     try {
       await verifyOtp(code);
+      if (isAvailable && !hasBeenPrompted) {
+        const label = biometricType === 'face' ? 'Face ID' : 'Fingerprint';
+        Alert.alert(
+          `Enable ${label}?`,
+          `Use ${label} to sign in faster next time.`,
+          [
+            { text: 'Not Now', style: 'cancel', onPress: markPrompted },
+            { text: `Enable ${label}`, onPress: enable },
+          ],
+        );
+      }
       router.replace('/(app)/dashboard');
     } catch {
       Alert.alert('Invalid code', 'Please check the code and try again.');

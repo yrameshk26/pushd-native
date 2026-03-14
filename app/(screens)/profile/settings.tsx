@@ -300,19 +300,6 @@ export default function SettingsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
-        {/* Subscription & Billing */}
-        <Text style={styles.sectionLabel}>Subscription</Text>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/paywall' as never)}>
-            <Ionicons name="sparkles-outline" size={20} color="#F59E0B" style={styles.linkIcon} />
-            <View style={styles.linkTextGroup}>
-              <Text style={styles.linkLabel}>Subscription &amp; Billing</Text>
-              <Text style={styles.linkSub}>Manage your plan, upgrade or apply promo codes</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
-          </TouchableOpacity>
-        </View>
-
         {/* Avatar */}
         <TouchableOpacity style={styles.avatarSection} onPress={handleChangePhoto} activeOpacity={0.8} disabled={avatarUploading}>
           <View style={styles.avatarWrap}>
@@ -350,6 +337,19 @@ export default function SettingsScreen() {
             placeholderTextColor="#718FAF" maxLength={200} multiline numberOfLines={3} textAlignVertical="top"
           />
           <Text style={styles.charCount}>{bio.length}/200</Text>
+        </View>
+
+        {/* Subscription & Billing */}
+        <Text style={styles.sectionLabel}>Subscription</Text>
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/paywall' as never)}>
+            <Ionicons name="sparkles-outline" size={20} color="#F59E0B" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Subscription &amp; Billing</Text>
+              <Text style={styles.linkSub}>Manage your plan, upgrade or apply promo codes</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
+          </TouchableOpacity>
         </View>
 
         {/* Weight Unit */}
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
 
   sectionLabel: { fontSize: 11, fontWeight: '700', color: '#718FAF', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8, marginTop: 24, marginLeft: 2 },
 
-  card: { backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: '#162540', overflow: 'hidden' },
+  card: { backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: '#162540', overflow: 'hidden', marginBottom: 8 },
   sep: { height: 1, backgroundColor: '#162540', marginLeft: 16 },
 
   toggleRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, minHeight: 52 },

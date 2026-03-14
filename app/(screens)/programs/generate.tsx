@@ -130,8 +130,10 @@ export default function BuildRoutineScreen() {
     setGenerating(true);
     setTipIndex(0);
     try {
+      const isFullGym = equipment.length === EQUIPMENT_OPTIONS.length;
       const { data } = await api.post('/api/ai/build-routine', {
         focus, goal, level, durationMins: duration, equipment,
+        fullGym: isFullGym,
         notes: notes.trim() || undefined,
       });
       setRoutine(data.routine);
