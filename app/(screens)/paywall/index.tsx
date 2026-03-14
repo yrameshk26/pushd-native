@@ -64,12 +64,25 @@ const FREE_FEATURES = [
 ];
 
 export default function PaywallScreen() {
-  const { tier, applyPromo } = useSubscriptionStore();
+  const { tier, isAdmin, applyPromo, setAdminTier } = useSubscriptionStore();
   const [selected, setSelected] = useState<Plan>('ELITE');
   const [yearly, setYearly] = useState(true);
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState('');
+  const [adminLoading, setAdminLoading] = useState(false);
+
+  async function handleAdminTier(t: 'FREE' | Plan) {
+    setAdminLoading(true);
+    try {
+      await setAdminTier(t as any);
+      Alert.alert('Done', `Tier set to ${t}.`, [{ text: 'OK', onPress: () => router.back() }]);
+    } catch {
+      Alert.alert('Error', 'Failed to set tier.');
+    } finally {
+      setAdminLoading(false);
+    }
+  }
 
   async function handleApplyPromo() {
     if (!promoCode.trim()) return;
@@ -106,7 +119,7 @@ export default function PaywallScreen() {
           <View style={styles.currentBadge}>
             <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
             <Text style={styles.currentBadgeText}>
-              You're on the {tier === 'PRO' ? 'Pro' : 'Elite'} plan
+              {"You're on the"} {tier === 'PRO' ? 'Pro' : 'Elite'} plan
             </Text>
           </View>
         )}
@@ -195,6 +208,32 @@ export default function PaywallScreen() {
             </View>
           ))}
         </View>
+
+        {/* Admin tier override */}
+        {isAdmin && (
+          <View style={styles.adminSection}>
+            <View style={styles.adminHeader}>
+              <Ionicons name="shield-checkmark" size={14} color="#F59E0B" />
+              <Text style={styles.adminLabel}>Admin Override</Text>
+            </View>
+            <View style={styles.adminTierRow}>
+              {(['FREE', 'PRO', 'ELITE'] as const).map((t) => (
+                <TouchableOpacity
+                  key={t}
+                  style={[styles.adminTierBtn, tier === t && styles.adminTierBtnActive]}
+                  onPress={() => handleAdminTier(t)}
+                  disabled={adminLoading || tier === t}
+                >
+                  {adminLoading && tier !== t ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={[styles.adminTierText, tier === t && styles.adminTierTextActive]}>{t}</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* Promo code */}
         <View style={styles.promoSection}>
@@ -313,6 +352,21 @@ const styles = StyleSheet.create({
     borderRadius: 16, padding: 16, marginBottom: 20, gap: 8,
   },
   freeTitle: { color: '#4A6080', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold', marginBottom: 4 },
+
+  adminSection: {
+    backgroundColor: 'rgba(245,158,11,0.08)', borderWidth: 1, borderColor: 'rgba(245,158,11,0.25)',
+    borderRadius: 14, padding: 14, marginBottom: 20,
+  },
+  adminHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  adminLabel: { color: '#F59E0B', fontSize: 12, fontWeight: '700', fontFamily: 'DMSans-Bold', textTransform: 'uppercase', letterSpacing: 0.5 },
+  adminTierRow: { flexDirection: 'row', gap: 8 },
+  adminTierBtn: {
+    flex: 1, paddingVertical: 10, borderRadius: 10, alignItems: 'center',
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
+  },
+  adminTierBtnActive: { backgroundColor: 'rgba(245,158,11,0.2)', borderColor: '#F59E0B' },
+  adminTierText: { color: '#718FAF', fontSize: 13, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  adminTierTextActive: { color: '#F59E0B' },
 
   promoSection: { marginBottom: 20 },
   promoLabel: { color: '#718FAF', fontSize: 13, fontWeight: '600', fontFamily: 'DMSans-SemiBold', marginBottom: 8 },

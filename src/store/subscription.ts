@@ -5,14 +5,17 @@ export type SubscriptionTier = 'FREE' | 'PRO' | 'ELITE';
 
 interface SubscriptionStore {
   tier: SubscriptionTier;
+  isAdmin: boolean;
   loading: boolean;
   fetchTier: () => Promise<void>;
   applyPromo: (code: string) => Promise<{ tier: SubscriptionTier; message: string }>;
   setTier: (tier: SubscriptionTier) => void;
+  setAdminTier: (tier: SubscriptionTier) => Promise<void>;
 }
 
 export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   tier: 'FREE',
+  isAdmin: false,
   loading: false,
 
   fetchTier: async () => {
@@ -20,7 +23,10 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
     try {
       const { data } = await api.get('/api/subscriptions/status');
       const tier = (data?.tier ?? 'FREE') as SubscriptionTier;
-      set({ tier });
+      // Fetch isAdmin from /api/users/me alongside tier
+      const meRes = await api.get('/api/users/me').catch(() => ({ data: null }));
+      const isAdmin = meRes.data?.isAdmin ?? false;
+      set({ tier, isAdmin });
     } catch {
       // silently fail — keep current tier
     } finally {
@@ -36,6 +42,11 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   },
 
   setTier: (tier) => set({ tier }),
+
+  setAdminTier: async (tier: SubscriptionTier) => {
+    await api.patch('/api/admin/users/me/tier', { tier });
+    set({ tier });
+  },
 }));
 
 export function isPro(tier: SubscriptionTier): boolean {
