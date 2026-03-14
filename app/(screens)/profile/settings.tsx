@@ -237,32 +237,29 @@ export default function SettingsScreen() {
 
   const logout = useAuthStore((s) => s.logout);
 
+  const [deleteError, setDeleteError] = useState('');
+
   const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'This permanently deletes all your workouts, routines, progress, and personal data. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Continue', style: 'destructive', onPress: () => { setDeleteConfirmText(''); setShowDeleteModal(true); } },
-      ],
-    );
+    setDeleteConfirmText('');
+    setDeleteError('');
+    setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
     if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') {
-      Alert.alert('Incorrect', 'You must type DELETE to confirm.');
+      setDeleteError('Type DELETE exactly to confirm.');
       return;
     }
+    setDeleteError('');
     setDeleting(true);
     try {
       await api.delete('/api/users/me');
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.error ?? e?.message ?? 'Could not delete account. Please try again.');
+      const msg = e?.response?.data?.error ?? e?.message ?? 'Could not delete account. Please try again.';
+      setDeleteError(msg);
       setDeleting(false);
-      setShowDeleteModal(false);
       return;
     }
-    // Account deleted — clear local tokens regardless of revoke success
     try { await logout(); } catch { /* ignore */ }
     setDeleting(false);
     setShowDeleteModal(false);
@@ -419,31 +416,36 @@ export default function SettingsScreen() {
       <Modal visible={showDeleteModal} transparent animationType="fade" onRequestClose={() => setShowDeleteModal(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Final Confirmation</Text>
+            <Text style={styles.modalTitle}>Delete Account</Text>
             <Text style={styles.modalBody}>
-              Type <Text style={{ color: '#fff', fontWeight: '700' }}>DELETE</Text> to permanently delete your account and all data.
+              This permanently deletes all your workouts, routines, progress, and personal data.{'\n\n'}
+              Type <Text style={{ color: '#fff', fontWeight: '700' }}>DELETE</Text> to confirm.
             </Text>
             <TextInput
               style={styles.modalInput}
               value={deleteConfirmText}
-              onChangeText={setDeleteConfirmText}
+              onChangeText={(t) => { setDeleteConfirmText(t); setDeleteError(''); }}
               placeholder="Type DELETE"
               placeholderTextColor="#718FAF"
               autoCapitalize="characters"
+              autoCorrect={false}
               autoFocus
             />
+            {deleteError ? (
+              <Text style={styles.modalError}>{deleteError}</Text>
+            ) : null}
             <View style={styles.modalBtns}>
               <TouchableOpacity
                 style={[styles.modalBtn, styles.modalBtnCancel]}
-                onPress={() => setShowDeleteModal(false)}
+                onPress={() => { setShowDeleteModal(false); setDeleteError(''); }}
                 disabled={deleting}
               >
                 <Text style={styles.modalBtnCancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnDelete, (deleteConfirmText.trim().toUpperCase() !== 'DELETE' || deleting) && styles.modalBtnDisabled]}
+                style={[styles.modalBtn, styles.modalBtnDelete, deleting && styles.modalBtnDisabled]}
                 onPress={confirmDelete}
-                disabled={deleteConfirmText.trim().toUpperCase() !== 'DELETE' || deleting}
+                disabled={deleting}
               >
                 {deleting
                   ? <ActivityIndicator color="#fff" size="small" />
@@ -541,4 +543,5 @@ const styles = StyleSheet.create({
   modalBtnDeleteText: { color: '#fff', fontSize: 15, fontWeight: '700',
     fontFamily: 'DMSans-Bold' },
   modalBtnDisabled: { opacity: 0.4 },
+  modalError: { color: '#ef4444', fontSize: 13, marginBottom: 12, fontFamily: 'DMSans-Regular' },
 });
