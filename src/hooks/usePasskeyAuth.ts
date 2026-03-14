@@ -1,9 +1,18 @@
 import { useState, useCallback } from 'react';
 import { Platform } from 'react-native';
 import { router } from 'expo-router';
-import * as Passkey from 'react-native-passkeys';
 import { api } from '../api/client';
 import { useAuthStore } from '../store/auth';
+
+// Attempt to load react-native-passkeys gracefully — requires a dev build.
+// In Expo Go the native module is missing, so we fall back to unavailable.
+type PasskeyModule = typeof import('react-native-passkeys');
+let PasskeyLib: PasskeyModule | null = null;
+try {
+  PasskeyLib = require('react-native-passkeys');
+} catch {
+  // native module not available (Expo Go or old build)
+}
 
 export interface UsePasskeyAuthReturn {
   loginWithPasskey: () => Promise<void>;
@@ -18,16 +27,18 @@ export function usePasskeyAuth(): UsePasskeyAuthReturn {
   const [error, setError] = useState<string | null>(null);
   const loginWithPasskeyStore = useAuthStore((s) => s.loginWithPasskey);
 
-  const isSupported = Platform.OS !== 'web' && Passkey.isSupported();
+  const isSupported = Platform.OS !== 'web' && !!PasskeyLib && PasskeyLib.isSupported();
 
   const loginWithPasskey = useCallback(async () => {
     setError(null);
     setLoading(true);
     try {
+      if (!PasskeyLib) throw new Error('Passkeys require a development build.');
+
       const { data: options } = await api.post('/api/auth/passkey/login/options', {});
       const { sessionId, ...authOptions } = options as { sessionId: string; [k: string]: unknown };
 
-      const credential = await Passkey.get(authOptions as Parameters<typeof Passkey.get>[0]);
+      const credential = await PasskeyLib.get(authOptions as Parameters<typeof PasskeyLib.get>[0]);
       if (!credential) throw new Error('Passkey authentication was cancelled.');
 
       const { data } = await api.post('/api/auth/passkey/native/login/verify', {
@@ -51,9 +62,11 @@ export function usePasskeyAuth(): UsePasskeyAuthReturn {
     setError(null);
     setLoading(true);
     try {
+      if (!PasskeyLib) throw new Error('Passkeys require a development build.');
+
       const { data: options } = await api.post('/api/auth/passkey/native/register/options', {});
 
-      const credential = await Passkey.create(options as Parameters<typeof Passkey.create>[0]);
+      const credential = await PasskeyLib.create(options as Parameters<typeof PasskeyLib.create>[0]);
       if (!credential) throw new Error('Passkey registration was cancelled.');
 
       const deviceName = name ?? (Platform.OS === 'ios' ? 'iPhone / Face ID' : 'Android Fingerprint');
