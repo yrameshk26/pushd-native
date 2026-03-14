@@ -39,16 +39,31 @@ interface PlanForm {
   notes: string;
 }
 
-interface GeneratedRoutine {
-  id: string;
-  name: string;
+interface PreviewExercise {
+  exerciseId: string;
+  exerciseName: string;
+  order: number;
+  targetSets: number;
+  targetReps: number | null;
+  notes: string | null;
 }
 
-interface GeneratedPlan {
+interface PreviewRoutine {
+  name: string;
+  description: string;
+  exercises: PreviewExercise[];
+}
+
+interface PreviewPlan {
   planName: string;
   planDescription: string;
   weeklySchedule?: string;
-  routines: GeneratedRoutine[];
+  routines: PreviewRoutine[];
+}
+
+interface SavedRoutine {
+  id: string;
+  name: string;
 }
 
 // ─── Constants ─────────────────────────────────────────────────────────────
@@ -430,19 +445,16 @@ function GeneratingScreen({ status }: { status: string }) {
   );
 }
 
-function SuccessScreen({ plan, onViewRoutines }: { plan: GeneratedPlan; onViewRoutines: () => void }) {
+function SuccessScreen({ routines, onViewRoutines }: { routines: SavedRoutine[]; onViewRoutines: () => void }) {
   return (
     <ScrollView contentContainerStyle={successStyles.container}>
       <View style={successStyles.iconWrap}>
         <Ionicons name="checkmark-circle" size={48} color="#22c55e" />
       </View>
-      <Text style={successStyles.planName}>{plan.planName}</Text>
-      <Text style={successStyles.planDesc}>{plan.planDescription}</Text>
-      {plan.weeklySchedule ? (
-        <Text style={successStyles.schedule}>Schedule: {plan.weeklySchedule}</Text>
-      ) : null}
+      <Text style={successStyles.planName}>Routines Saved!</Text>
+      <Text style={successStyles.planDesc}>{routines.length} routine{routines.length !== 1 ? 's' : ''} added to your library</Text>
       <View style={successStyles.routineList}>
-        {plan.routines.map((r) => (
+        {routines.map((r) => (
           <TouchableOpacity
             key={r.id}
             style={successStyles.routineRow}
@@ -509,7 +521,9 @@ export default function AIPlannerScreen() {
   const [form, setForm] = useState<PlanForm>(DEFAULT_FORM);
   const [generating, setGenerating] = useState(false);
   const [status, setStatus] = useState('Initialising...');
-  const [plan, setPlan] = useState<GeneratedPlan | null>(null);
+  const [preview, setPreview] = useState<PreviewPlan | null>(null);
+  const [saved, setSaved] = useState<SavedRoutine[] | null>(null);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   // Fetch body profile for pre-population
@@ -588,6 +602,7 @@ export default function AIPlannerScreen() {
           duration: form.duration,
           equipment: form.equipment,
           notes: form.notes.trim() || undefined,
+          dryRun: true,
         }),
       });
 
@@ -611,13 +626,12 @@ export default function AIPlannerScreen() {
             } else if (json.type === 'error') {
               throw new Error(json.message);
             } else if (json.type === 'done') {
-              setPlan({
+              setPreview({
                 planName: json.planName,
                 planDescription: json.planDescription,
                 weeklySchedule: json.weeklySchedule,
                 routines: json.routines ?? [],
               });
-              queryClient.invalidateQueries({ queryKey: ['routines'] });
             }
           } catch (parseErr) {
             // skip malformed event
@@ -653,8 +667,8 @@ export default function AIPlannerScreen() {
     }
   }
 
-  // Success state
-  if (plan) {
+  // Saved state
+  if (saved) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -662,7 +676,120 @@ export default function AIPlannerScreen() {
           <Text style={styles.heading}>AI Planner</Text>
           <View style={{ width: 40 }} />
         </View>
-        <SuccessScreen plan={plan} onViewRoutines={() => router.push('/(app)/routines')} />
+        <SuccessScreen routines={saved} onViewRoutines={() => router.push('/(app)/routines')} />
+      </SafeAreaView>
+    );
+  }
+
+  // Preview (review before saving) state
+  if (preview) {
+    async function handleSave() {
+      if (!preview) return;
+      setSaving(true);
+      try {
+        const { data } = await api.post('/api/ai-planner/confirm', {
+          planName: preview.planName,
+          planDescription: preview.planDescription,
+          weeklySchedule: preview.weeklySchedule,
+          routines: preview.routines,
+        });
+        const routines = data?.data?.routines ?? data?.routines ?? [];
+        queryClient.invalidateQueries({ queryKey: ['routines'] });
+        setSaved(routines);
+        setPreview(null);
+      } catch (err: any) {
+        Alert.alert('Save Failed', err?.response?.data?.error ?? 'Could not save routines. Please try again.');
+      } finally {
+        setSaving(false);
+      }
+    }
+
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setPreview(null)} style={styles.backBtn}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.headerCenter}>
+            <Ionicons name="sparkles" size={18} color="#3B82F6" />
+            <Text style={styles.heading}>Your Plan</Text>
+          </View>
+          <View style={{ width: 40 }} />
+        </View>
+
+        <ScrollView contentContainerStyle={reviewStyles.content} showsVerticalScrollIndicator={false}>
+          {/* Plan summary */}
+          <Text style={reviewStyles.planName}>{preview.planName}</Text>
+          <Text style={reviewStyles.planDesc}>{preview.planDescription}</Text>
+          {preview.weeklySchedule ? (
+            <View style={reviewStyles.schedulePill}>
+              <Ionicons name="calendar-outline" size={13} color="#3B82F6" />
+              <Text style={reviewStyles.scheduleText}>{preview.weeklySchedule}</Text>
+            </View>
+          ) : null}
+
+          <Text style={reviewStyles.sectionLabel}>{preview.routines.length} ROUTINES</Text>
+
+          {preview.routines.map((routine, ri) => (
+            <View key={ri} style={reviewStyles.routineCard}>
+              <View style={reviewStyles.routineHeader}>
+                <View style={reviewStyles.routineIconWrap}>
+                  <Ionicons name="barbell" size={16} color="#3B82F6" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={reviewStyles.routineName}>{routine.name}</Text>
+                  {routine.description ? (
+                    <Text style={reviewStyles.routineDesc} numberOfLines={1}>{routine.description}</Text>
+                  ) : null}
+                </View>
+                <Text style={reviewStyles.exerciseCount}>{routine.exercises.length} exercises</Text>
+              </View>
+
+              {routine.exercises.map((ex, ei) => (
+                <View key={ei} style={[reviewStyles.exerciseRow, ei < routine.exercises.length - 1 && reviewStyles.exerciseRowBorder]}>
+                  <Text style={reviewStyles.exerciseName} numberOfLines={1}>{ex.exerciseName}</Text>
+                  <Text style={reviewStyles.exerciseMeta}>
+                    {ex.targetSets} × {ex.targetReps ?? '—'}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+
+          <View style={{ height: 120 }} />
+        </ScrollView>
+
+        {/* Footer actions */}
+        <View style={reviewStyles.footer}>
+          <TouchableOpacity
+            style={reviewStyles.discardBtn}
+            onPress={() => { setPreview(null); setStep(0); setForm(DEFAULT_FORM); }}
+            activeOpacity={0.7}
+          >
+            <Text style={reviewStyles.discardText}>Discard</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[reviewStyles.regenerateBtn]}
+            onPress={() => setPreview(null)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="refresh-outline" size={16} color="#3B82F6" />
+            <Text style={reviewStyles.regenerateText}>Regenerate</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[reviewStyles.saveBtn, saving && { opacity: 0.6 }]}
+            onPress={handleSave}
+            disabled={saving}
+            activeOpacity={0.8}
+          >
+            {saving ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Ionicons name="checkmark-circle-outline" size={18} color="#fff" />
+            )}
+            <Text style={reviewStyles.saveBtnText}>{saving ? 'Saving…' : 'Save Routines'}</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -748,6 +875,64 @@ export default function AIPlannerScreen() {
     </SafeAreaView>
   );
 }
+
+const reviewStyles = StyleSheet.create({
+  content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 24 },
+  planName: { color: '#fff', fontSize: 22, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 6 },
+  planDesc: { color: '#718FAF', fontSize: 14, lineHeight: 20, marginBottom: 10 },
+  schedulePill: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start',
+    backgroundColor: 'rgba(59,130,246,0.12)', borderRadius: 20,
+    paddingHorizontal: 12, paddingVertical: 5, marginBottom: 20,
+  },
+  scheduleText: { color: '#3B82F6', fontSize: 12, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  sectionLabel: {
+    color: '#718FAF', fontSize: 11, fontWeight: '700', letterSpacing: 1,
+    marginBottom: 12, fontFamily: 'BarlowCondensed-SemiBold',
+  },
+  routineCard: {
+    backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1,
+    borderColor: '#162540', marginBottom: 12, overflow: 'hidden',
+  },
+  routineHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    padding: 14, borderBottomWidth: 1, borderBottomColor: '#162540',
+  },
+  routineIconWrap: {
+    width: 34, height: 34, borderRadius: 8,
+    backgroundColor: 'rgba(59,130,246,0.15)', alignItems: 'center', justifyContent: 'center',
+  },
+  routineName: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  routineDesc: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular', marginTop: 1 },
+  exerciseCount: { color: '#4A6080', fontSize: 11, fontFamily: 'DMSans-Regular', flexShrink: 0 },
+  exerciseRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 14, paddingVertical: 10,
+  },
+  exerciseRowBorder: { borderBottomWidth: 1, borderBottomColor: '#0F1A2E' },
+  exerciseName: { color: '#A8BDD4', fontSize: 13, fontFamily: 'DMSans-Regular', flex: 1, marginRight: 8 },
+  exerciseMeta: { color: '#4A6080', fontSize: 12, fontFamily: 'DMSans-Regular', flexShrink: 0 },
+  footer: {
+    flexDirection: 'row', gap: 8, padding: 16,
+    borderTopWidth: 1, borderTopColor: '#0B1326', backgroundColor: '#060C1B',
+  },
+  discardBtn: {
+    flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1,
+    borderColor: '#162540', alignItems: 'center', justifyContent: 'center',
+  },
+  discardText: { color: '#718FAF', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  regenerateBtn: {
+    flex: 1.2, paddingVertical: 14, borderRadius: 12, borderWidth: 1,
+    borderColor: '#3B82F644', flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: 5,
+  },
+  regenerateText: { color: '#3B82F6', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  saveBtn: {
+    flex: 2, backgroundColor: '#3B82F6', borderRadius: 12, paddingVertical: 14,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+  },
+  saveBtnText: { color: '#fff', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+});
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#060C1B' },
