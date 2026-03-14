@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
 import { storage } from '../../../src/utils/storage';
 import { TOKEN_STORAGE_KEY } from '../../../src/constants/config';
+import { useBiometricStore } from '../../../src/store/biometric';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -73,6 +74,53 @@ function getDefaultPasskeyName(): string {
     if (/Windows/i.test(ua)) return 'Windows Hello';
   }
   return 'Passkey';
+}
+
+// ─── Biometric Section ────────────────────────────────────────────────────────
+
+function BiometricSection() {
+  const { isAvailable, isEnabled, biometricType, hydrate, enable, disable, authenticate } = useBiometricStore();
+
+  useEffect(() => { hydrate(); }, []);
+
+  if (Platform.OS === 'web' || !isAvailable) return null;
+
+  const label = biometricType === 'face' ? 'Face ID' : 'Touch ID / Fingerprint';
+  const icon = biometricType === 'face' ? 'scan-outline' : 'finger-print-outline';
+
+  async function handleToggle() {
+    if (isEnabled) {
+      Alert.alert(`Disable ${label}?`, `You will need to use your password to sign in.`, [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Disable', style: 'destructive', onPress: () => disable() },
+      ]);
+    } else {
+      const success = await authenticate(`Confirm ${label} to enable`);
+      if (success) {
+        await enable();
+        Alert.alert('Enabled', `${label} login is now active.`);
+      }
+    }
+  }
+
+  return (
+    <View style={styles.card}>
+      <TouchableOpacity style={styles.biometricRow} onPress={handleToggle} activeOpacity={0.7}>
+        <View style={styles.biometricIconWrap}>
+          <Ionicons name={icon as any} size={20} color="#3B82F6" />
+        </View>
+        <View style={styles.biometricTextGroup}>
+          <Text style={styles.biometricLabel}>{label}</Text>
+          <Text style={styles.biometricSub}>
+            {isEnabled ? 'Tap to disable biometric login' : `Use ${label} to sign in faster`}
+          </Text>
+        </View>
+        <View style={[styles.togglePill, isEnabled && styles.togglePillOn]}>
+          <View style={[styles.toggleThumb, isEnabled && styles.toggleThumbOn]} />
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 // ─── Sessions Section ────────────────────────────────────────────────────────
@@ -423,6 +471,9 @@ export default function SecurityScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.sectionLabel}>Biometric Login</Text>
+        <BiometricSection />
+
         <Text style={styles.sectionLabel}>Passkeys &amp; Biometrics</Text>
         <PasskeysSection />
 
@@ -528,4 +579,15 @@ const styles = StyleSheet.create({
   // Password
   actionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16 },
   actionLabel: { flex: 1, fontSize: 15, color: '#fff' },
+
+  // Biometric toggle
+  biometricRow: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
+  biometricIconWrap: { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(59,130,246,0.12)', alignItems: 'center', justifyContent: 'center' },
+  biometricTextGroup: { flex: 1 },
+  biometricLabel: { color: '#fff', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  biometricSub: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
+  togglePill: { width: 46, height: 26, borderRadius: 13, backgroundColor: '#1e3a5f', justifyContent: 'center', paddingHorizontal: 3 },
+  togglePillOn: { backgroundColor: '#3B82F6' },
+  toggleThumb: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#718FAF' },
+  toggleThumbOn: { backgroundColor: '#fff', marginLeft: 20 },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useSubscriptionStore, isPro } from '../store/subscription';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,6 +57,7 @@ function muscleBarColor(status: MuscleRecovery['status']): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function RecoveryWidget({ data }: RecoveryWidgetProps) {
+  const { tier } = useSubscriptionStore();
   const color = scoreColor(data.score);
   const bgColor = scoreBgColor(data.score);
   const borderColor = scoreBorderColor(data.score);
@@ -73,13 +75,15 @@ export function RecoveryWidget({ data }: RecoveryWidgetProps) {
           <Ionicons name="pulse-outline" size={16} color={color} />
           <Text style={styles.recoveryLabel}>RECOVERY</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => router.push('/(screens)/coach')}
-          hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-          style={styles.coachLink}
-        >
-          <Text style={styles.coachLinkText}>Ask Coach ›</Text>
-        </TouchableOpacity>
+        {isPro(tier) && (
+          <TouchableOpacity
+            onPress={() => router.push('/(screens)/coach')}
+            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+            style={styles.coachLink}
+          >
+            <Text style={styles.coachLinkText}>Ask Coach ›</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Score + label row */}

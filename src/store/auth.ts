@@ -1,6 +1,7 @@
 import { create } from 'zustand';
+import axios from 'axios';
 import { api } from '../api/client';
-import { TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from '../constants/config';
+import { API_BASE_URL, TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from '../constants/config';
 import { storage } from '../utils/storage';
 
 export interface GoogleUserProfile {
@@ -35,6 +36,8 @@ interface AuthState {
     accessToken: string,
     refreshToken: string,
   ) => Promise<void>;
+  /** Use stored refresh token to silently log in (called after biometric success). */
+  loginWithBiometric: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -133,6 +136,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       username: null,
       avatarUrl: null,
     });
+  },
+
+  loginWithBiometric: async () => {
+    const refreshToken = await storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
+    if (!refreshToken) throw new Error('No stored session. Please log in with your password first.');
+
+    const { data } = await axios.post(`${API_BASE_URL}/api/auth/native/refresh`, {
+      refresh_token: refreshToken,
+    });
+
+    await storage.setItemAsync(TOKEN_STORAGE_KEY, data.access_token);
+    await storage.setItemAsync(REFRESH_TOKEN_STORAGE_KEY, data.refresh_token);
+    set({ isAuthenticated: true });
   },
 
   setGoogleUser: async (

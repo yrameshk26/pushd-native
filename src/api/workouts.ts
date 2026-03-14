@@ -20,7 +20,7 @@ export async function fetchWorkouts(cursor?: string, limit = 20): Promise<Workou
   // API returns { data: [...], total, hasMore } (no cursor) or
   // { data: [...] } when cursor param is provided.
   // Normalise to our WorkoutsResponse shape.
-  const rawItems: Array<Record<string, unknown>> = envelope.data ?? envelope.workouts ?? [];
+  const rawItems: Record<string, unknown>[] = envelope.data ?? envelope.workouts ?? [];
 
   const workouts: WorkoutListItem[] = rawItems.map((w) => ({
     id: w.id as string,
@@ -29,7 +29,7 @@ export async function fetchWorkouts(cursor?: string, limit = 20): Promise<Workou
     duration: (w.duration ?? 0) as number,
     volume: (w.totalVolume ?? w.volume ?? 0) as number,
     prCount: (w.prCount ?? 0) as number,
-    exercises: ((w.exercises ?? []) as Array<Record<string, unknown>>).map((ex) => ({
+    exercises: ((w.exercises ?? []) as Record<string, unknown>[]).map((ex) => ({
       exerciseName:
         (ex.exerciseName as string | undefined) ??
         ((ex.exercise as Record<string, unknown> | undefined)?.name as string | undefined) ??

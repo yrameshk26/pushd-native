@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 // Graceful import — expo-notifications is not supported in Expo Go on Android (SDK 53+)
 let Notifications: typeof import('expo-notifications') | null = null;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   const mod = require('expo-notifications');
   // Expo Go on Android removes push notification support — check for a key export
   if (mod && typeof mod.getPermissionsAsync === 'function') {

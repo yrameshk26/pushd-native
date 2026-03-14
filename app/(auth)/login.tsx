@@ -1,5 +1,4 @@
-import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ActivityIndicator,
   StyleSheet, KeyboardAvoidingView, Platform, Alert,
@@ -8,6 +7,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
 import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
+import { useBiometricStore } from '../../src/store/biometric';
+import { storage } from '../../src/utils/storage';
+import { REFRESH_TOKEN_STORAGE_KEY } from '../../src/constants/config';
 
 export default function LoginScreen() {
   const { message } = useLocalSearchParams<{ message?: string }>();
@@ -15,8 +17,35 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasStoredSession, setHasStoredSession] = useState(false);
+
   const sendOtp = useAuthStore((s) => s.sendOtp);
+  const loginWithBiometric = useAuthStore((s) => s.loginWithBiometric);
   const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
+
+  const { isAvailable, isEnabled, biometricType, hydrate, authenticate } = useBiometricStore();
+
+  useEffect(() => {
+    hydrate();
+    // Check if there's a stored refresh token (previous session)
+    storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY).then((t) => setHasStoredSession(!!t));
+  }, []);
+
+  // Show if device has biometrics + a previous session exists + user hasn't disabled it
+  const showBiometricButton = isAvailable && isEnabled && hasStoredSession;
+
+  const handleBiometricLogin = async () => {
+    try {
+      const label = biometricType === 'face' ? 'Face ID' : 'Touch ID / Fingerprint';
+      const success = await authenticate(`Sign in with ${label}`);
+      if (!success) return;
+
+      await loginWithBiometric();
+      router.replace('/(app)/dashboard');
+    } catch (e: any) {
+      Alert.alert('Biometric Login Failed', e?.message ?? 'Please sign in with your password.');
+    }
+  };
 
   const handleSend = async () => {
     const trimmed = email.trim().toLowerCase();
@@ -24,6 +53,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const result = await sendOtp(trimmed, password);
+
       if (result.next === 'dashboard') {
         router.replace('/(app)/dashboard');
       } else if (result.next === 'verify-email') {
@@ -57,6 +87,9 @@ export default function LoginScreen() {
     }
   };
 
+  const biometricIcon = biometricType === 'face' ? 'scan-outline' : 'finger-print-outline';
+  const biometricLabel = biometricType === 'face' ? 'Sign in with Face ID' : 'Sign in with Touch ID';
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -71,6 +104,22 @@ export default function LoginScreen() {
             <Text style={styles.successText}>{message}</Text>
           </View>
         ) : null}
+
+        {/* Biometric login button — shown when enabled and a session exists */}
+        {showBiometricButton && (
+          <>
+            <TouchableOpacity style={styles.biometricButton} onPress={handleBiometricLogin}>
+              <Ionicons name={biometricIcon as any} size={22} color="#3B82F6" />
+              <Text style={styles.biometricButtonText}>{biometricLabel}</Text>
+            </TouchableOpacity>
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or sign in with password</Text>
+              <View style={styles.dividerLine} />
+            </View>
+          </>
+        )}
 
         <TextInput
           style={styles.input}
@@ -110,14 +159,13 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        {/* Google Sign-In — hidden in Expo Go due to Google OAuth proxy restriction */}
-        {Constants.appOwnership !== 'expo' && <View style={styles.divider}>
+        <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>or</Text>
           <View style={styles.dividerLine} />
-        </View>}
+        </View>
 
-        {Constants.appOwnership !== 'expo' && <TouchableOpacity
+        <TouchableOpacity
           style={[styles.googleButton, googleLoading && styles.googleButtonDisabled]}
           onPress={handleGoogleSignIn}
           disabled={googleLoading}
@@ -132,7 +180,7 @@ export default function LoginScreen() {
               <Text style={styles.googleButtonText}>Continue with Google</Text>
             </>
           )}
-        </TouchableOpacity>}
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.forgotButton}
@@ -142,7 +190,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <View style={styles.registerRow}>
-          <Text style={styles.registerText}>Don't have an account? </Text>
+          <Text style={styles.registerText}>{"Don't have an account? "}</Text>
           <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
             <Text style={styles.registerLink}>Register</Text>
           </TouchableOpacity>
@@ -162,6 +210,15 @@ const styles = StyleSheet.create({
     padding: 14, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(81,207,102,0.3)',
   },
   successText: { color: '#51CF66', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
+
+  biometricButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, backgroundColor: 'rgba(59,130,246,0.1)', borderRadius: 14,
+    paddingVertical: 18, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)',
+    marginBottom: 20,
+  },
+  biometricButtonText: { color: '#3B82F6', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+
   input: {
     backgroundColor: '#0B1326', color: '#fff', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
@@ -186,7 +243,7 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   dividerLine: { flex: 1, height: 1, backgroundColor: '#162540' },
-  dividerText: { color: '#718FAF', fontSize: 14, marginHorizontal: 12, fontFamily: 'DMSans-Regular' },
+  dividerText: { color: '#718FAF', fontSize: 13, marginHorizontal: 12, fontFamily: 'DMSans-Regular' },
   googleButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#0B1326', borderRadius: 12, paddingVertical: 14,

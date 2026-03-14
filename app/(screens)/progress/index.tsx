@@ -22,7 +22,7 @@ import { MuscleHeatmap } from '../../../src/components/MuscleHeatmap';
 import { api } from '../../../src/api/client';
 
 async function fetchMuscleHeatmap(): Promise<Record<string, number>> {
-  const { data } = await api.get<{ data: Array<{ muscle: string; sets: number }> }>(
+  const { data } = await api.get<{ data: { muscle: string; sets: number }[] }>(
     '/api/progress/muscle-heatmap',
   );
   const items = data?.data ?? [];

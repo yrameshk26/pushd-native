@@ -3,9 +3,6 @@ import { Stack, router, usePathname } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Platform, View, LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-// Suppress Expo Go warning about push notifications not being supported
-LogBox.ignoreLogs(['expo-notifications: Android Push notifications']);
 import { useAuthStore } from '../src/store/auth';
 import TabBar from '../src/components/TabBar';
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';
@@ -23,6 +20,9 @@ import {
   BarlowCondensed_700Bold,
   BarlowCondensed_800ExtraBold,
 } from '@expo-google-fonts/barlow-condensed';
+
+// Suppress Expo Go warning about push notifications not being supported
+LogBox.ignoreLogs(['expo-notifications: Android Push notifications']);
 
 // Lazy-import expo-notifications for the response listener — the lib guard is
 // already inside notifications.ts; here we only need the subscription type.

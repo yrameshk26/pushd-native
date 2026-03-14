@@ -45,7 +45,7 @@ function useGoogleAuthWithPackage(): UseGoogleAuthReturn {
 
   // useAuthRequest is always defined inside this branch
   const [, response, promptAsyncInternal] =
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+     
     GoogleProvider!.useAuthRequest({
       iosClientId: GOOGLE_CLIENT_ID_IOS,
       androidClientId: GOOGLE_CLIENT_ID_ANDROID,
