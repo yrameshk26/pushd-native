@@ -86,12 +86,32 @@ export interface LogSupplementPayload {
 
 export async function fetchNutritionGoals(): Promise<NutritionGoals> {
   const { data } = await api.get('/api/nutrition/goals');
-  return data;
+  const g = data?.data ?? data;
+  return {
+    calories: g.calories ?? 2000,
+    protein: g.protein ?? 150,
+    carbs: g.carbs ?? 200,
+    fat: g.fat ?? 65,
+    water: g.water ?? g.waterMl ?? 2500,
+  };
 }
 
 export async function saveNutritionGoals(goals: NutritionGoals): Promise<NutritionGoals> {
-  const { data } = await api.post('/api/nutrition/goals', goals);
-  return data;
+  const { data } = await api.put('/api/nutrition/goals', {
+    calories: goals.calories,
+    protein: goals.protein,
+    carbs: goals.carbs,
+    fat: goals.fat,
+    waterMl: goals.water,
+  });
+  const g = data?.data ?? data;
+  return {
+    calories: g.calories ?? goals.calories,
+    protein: g.protein ?? goals.protein,
+    carbs: g.carbs ?? goals.carbs,
+    fat: g.fat ?? goals.fat,
+    water: g.water ?? g.waterMl ?? goals.water,
+  };
 }
 
 export async function fetchFoodLogs(date: string): Promise<FoodLogsResponse> {
