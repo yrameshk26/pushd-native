@@ -6,13 +6,14 @@ import {
   StyleSheet,
   ActivityIndicator,
   ListRenderItemInfo,
+  Alert,
 } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
 import { api } from '../../src/api/client';
-import type { Routine } from '../../src/types';
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 
@@ -79,47 +80,84 @@ function ProgramsCard() {
 
 interface RoutineCardProps {
   routine: RoutineListItem;
+  onDelete: (id: string, name: string) => void;
 }
 
-function RoutineCard({ routine }: RoutineCardProps) {
-  return (
+function RoutineCard({ routine, onDelete }: RoutineCardProps) {
+  const renderRightActions = () => (
     <TouchableOpacity
-      style={styles.routineCard}
-      onPress={() => router.push(`/(screens)/routines/${routine.id}`)}
-      activeOpacity={0.75}
+      style={styles.deleteAction}
+      onPress={() => onDelete(routine.id, routine.name)}
+      activeOpacity={0.8}
     >
-      <View style={styles.routineCardLeft}>
-        <Text style={styles.routineName} numberOfLines={1}>{routine.name}</Text>
-        <View style={styles.routineMeta}>
-          <Ionicons name="barbell-outline" size={13} color="#3B82F6" />
-          <Text style={styles.routineMetaText}>
-            {routine._count.exercises} exercise{routine._count.exercises !== 1 ? 's' : ''}
-          </Text>
-          <Text style={styles.routineMetaDot}>·</Text>
-          <Text style={styles.routineMetaText}>{formatDate(routine.lastPerformedAt)}</Text>
-        </View>
-        {routine.description ? (
-          <Text style={styles.routineDesc} numberOfLines={1}>{routine.description}</Text>
-        ) : null}
-      </View>
-      <Ionicons name="chevron-forward" size={18} color="#4A6080" />
+      <Ionicons name="trash-outline" size={22} color="#fff" />
+      <Text style={styles.deleteActionText}>Delete</Text>
     </TouchableOpacity>
+  );
+
+  return (
+    <Swipeable
+      renderRightActions={renderRightActions}
+      rightThreshold={40}
+      overshootRight={false}
+    >
+      <TouchableOpacity
+        style={styles.routineCard}
+        onPress={() => router.push(`/(screens)/routines/${routine.id}`)}
+        activeOpacity={0.75}
+      >
+        <View style={styles.routineCardLeft}>
+          <Text style={styles.routineName} numberOfLines={1}>{routine.name}</Text>
+          <View style={styles.routineMeta}>
+            <Ionicons name="barbell-outline" size={13} color="#3B82F6" />
+            <Text style={styles.routineMetaText}>
+              {routine._count.exercises} exercise{routine._count.exercises !== 1 ? 's' : ''}
+            </Text>
+            <Text style={styles.routineMetaDot}>·</Text>
+            <Text style={styles.routineMetaText}>{formatDate(routine.lastPerformedAt)}</Text>
+          </View>
+          {routine.description ? (
+            <Text style={styles.routineDesc} numberOfLines={1}>{routine.description}</Text>
+          ) : null}
+        </View>
+        <Ionicons name="chevron-forward" size={18} color="#4A6080" />
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function RoutinesScreen() {
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError, refetch } = useQuery<RoutineListItem[]>({
     queryKey: ['routines'],
     queryFn: fetchRoutines,
     staleTime: 2 * 60 * 1000,
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => { await api.delete(`/api/routines/${id}`); },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['routines'] }),
+    onError: () => Alert.alert('Error', 'Failed to delete routine.'),
+  });
+
+  function handleDelete(id: string, name: string) {
+    Alert.alert(
+      'Delete Routine',
+      `Delete "${name}"? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => deleteMutation.mutate(id) },
+      ]
+    );
+  }
+
   const routines = data ?? [];
 
   const renderItem = ({ item }: ListRenderItemInfo<RoutineListItem>) => (
-    <RoutineCard routine={item} />
+    <RoutineCard routine={item} onDelete={handleDelete} />
   );
 
   const EmptyComponent = (
@@ -228,22 +266,14 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   ctaIconAI: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 40, height: 40, borderRadius: 10,
     backgroundColor: '#3B82F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
   ctaIconBlue: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 40, height: 40, borderRadius: 10,
     backgroundColor: '#3B82F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
   ctaBody: { flex: 1 },
   ctaTitle: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2, fontFamily: 'DMSans-SemiBold' },
@@ -251,12 +281,8 @@ const styles = StyleSheet.create({
 
   // Section label
   sectionLabel: {
-    color: '#718FAF',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginTop: 16,
-    marginBottom: 10,
+    color: '#718FAF', fontSize: 11, fontWeight: '700',
+    letterSpacing: 1, marginTop: 16, marginBottom: 10,
     fontFamily: 'BarlowCondensed-SemiBold',
   },
 
@@ -275,19 +301,28 @@ const styles = StyleSheet.create({
   routineName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 6, fontFamily: 'DMSans-Bold' },
   routineMeta: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 4 },
   routineMetaText: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular' },
-  routineMetaDot: { color: '#4A6080', fontSize: 12, fontFamily: 'DMSans-Regular' },
+  routineMetaDot: { color: '#4A6080', fontSize: 12 },
   routineDesc: { color: '#718FAF', fontSize: 12, marginTop: 2, fontFamily: 'DMSans-Regular' },
+
+  // Swipe delete action
+  deleteAction: {
+    backgroundColor: '#ef4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: 14,
+    marginBottom: 10,
+    gap: 4,
+  },
+  deleteActionText: { color: '#fff', fontSize: 11, fontWeight: '700' },
 
   // Empty state
   emptyState: { alignItems: 'center', paddingTop: 48, gap: 10 },
   emptyTitle: { color: '#718FAF', fontSize: 17, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
   emptySubtitle: { color: '#718FAF', fontSize: 13, textAlign: 'center', maxWidth: 260, fontFamily: 'DMSans-Regular' },
   emptyCreateBtn: {
-    marginTop: 12,
-    backgroundColor: '#3B82F6',
-    borderRadius: 12,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    marginTop: 12, backgroundColor: '#3B82F6',
+    borderRadius: 12, paddingHorizontal: 24, paddingVertical: 12,
   },
   emptyCreateText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 
@@ -295,12 +330,9 @@ const styles = StyleSheet.create({
   centeredState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   errorText: { color: '#e74c3c', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
   retryBtn: {
-    backgroundColor: '#0B1326',
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: '#162540',
+    backgroundColor: '#0B1326', borderRadius: 10,
+    paddingHorizontal: 20, paddingVertical: 10,
+    borderWidth: 1, borderColor: '#162540',
   },
   retryText: { color: '#3B82F6', fontWeight: '600', fontSize: 14, fontFamily: 'DMSans-SemiBold' },
 });
