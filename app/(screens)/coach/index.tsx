@@ -28,7 +28,8 @@ export default function CoachScreen() {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/api/ai/coach', { message: text.trim(), history: messages });
+      const allMessages = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
+      const { data } = await api.post('/api/ai/coach', { messages: allMessages });
       const assistantMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: data.reply ?? data.message };
       setMessages((prev) => [...prev, assistantMsg]);
       if (data.remaining !== undefined) setRemaining(data.remaining);
