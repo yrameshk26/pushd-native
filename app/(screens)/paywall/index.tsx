@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Alert, ActivityIndicator,
 } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -282,7 +283,15 @@ export default function PaywallScreen() {
           <Text style={styles.continueFreeTxt}>Continue with Free</Text>
         </TouchableOpacity>
         <Text style={styles.terms}>
-          Cancel anytime. By subscribing you agree to our Terms of Service. Payments processed by App Store / Google Play.
+          Cancel anytime. By subscribing you agree to our{' '}
+          <Text style={styles.termsLink} onPress={() => WebBrowser.openBrowserAsync('https://pushd.fit/terms')}>
+            Terms of Service
+          </Text>
+          {' '}and{' '}
+          <Text style={styles.termsLink} onPress={() => WebBrowser.openBrowserAsync('https://pushd.fit/privacy')}>
+            Privacy Policy
+          </Text>
+          . Payments processed by App Store / Google Play.
         </Text>
       </View>
     </SafeAreaView>
@@ -398,4 +407,5 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Regular', textDecorationLine: 'underline',
   },
   terms: { color: '#4A6080', fontSize: 10, textAlign: 'center', fontFamily: 'DMSans-Regular', lineHeight: 14 },
+  termsLink: { color: '#718FAF', textDecorationLine: 'underline' },
 });

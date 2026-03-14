@@ -5,6 +5,11 @@ import { Platform, View, LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAuthStore } from '../src/store/auth';
 import TabBar from '../src/components/TabBar';
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import { initSentry } from '../src/lib/sentry';
+
+// Initialise Sentry before anything else renders
+initSentry();
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';
 import { api } from '../src/api/client';
 import { useFonts } from 'expo-font';
@@ -114,12 +119,14 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <View style={{ flex: 1, backgroundColor: '#060C1B' }}>
-          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060C1B' } }} />
-          {showTabBar && <TabBar />}
-        </View>
-      </QueryClientProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <View style={{ flex: 1, backgroundColor: '#060C1B' }}>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060C1B' } }} />
+            {showTabBar && <TabBar />}
+          </View>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }

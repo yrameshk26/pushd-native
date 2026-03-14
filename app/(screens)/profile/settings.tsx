@@ -23,6 +23,7 @@ import { useAuthStore } from '../../../src/store/auth';
 import NotificationSettings from '../../../src/components/NotificationSettings';
 import { storage } from '../../../src/utils/storage';
 import { TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
+import * as WebBrowser from 'expo-web-browser';
 
 interface UserProfile {
   displayName: string;
@@ -446,6 +447,32 @@ export default function SettingsScreen() {
               <Text style={styles.linkSub}>Feedback, questions or bug reports</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color="#4A6080" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Legal */}
+        <Text style={styles.sectionLabel}>Legal</Text>
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.linkRow}
+            onPress={() => WebBrowser.openBrowserAsync('https://pushd.fit/privacy')}
+          >
+            <Ionicons name="document-text-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Privacy Policy</Text>
+            </View>
+            <Ionicons name="open-outline" size={16} color="#4A6080" />
+          </TouchableOpacity>
+          <View style={styles.sep} />
+          <TouchableOpacity
+            style={styles.linkRow}
+            onPress={() => WebBrowser.openBrowserAsync('https://pushd.fit/terms')}
+          >
+            <Ionicons name="reader-outline" size={20} color="#60a5fa" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Terms of Service</Text>
+            </View>
+            <Ionicons name="open-outline" size={16} color="#4A6080" />
           </TouchableOpacity>
         </View>
 

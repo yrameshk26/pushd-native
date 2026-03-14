@@ -27,7 +27,10 @@
               "com.googleusercontent.apps.457233933936-je2apg0il7a9cm51ktrh2s8q7c5rmrad"
             ]
           }
-        ]
+        ],
+        "NSPhotoLibraryUsageDescription": "Pushd uses your photo library to let you set a profile picture and attach progress photos to your workouts.",
+        "NSCameraUsageDescription": "Pushd uses your camera to let you take a profile picture or capture workout progress photos.",
+        "NSFaceIDUsageDescription": "Pushd uses Face ID to let you sign in quickly and securely without entering your password."
       },
       "usesAppleSignIn": true,
       "entitlements": {
@@ -79,13 +82,15 @@
         }
       ],
       "expo-web-browser",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "@sentry/react-native"
     ],
     "extra": {
       "eas": {
         "projectId": "bee118a9-6716-4aba-bd5e-4279c1e3adb8"
       },
-      "router": {}
+      "router": {},
+      "sentryDsn": ""
     },
     "owner": "rameshyoha",
     "runtimeVersion": {
