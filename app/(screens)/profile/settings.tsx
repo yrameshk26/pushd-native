@@ -22,7 +22,7 @@ import { useWorkoutPrefsStore } from '../../../src/store/workout-prefs';
 import { useAuthStore } from '../../../src/store/auth';
 import NotificationSettings from '../../../src/components/NotificationSettings';
 import { storage } from '../../../src/utils/storage';
-import { TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
+import { TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
 
 interface UserProfile {
   displayName: string;
@@ -260,6 +260,9 @@ export default function SettingsScreen() {
       setDeleting(false);
       return;
     }
+    // Wipe stored tokens including the refresh token kept for biometric login
+    await storage.deleteItemAsync(TOKEN_STORAGE_KEY).catch(() => {});
+    await storage.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY).catch(() => {});
     try { await logout(); } catch { /* ignore */ }
     setDeleting(false);
     setShowDeleteModal(false);
