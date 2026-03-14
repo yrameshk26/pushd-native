@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
+import { storage } from '../../../src/utils/storage';
 
 // ─── API types (matches actual backend response) ─────────────────────────────
 
@@ -58,8 +59,18 @@ export default function GroceryListScreen() {
   const { planId } = useLocalSearchParams<{ planId: string }>();
   const router = useRouter();
 
-  // checked items stored as "CategoryName:ItemName"
+  // checked items stored as "CategoryName:ItemName", persisted to AsyncStorage
+  const storageKey = `grocery-checked:${planId}`;
   const [checked, setChecked] = useState<Set<string>>(new Set());
+
+  // Load persisted state on mount
+  useEffect(() => {
+    storage.getItemAsync(storageKey).then((raw) => {
+      if (raw) {
+        try { setChecked(new Set(JSON.parse(raw))); } catch { /* ignore */ }
+      }
+    });
+  }, [storageKey]);
 
   const listQuery = useQuery({
     queryKey: ['grocery-list', planId],
@@ -72,9 +83,10 @@ export default function GroceryListScreen() {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
+      storage.setItemAsync(storageKey, JSON.stringify([...next]));
       return next;
     });
-  }, []);
+  }, [storageKey]);
 
   const totalItems = listQuery.data?.totalItems ?? 0;
   const checkedCount = checked.size;
