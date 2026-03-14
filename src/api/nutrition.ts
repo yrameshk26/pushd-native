@@ -227,7 +227,7 @@ export async function fetchMealPlan(planId: string): Promise<MealPlan> {
 }
 
 export async function logMealFromPlan(planId: string, mealId: string): Promise<FoodLog> {
-  const { data } = await api.post(`/api/meal-plans/${planId}/meals/${mealId}/log`);
+  const { data } = await api.patch(`/api/meal-plans/${planId}/meals/${mealId}/log`);
   return data;
 }
 
