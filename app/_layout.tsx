@@ -7,9 +7,12 @@ import { useAuthStore } from '../src/store/auth';
 import TabBar from '../src/components/TabBar';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { initSentry } from '../src/lib/sentry';
+import { initPurchases, identifyUser } from '../src/lib/purchases';
 
 // Initialise Sentry before anything else renders
 initSentry();
+// Initialise RevenueCat (anonymous until user logs in)
+initPurchases();
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';
 import { api } from '../src/api/client';
 import { useFonts } from 'expo-font';
@@ -52,6 +55,7 @@ setupNotificationHandler();
 export default function RootLayout() {
   const hydrate = useAuthStore((s) => s.hydrate);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const userId = useAuthStore((s) => s.userId);
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith('/(auth)') || pathname === '/';
   const showTabBar = isAuthenticated && !isAuthRoute;
@@ -74,6 +78,13 @@ export default function RootLayout() {
   useEffect(() => {
     hydrate();
   }, []);
+
+  // Identify user with RevenueCat once authenticated
+  useEffect(() => {
+    if (isAuthenticated && userId) {
+      identifyUser(userId);
+    }
+  }, [isAuthenticated, userId]);
 
   // Register push token with the backend whenever the user is authenticated.
   useEffect(() => {

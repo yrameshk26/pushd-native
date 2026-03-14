@@ -1,30 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Alert, ActivityIndicator,
 } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import { PurchasesPackage } from 'react-native-purchases';
 import { useSubscriptionStore, isPro, isElite } from '../../../src/store/subscription';
+import {
+  getOfferings,
+  purchasePackage,
+  restorePurchases,
+  getActiveTierFromCustomerInfo,
+  PRODUCT_IDS,
+} from '../../../src/lib/purchases';
 
 type Plan = 'PRO' | 'ELITE';
 
-const PLANS: {
-  id: Plan;
-  name: string;
-  price: string;
-  yearlyPrice: string;
-  color: string;
-  badge?: string;
-  features: string[];
-}[] = [
-  {
-    id: 'PRO',
+const PLAN_META: Record<Plan, { name: string; color: string; badge?: string; features: string[] }> = {
+  PRO: {
     name: 'Pro',
-    price: '$7.99',
-    yearlyPrice: '$59.99',
     color: '#3B82F6',
     features: [
       'Unlimited routines',
@@ -36,11 +33,8 @@ const PLANS: {
       'Water & supplement tracking',
     ],
   },
-  {
-    id: 'ELITE',
+  ELITE: {
     name: 'Elite',
-    price: '$14.99',
-    yearlyPrice: '$99.99',
     color: '#F59E0B',
     badge: 'BEST VALUE',
     features: [
@@ -53,7 +47,7 @@ const PLANS: {
       'Early access to new features',
     ],
   },
-];
+};
 
 const FREE_FEATURES = [
   'Unlimited workout logging',
@@ -65,13 +59,100 @@ const FREE_FEATURES = [
 ];
 
 export default function PaywallScreen() {
-  const { tier, isAdmin, applyPromo, setAdminTier } = useSubscriptionStore();
+  const { tier, isAdmin, applyPromo, setTier, setAdminTier } = useSubscriptionStore();
   const [selected, setSelected] = useState<Plan>('ELITE');
   const [yearly, setYearly] = useState(true);
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState('');
   const [adminLoading, setAdminLoading] = useState(false);
+
+  // RevenueCat state
+  const [packages, setPackages] = useState<Record<string, PurchasesPackage>>({});
+  const [offeringsLoading, setOfferingsLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  useEffect(() => {
+    loadOfferings();
+  }, []);
+
+  async function loadOfferings() {
+    setOfferingsLoading(true);
+    try {
+      const offering = await getOfferings();
+      if (!offering) return;
+      const pkgMap: Record<string, PurchasesPackage> = {};
+      for (const pkg of offering.availablePackages) {
+        pkgMap[pkg.product.identifier] = pkg;
+      }
+      setPackages(pkgMap);
+    } catch (err) {
+      console.warn('[Paywall] Failed to load offerings:', err);
+    } finally {
+      setOfferingsLoading(false);
+    }
+  }
+
+  function getPackageForSelection(): PurchasesPackage | null {
+    const id = selected === 'PRO'
+      ? (yearly ? PRODUCT_IDS.PRO_YEARLY    : PRODUCT_IDS.PRO_MONTHLY)
+      : (yearly ? PRODUCT_IDS.ELITE_YEARLY  : PRODUCT_IDS.ELITE_MONTHLY);
+    return packages[id] ?? null;
+  }
+
+  function getPriceLabel(plan: Plan, isYearly: boolean): string {
+    const id = plan === 'PRO'
+      ? (isYearly ? PRODUCT_IDS.PRO_YEARLY    : PRODUCT_IDS.PRO_MONTHLY)
+      : (isYearly ? PRODUCT_IDS.ELITE_YEARLY  : PRODUCT_IDS.ELITE_MONTHLY);
+    const pkg = packages[id];
+    return pkg?.product.priceString ?? (plan === 'PRO' ? (isYearly ? '$59.99' : '$7.99') : (isYearly ? '$99.99' : '$14.99'));
+  }
+
+  async function handleSubscribe() {
+    const pkg = getPackageForSelection();
+    if (!pkg) {
+      Alert.alert('Not available', 'Unable to load subscription options. Please try again.');
+      return;
+    }
+    setPurchasing(true);
+    try {
+      const customerInfo = await purchasePackage(pkg);
+      const newTier = getActiveTierFromCustomerInfo(customerInfo);
+      setTier(newTier);
+      Alert.alert(
+        '🎉 Welcome to ' + PLAN_META[selected].name + '!',
+        'Your subscription is now active.',
+        [{ text: 'Let\'s go!', onPress: () => router.back() }],
+      );
+    } catch (err: any) {
+      // User cancelled — don't show an error
+      if (err?.userCancelled) return;
+      Alert.alert('Purchase failed', err?.message ?? 'Something went wrong. Please try again.');
+    } finally {
+      setPurchasing(false);
+    }
+  }
+
+  async function handleRestore() {
+    setRestoring(true);
+    try {
+      const customerInfo = await restorePurchases();
+      const newTier = getActiveTierFromCustomerInfo(customerInfo);
+      setTier(newTier);
+      if (newTier === 'FREE') {
+        Alert.alert('No purchases found', 'No active subscriptions were found for your account.');
+      } else {
+        Alert.alert('Restored!', `Your ${newTier} subscription has been restored.`, [
+          { text: 'Continue', onPress: () => router.back() },
+        ]);
+      }
+    } catch (err: any) {
+      Alert.alert('Restore failed', err?.message ?? 'Could not restore purchases.');
+    } finally {
+      setRestoring(false);
+    }
+  }
 
   async function handleAdminTier(t: 'FREE' | Plan) {
     setAdminLoading(true);
@@ -93,12 +174,14 @@ export default function PaywallScreen() {
       const result = await applyPromo(promoCode.trim());
       Alert.alert('Success!', result.message, [{ text: 'Continue', onPress: () => router.back() }]);
     } catch (err: any) {
-      const msg = err?.response?.data?.error ?? 'Invalid promo code';
-      setPromoError(msg);
+      setPromoError(err?.response?.data?.error ?? 'Invalid promo code');
     } finally {
       setPromoLoading(false);
     }
   }
+
+  const selectedPkg = getPackageForSelection();
+  const isLoading = offeringsLoading;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -111,7 +194,11 @@ export default function PaywallScreen() {
           <Ionicons name="sparkles" size={18} color="#F59E0B" />
           <Text style={styles.headerTitle}>Upgrade Pushd</Text>
         </View>
-        <View style={{ width: 40 }} />
+        <TouchableOpacity onPress={handleRestore} disabled={restoring} style={styles.restoreBtn}>
+          {restoring
+            ? <ActivityIndicator size="small" color="#718FAF" />
+            : <Text style={styles.restoreTxt}>Restore</Text>}
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -145,23 +232,20 @@ export default function PaywallScreen() {
         </View>
 
         {/* Plan cards */}
-        {PLANS.map((plan) => {
-          const isSelected = selected === plan.id;
-          const isActive = (plan.id === 'PRO' && isPro(tier)) || (plan.id === 'ELITE' && isElite(tier));
+        {(['PRO', 'ELITE'] as Plan[]).map((planId) => {
+          const plan = PLAN_META[planId];
+          const isSelected = selected === planId;
+          const isActive = (planId === 'PRO' && isPro(tier)) || (planId === 'ELITE' && isElite(tier));
           return (
             <TouchableOpacity
-              key={plan.id}
+              key={planId}
               style={[styles.planCard, isSelected && { borderColor: plan.color, borderWidth: 2 }]}
-              onPress={() => setSelected(plan.id)}
+              onPress={() => setSelected(planId)}
               activeOpacity={0.8}
             >
               <View style={styles.planCardTop}>
                 <View style={[styles.planIconWrap, { backgroundColor: `${plan.color}20` }]}>
-                  <Ionicons
-                    name={plan.id === 'ELITE' ? 'diamond' : 'star'}
-                    size={18}
-                    color={plan.color}
-                  />
+                  <Ionicons name={planId === 'ELITE' ? 'diamond' : 'star'} size={18} color={plan.color} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <View style={styles.planNameRow}>
@@ -178,7 +262,7 @@ export default function PaywallScreen() {
                     )}
                   </View>
                   <Text style={[styles.planPrice, { color: plan.color }]}>
-                    {yearly ? plan.yearlyPrice : plan.price}
+                    {isLoading ? '—' : getPriceLabel(planId, yearly)}
                     <Text style={styles.planPricePer}>{yearly ? '/yr' : '/mo'}</Text>
                   </Text>
                 </View>
@@ -186,7 +270,6 @@ export default function PaywallScreen() {
                   {isSelected && <View style={[styles.radioDot, { backgroundColor: plan.color }]} />}
                 </View>
               </View>
-
               <View style={styles.featureList}>
                 {plan.features.map((f) => (
                   <View key={f} style={styles.featureRow}>
@@ -225,11 +308,9 @@ export default function PaywallScreen() {
                   onPress={() => handleAdminTier(t)}
                   disabled={adminLoading || tier === t}
                 >
-                  {adminLoading && tier !== t ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text style={[styles.adminTierText, tier === t && styles.adminTierTextActive]}>{t}</Text>
-                  )}
+                  {adminLoading && tier !== t
+                    ? <ActivityIndicator size="small" color="#fff" />
+                    : <Text style={[styles.adminTierText, tier === t && styles.adminTierTextActive]}>{t}</Text>}
                 </TouchableOpacity>
               ))}
             </View>
@@ -257,8 +338,7 @@ export default function PaywallScreen() {
             >
               {promoLoading
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.promoBtnText}>Apply</Text>
-              }
+                : <Text style={styles.promoBtnText}>Apply</Text>}
             </TouchableOpacity>
           </View>
           {promoError ? <Text style={styles.promoErrorText}>{promoError}</Text> : null}
@@ -270,13 +350,22 @@ export default function PaywallScreen() {
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.subscribeBtn, { backgroundColor: PLANS.find(p => p.id === selected)?.color ?? '#3B82F6' }]}
-          onPress={() => Alert.alert('Coming Soon', 'In-app purchases are in sandbox mode. Use a promo code to unlock your tier.')}
+          style={[
+            styles.subscribeBtn,
+            { backgroundColor: PLAN_META[selected].color },
+            (purchasing || isLoading || !selectedPkg) && { opacity: 0.6 },
+          ]}
+          onPress={handleSubscribe}
+          disabled={purchasing || isLoading || !selectedPkg}
           activeOpacity={0.85}
         >
-          <Ionicons name="sparkles" size={18} color="#fff" />
+          {purchasing
+            ? <ActivityIndicator size="small" color="#fff" />
+            : <Ionicons name="sparkles" size={18} color="#fff" />}
           <Text style={styles.subscribeBtnText}>
-            Subscribe to {PLANS.find(p => p.id === selected)?.name} — {yearly ? PLANS.find(p => p.id === selected)?.yearlyPrice : PLANS.find(p => p.id === selected)?.price}{yearly ? '/yr' : '/mo'}
+            {purchasing
+              ? 'Processing…'
+              : `Subscribe to ${PLAN_META[selected].name} — ${getPriceLabel(selected, yearly)}${yearly ? '/yr' : '/mo'}`}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
@@ -308,6 +397,8 @@ const styles = StyleSheet.create({
   closeBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
+  restoreBtn: { paddingHorizontal: 8, paddingVertical: 8, minWidth: 60, alignItems: 'flex-end' },
+  restoreTxt: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
 
   content: { paddingHorizontal: 16, paddingTop: 20 },
 
