@@ -52,7 +52,7 @@ async function generateMealPlan(payload: GeneratePlanPayload) {
     dietaryRestrictions: payload.dietary ?? [],
     cuisines: payload.cuisine && payload.cuisine !== 'Any' ? [payload.cuisine] : [],
     planName: payload.name,
-  });
+  }, { timeout: 120000 }); // AI generation can take up to 2 minutes
   return data?.data ?? data;
 }
 
@@ -78,8 +78,13 @@ export default function NewMealPlanScreen() {
     },
     onError: (err: any) => {
       const status = err?.response?.status;
+      const isTimeout = err?.code === 'ECONNABORTED' || err?.message?.includes('timeout');
       if (status === 429) {
         Alert.alert('Rate Limit', 'You can generate up to 5 meal plans per hour. Please try again later.');
+      } else if (isTimeout) {
+        // Server is still processing — navigate to meals list, plan will appear shortly
+        queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
+        router.replace('/(screens)/meals' as any);
       } else {
         const msg = err?.response?.data?.error ?? 'Failed to generate meal plan. Please try again.';
         Alert.alert('Error', msg);
