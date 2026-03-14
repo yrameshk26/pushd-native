@@ -139,7 +139,8 @@ function StepPersonalInfo({
           min={1}
           max={12}
           onChange={(v) => setDOBField('month', v)}
-          style={{ flex: 1 }}
+          style={{ flex: 1.5 }}
+          compact
         />
         <NumberStepper
           label="Day"
@@ -147,7 +148,8 @@ function StepPersonalInfo({
           min={1}
           max={31}
           onChange={(v) => setDOBField('day', v)}
-          style={{ flex: 1 }}
+          style={{ flex: 1.5 }}
+          compact
         />
       </View>
 
@@ -181,7 +183,7 @@ function StepPersonalInfo({
 // ─── Number Stepper ───────────────────────────────────────────────────────────
 
 function NumberStepper({
-  label, value, min, max, step = 1, unit = '', onChange, style,
+  label, value, min, max, step = 1, unit = '', onChange, style, compact = false,
 }: {
   label: string;
   value: number;
@@ -191,6 +193,7 @@ function NumberStepper({
   unit?: string;
   onChange: (v: number) => void;
   style?: object;
+  compact?: boolean;
 }) {
   const decrement = () => {
     const next = Math.round((value - step) * 100) / 100;
@@ -201,16 +204,19 @@ function NumberStepper({
     if (next <= max) onChange(next);
   };
 
+  const btnStyle = compact ? [stepperStyles.btn, stepperStyles.btnCompact] : stepperStyles.btn;
+  const iconSize = compact ? 16 : 20;
+
   return (
     <View style={[stepperStyles.container, style]}>
       {label ? <Text style={stepperStyles.label}>{label}</Text> : null}
       <View style={stepperStyles.controls}>
-        <TouchableOpacity style={stepperStyles.btn} onPress={decrement}>
-          <Ionicons name="remove" size={20} color="#fff" />
+        <TouchableOpacity style={btnStyle} onPress={decrement}>
+          <Ionicons name="remove" size={iconSize} color="#fff" />
         </TouchableOpacity>
         <Text style={stepperStyles.value}>{value}{unit}</Text>
-        <TouchableOpacity style={stepperStyles.btn} onPress={increment}>
-          <Ionicons name="add" size={20} color="#fff" />
+        <TouchableOpacity style={btnStyle} onPress={increment}>
+          <Ionicons name="add" size={iconSize} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -578,6 +584,9 @@ const stepperStyles = StyleSheet.create({
   btn: {
     width: 40, height: 40, borderRadius: 8, backgroundColor: '#162540',
     alignItems: 'center', justifyContent: 'center',
+  },
+  btnCompact: {
+    width: 32, height: 32, borderRadius: 6,
   },
   value: { color: '#fff', fontSize: 18, fontWeight: '700',
     fontFamily: 'BarlowCondensed-Bold', flex: 1, textAlign: 'center' },
