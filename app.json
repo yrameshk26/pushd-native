@@ -87,6 +87,12 @@
       },
       "router": {}
     },
-    "owner": "rameshyoha"
+    "owner": "rameshyoha",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/bee118a9-6716-4aba-bd5e-4279c1e3adb8"
+    }
   }
 }
