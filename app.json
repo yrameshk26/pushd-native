@@ -20,6 +20,9 @@
           "fetch",
           "remote-notification"
         ]
+      },
+      "entitlements": {
+        "com.apple.developer.associated-domains": ["webcredentials:pushd.fit"]
       }
     },
     "android": {
