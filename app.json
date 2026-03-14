@@ -29,6 +29,7 @@
           }
         ]
       },
+      "usesAppleSignIn": true,
       "entitlements": {
         "com.apple.developer.associated-domains": [
           "webcredentials:pushd.fit"
@@ -77,7 +78,8 @@
           "sounds": []
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-apple-authentication"
     ],
     "extra": {
       "eas": {

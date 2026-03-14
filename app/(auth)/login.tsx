@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
 import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
+import { useAppleAuth } from '../../src/hooks/useAppleAuth';
 import { useBiometricStore } from '../../src/store/biometric';
 import { usePasskeyAuth } from '../../src/hooks/usePasskeyAuth';
 import { storage } from '../../src/utils/storage';
@@ -23,6 +24,7 @@ export default function LoginScreen() {
   const sendOtp = useAuthStore((s) => s.sendOtp);
   const loginWithBiometric = useAuthStore((s) => s.loginWithBiometric);
   const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
+  const { isSupported: appleSupported, loading: appleLoading, signInWithApple } = useAppleAuth();
 
   const { isAvailable, isEnabled, biometricType, hydrate, authenticate } = useBiometricStore();
   const { loginWithPasskey, loading: passkeyLoading, error: passkeyError, isSupported: passkeySupported } = usePasskeyAuth();
@@ -212,6 +214,23 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
+        {appleSupported && (
+          <TouchableOpacity
+            style={[styles.appleButton, appleLoading && styles.googleButtonDisabled]}
+            onPress={signInWithApple}
+            disabled={appleLoading}
+          >
+            {appleLoading ? (
+              <ActivityIndicator color="#000" />
+            ) : (
+              <>
+                <Ionicons name="logo-apple" size={20} color="#000" style={{ marginRight: 8 }} />
+                <Text style={styles.appleButtonText}>Continue with Apple</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={styles.forgotButton}
           onPress={() => router.push('/(auth)/forgot-password')}
@@ -295,6 +314,12 @@ const styles = StyleSheet.create({
   },
   googleIconText: { color: '#4285F4', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
   googleButtonText: { color: '#fff', fontSize: 16, fontWeight: '600', fontFamily: 'DMSans-Medium' },
+  appleButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#fff', borderRadius: 12, paddingVertical: 14,
+    marginTop: 10, marginBottom: 4,
+  },
+  appleButtonText: { color: '#000', fontSize: 16, fontWeight: '600', fontFamily: 'DMSans-Medium' },
   forgotButton: { alignItems: 'center', marginTop: 20 },
   forgotText: { color: '#718FAF', fontSize: 15, fontFamily: 'DMSans-Regular' },
   registerRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 16 },
