@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ListRenderItemInfo,
-  Alert,
+  Animated,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -80,26 +81,47 @@ function ProgramsCard() {
 
 interface RoutineCardProps {
   routine: RoutineListItem;
-  onDelete: (id: string, name: string) => void;
+  onDelete: (id: string) => void;
 }
 
+const CARD_WIDTH = 80;
+const FULL_SWIPE_THRESHOLD = 200;
+
 function RoutineCard({ routine, onDelete }: RoutineCardProps) {
-  const renderRightActions = () => (
-    <TouchableOpacity
-      style={styles.deleteAction}
-      onPress={() => onDelete(routine.id, routine.name)}
-      activeOpacity={0.8}
-    >
-      <Ionicons name="trash-outline" size={22} color="#fff" />
-      <Text style={styles.deleteActionText}>Delete</Text>
-    </TouchableOpacity>
-  );
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const renderRightActions = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => {
+    const bgColor = dragX.interpolate({
+      inputRange: [-FULL_SWIPE_THRESHOLD, -CARD_WIDTH],
+      outputRange: ['#b91c1c', '#ef4444'],
+      extrapolate: 'clamp',
+    });
+    const scale = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.8, 1],
+      extrapolate: 'clamp',
+    });
+    return (
+      <Animated.View style={[styles.deleteAction, { backgroundColor: bgColor }]}>
+        <Animated.View style={{ transform: [{ scale }], alignItems: 'center', gap: 4 }}>
+          <Ionicons name="trash-outline" size={22} color="#fff" />
+          <Text style={styles.deleteActionText}>Delete</Text>
+        </Animated.View>
+      </Animated.View>
+    );
+  };
 
   return (
     <Swipeable
+      ref={swipeableRef}
       renderRightActions={renderRightActions}
-      rightThreshold={40}
+      rightThreshold={CARD_WIDTH}
       overshootRight={false}
+      onSwipeableWillOpen={() => {
+        // full swipe detected — delete immediately
+        swipeableRef.current?.close();
+        onDelete(routine.id);
+      }}
     >
       <TouchableOpacity
         style={styles.routineCard}
@@ -140,18 +162,11 @@ export default function RoutinesScreen() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => { await api.delete(`/api/routines/${id}`); },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['routines'] }),
-    onError: () => Alert.alert('Error', 'Failed to delete routine.'),
+    onError: () => {},
   });
 
-  function handleDelete(id: string, name: string) {
-    Alert.alert(
-      'Delete Routine',
-      `Delete "${name}"? This cannot be undone.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => deleteMutation.mutate(id) },
-      ]
-    );
+  function handleDelete(id: string) {
+    deleteMutation.mutate(id);
   }
 
   const routines = data ?? [];
