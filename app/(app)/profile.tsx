@@ -5,7 +5,7 @@ import { useAuthStore } from '../../src/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useSubscriptionStore, isPro, isElite } from '../../src/store/subscription';
+import { useSubscriptionStore, isElite } from '../../src/store/subscription';
 
 interface UserProfile {
   id: string;
@@ -14,6 +14,7 @@ interface UserProfile {
   bio: string | null;
   avatarUrl: string | null;
   email: string;
+  isAdmin: boolean;
 }
 
 interface UserStats {
@@ -96,7 +97,7 @@ export default function ProfileScreen() {
 
   const handleExport = async () => {
     try {
-      const { data } = await api.get('/api/workouts/export', { responseType: 'blob' });
+      await api.get('/api/workouts/export', { responseType: 'blob' });
       Alert.alert('Export', 'Workout data exported successfully.');
     } catch {
       Alert.alert('Error', 'Failed to export workouts.');
@@ -213,6 +214,18 @@ export default function ProfileScreen() {
                 <Text style={styles.linkLabel}>Export Workouts (JSON)</Text>
                 <Ionicons name="chevron-forward" size={16} color="#4A6080" />
               </TouchableOpacity>
+
+              {me?.isAdmin && (
+                <TouchableOpacity
+                  style={[styles.linkRow, styles.adminLinkRow]}
+                  onPress={() => router.push('/(screens)/admin' as never)}
+                  activeOpacity={0.75}
+                >
+                  <Ionicons name="shield-checkmark" size={18} color="#F59E0B" style={styles.linkIcon} />
+                  <Text style={[styles.linkLabel, { color: '#F59E0B' }]}>Admin Panel</Text>
+                  <Ionicons name="chevron-forward" size={16} color="#F59E0B" />
+                </TouchableOpacity>
+              )}
             </View>
           </>
         )}
