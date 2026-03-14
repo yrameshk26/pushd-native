@@ -68,8 +68,10 @@
     ],
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "bee118a9-6716-4aba-bd5e-4279c1e3adb8"
+      },
+      "router": {}
+    },
+    "owner": "rameshyoha"
   }
 }
