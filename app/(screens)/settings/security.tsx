@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   TextInput,
   Platform,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -228,11 +229,7 @@ function PasskeysSection() {
 
   async function handleRegister() {
     if (Platform.OS !== 'web') {
-      Alert.alert(
-        'Use Web Browser',
-        'Passkey registration uses your device\'s biometrics and requires the web browser. Open pushd.fit/profile/settings to register.',
-        [{ text: 'OK' }],
-      );
+      Linking.openURL('https://pushd.fit/profile/settings');
       return;
     }
 
@@ -321,8 +318,27 @@ function PasskeysSection() {
           </TouchableOpacity>
         </View>
 
-        {/* Add passkey form */}
-        {showNameInput && (
+        {/* Native: show inline notice with link instead of form */}
+        {showNameInput && Platform.OS !== 'web' && (
+          <>
+            <View style={styles.sep} />
+            <View style={styles.nativePasskeyNotice}>
+              <Ionicons name="information-circle-outline" size={18} color="#60a5fa" style={{ marginTop: 1 }} />
+              <View style={{ flex: 1, gap: 8 }}>
+                <Text style={styles.nativePasskeyNoticeText}>
+                  Passkey registration requires your web browser. Tap below to open the web app and register your biometric.
+                </Text>
+                <TouchableOpacity style={styles.openWebBtn} onPress={() => Linking.openURL('https://pushd.fit/profile/settings')}>
+                  <Ionicons name="open-outline" size={14} color="#fff" />
+                  <Text style={styles.openWebBtnText}>Open pushd.fit to register</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        )}
+
+        {/* Add passkey form (web only) */}
+        {showNameInput && Platform.OS === 'web' && (
           <>
             <View style={styles.sep} />
             <View style={styles.addPasskeyForm}>
@@ -500,6 +516,14 @@ const styles = StyleSheet.create({
   passkeyMeta: { color: '#718FAF', fontSize: 12 },
   deletePasskeyBtn: { padding: 6 },
   passkeyHint: { color: '#4A6080', fontSize: 12, padding: 14, lineHeight: 18 },
+  nativePasskeyNotice: { flexDirection: 'row', gap: 10, padding: 16, alignItems: 'flex-start' },
+  nativePasskeyNoticeText: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
+  openWebBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: '#3B82F6', borderRadius: 10,
+    paddingVertical: 10, paddingHorizontal: 14, alignSelf: 'flex-start',
+  },
+  openWebBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
 
   // Password
   actionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16 },
