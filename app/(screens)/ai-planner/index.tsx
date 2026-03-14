@@ -31,6 +31,7 @@ interface PlanForm {
   goal: Goal | '';
   level: Level | '';
   daysPerWeek: number;
+  workoutDurationMinutes: number | null;
   equipment: Equipment[];
   preferences: string;
 }
@@ -84,15 +85,18 @@ const MOTIVATIONAL_TEXTS = [
 
 const STEPS = [
   { title: 'Your Goal', subtitle: 'What are you training for?' },
-  { title: 'Training Details', subtitle: 'Level and weekly schedule' },
+  { title: 'Training Details', subtitle: 'Level, schedule, and session length' },
   { title: 'Equipment', subtitle: 'What do you have access to?' },
   { title: 'Preferences', subtitle: 'Any injuries or focus areas?' },
 ];
+
+const DURATION_PRESETS = [30, 45, 60] as const;
 
 const DEFAULT_FORM: PlanForm = {
   goal: '',
   level: '',
   daysPerWeek: 4,
+  workoutDurationMinutes: 45,
   equipment: ['BARBELL', 'DUMBBELL', 'CABLE', 'MACHINE', 'BODYWEIGHT'],
   preferences: '',
 };
@@ -146,9 +150,22 @@ function StepGoal({ form, update }: { form: PlanForm; update: (p: Partial<PlanFo
   );
 }
 
-// ─── Step 2: Level + Days ──────────────────────────────────────────────────
+// ─── Step 2: Level + Days + Duration ──────────────────────────────────────
 
 function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
+  const [customDuration, setCustomDuration] = React.useState('');
+  const isCustom = !DURATION_PRESETS.includes(form.workoutDurationMinutes as any);
+
+  function handleCustomChange(text: string) {
+    setCustomDuration(text);
+    const parsed = parseInt(text, 10);
+    if (!isNaN(parsed) && parsed >= 10 && parsed <= 180) {
+      update({ workoutDurationMinutes: parsed });
+    } else {
+      update({ workoutDurationMinutes: null });
+    }
+  }
+
   return (
     <View style={stepStyles.container}>
       <Text style={stepStyles.sectionLabel}>Fitness Level</Text>
@@ -188,6 +205,40 @@ function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<Pl
           </TouchableOpacity>
         ))}
       </View>
+
+      <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>Workout Duration (optional)</Text>
+      <View style={stepStyles.daysRow}>
+        {DURATION_PRESETS.map((d) => (
+          <TouchableOpacity
+            key={d}
+            style={[stepStyles.dayBtn, form.workoutDurationMinutes === d && !isCustom && stepStyles.dayBtnSelected]}
+            onPress={() => { setCustomDuration(''); update({ workoutDurationMinutes: d }); }}
+            activeOpacity={0.7}
+          >
+            <Text style={[stepStyles.dayBtnText, form.workoutDurationMinutes === d && !isCustom && stepStyles.dayBtnTextSelected]}>
+              {d}m
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity
+          style={[stepStyles.dayBtn, isCustom && stepStyles.dayBtnSelected]}
+          onPress={() => { update({ workoutDurationMinutes: null }); setCustomDuration(''); }}
+          activeOpacity={0.7}
+        >
+          <Text style={[stepStyles.dayBtnText, isCustom && stepStyles.dayBtnTextSelected]}>Custom</Text>
+        </TouchableOpacity>
+      </View>
+      {isCustom && (
+        <TextInput
+          style={durationStyles.input}
+          value={customDuration}
+          onChangeText={handleCustomChange}
+          placeholder="Minutes (e.g. 75)"
+          placeholderTextColor="#4A6080"
+          keyboardType="number-pad"
+          maxLength={3}
+        />
+      )}
     </View>
   );
 }
@@ -273,6 +324,13 @@ function StepPreferences({ form, update }: { form: PlanForm; update: (p: Partial
     </View>
   );
 }
+
+const durationStyles = StyleSheet.create({
+  input: {
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#3B82F6',
+    borderRadius: 12, padding: 14, color: '#fff', fontSize: 15, marginTop: 10,
+  },
+});
 
 const prefStyles = StyleSheet.create({
   textarea: {
@@ -465,6 +523,9 @@ export default function AIPlannerScreen() {
         durationWeeks: 8,
         equipment: form.equipment,
         focusAreas,
+        ...(form.workoutDurationMinutes != null
+          ? { workoutDurationMinutes: form.workoutDurationMinutes }
+          : {}),
       });
       const result = data?.data ?? data;
       return {
