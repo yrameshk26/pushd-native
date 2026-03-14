@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
-import { storage } from '../../../src/utils/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ─── API types (matches actual backend response) ─────────────────────────────
 
@@ -60,12 +60,12 @@ export default function GroceryListScreen() {
   const router = useRouter();
 
   // checked items stored as "CategoryName:ItemName", persisted to AsyncStorage
-  const storageKey = `grocery-checked:${planId}`;
+  const storageKey = `grocery-checked_${planId}`;
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   // Load persisted state on mount
   useEffect(() => {
-    storage.getItemAsync(storageKey).then((raw) => {
+    AsyncStorage.getItem(storageKey).then((raw) => {
       if (raw) {
         try { setChecked(new Set(JSON.parse(raw))); } catch { /* ignore */ }
       }
@@ -83,7 +83,7 @@ export default function GroceryListScreen() {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
-      storage.setItemAsync(storageKey, JSON.stringify([...next]));
+      AsyncStorage.setItem(storageKey, JSON.stringify([...next]));
       return next;
     });
   }, [storageKey]);
