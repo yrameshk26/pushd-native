@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Stack, router, usePathname } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Platform, View, LogBox } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Suppress Expo Go warning about push notifications not being supported
 LogBox.ignoreLogs(['expo-notifications: Android Push notifications']);
@@ -112,11 +113,13 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <View style={{ flex: 1, backgroundColor: '#060C1B' }}>
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060C1B' } }} />
-        {showTabBar && <TabBar />}
-      </View>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <View style={{ flex: 1, backgroundColor: '#060C1B' }}>
+          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060C1B' } }} />
+          {showTabBar && <TabBar />}
+        </View>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
