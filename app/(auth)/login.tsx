@@ -8,6 +8,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
 import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
 import { useBiometricStore } from '../../src/store/biometric';
+import { storage } from '../../src/utils/storage';
+import { REFRESH_TOKEN_STORAGE_KEY } from '../../src/constants/config';
 
 export default function LoginScreen() {
   const { message } = useLocalSearchParams<{ message?: string }>();
@@ -15,6 +17,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasStoredSession, setHasStoredSession] = useState(false);
 
   const sendOtp = useAuthStore((s) => s.sendOtp);
   const loginWithBiometric = useAuthStore((s) => s.loginWithBiometric);
@@ -24,10 +27,11 @@ export default function LoginScreen() {
 
   useEffect(() => {
     hydrate();
+    storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY).then((t) => setHasStoredSession(!!t));
   }, []);
 
-  // Show if device has biometrics enrolled and user hasn't disabled it
-  const showBiometricButton = isAvailable && isEnabled;
+  // Show if device has biometrics + a previous session exists + user hasn't disabled it
+  const showBiometricButton = isAvailable && isEnabled && hasStoredSession;
 
   const handleBiometricLogin = async () => {
     try {
