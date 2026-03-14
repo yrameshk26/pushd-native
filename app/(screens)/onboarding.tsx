@@ -81,6 +81,15 @@ function ProgressBar({ step }: { step: number }) {
 
 // ─── Step 1: Personal Info ────────────────────────────────────────────────────
 
+// Conversion helpers
+const cmToFtIn = (cm: number) => {
+  const totalIn = cm / 2.54;
+  return { ft: Math.floor(totalIn / 12), inches: Math.round(totalIn % 12) };
+};
+const ftInToCm = (ft: number, inches: number) => Math.round((ft * 12 + inches) * 2.54);
+const kgToLbs = (kg: number) => Math.round(kg * 2.20462 * 10) / 10;
+const lbsToKg = (lbs: number) => Math.round(lbs / 2.20462 * 10) / 10;
+
 function StepPersonalInfo({
   data,
   onChange,
@@ -89,11 +98,17 @@ function StepPersonalInfo({
   onChange: (patch: Partial<OnboardingData>) => void;
 }) {
   const currentYear = new Date().getFullYear();
+  const [useMetric, setUseMetric] = useState(true);
 
   const setDOBField = (field: 'year' | 'month' | 'day', value: number) => {
     const existing = data.dateOfBirth ?? { year: 1990, month: 1, day: 1 };
     onChange({ dateOfBirth: { ...existing, [field]: value } });
   };
+
+  const heightCm = data.heightCm ?? 170;
+  const weightKg = data.weightKg ?? 70;
+  const { ft, inches } = cmToFtIn(heightCm);
+  const weightLbs = kgToLbs(weightKg);
 
   const SEX_OPTIONS: { label: string; value: Sex }[] = [
     { label: 'Male', value: 'male' },
@@ -150,32 +165,89 @@ function StepPersonalInfo({
         />
       </View>
 
+      {/* Unit toggle */}
+      <View style={unitStyles.toggle}>
+        <TouchableOpacity
+          style={[unitStyles.btn, useMetric && unitStyles.btnActive]}
+          onPress={() => setUseMetric(true)}
+        >
+          <Text style={[unitStyles.btnText, useMetric && unitStyles.btnTextActive]}>Metric</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[unitStyles.btn, !useMetric && unitStyles.btnActive]}
+          onPress={() => setUseMetric(false)}
+        >
+          <Text style={[unitStyles.btnText, !useMetric && unitStyles.btnTextActive]}>Imperial</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Height */}
-      <Text style={stepStyles.label}>Height (cm)</Text>
-      <NumberStepper
-        label=""
-        value={data.heightCm ?? 170}
-        min={100}
-        max={250}
-        onChange={(v) => onChange({ heightCm: v })}
-        step={1}
-        unit="cm"
-        editable
-      />
+      <Text style={stepStyles.label}>Height</Text>
+      {useMetric ? (
+        <NumberStepper
+          label=""
+          value={heightCm}
+          min={100}
+          max={250}
+          onChange={(v) => onChange({ heightCm: v })}
+          step={1}
+          unit=" cm"
+          editable
+        />
+      ) : (
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <NumberStepper
+            label=""
+            value={ft}
+            min={3}
+            max={8}
+            onChange={(v) => onChange({ heightCm: ftInToCm(v, inches) })}
+            step={1}
+            unit=" ft"
+            editable
+            style={{ flex: 1 }}
+          />
+          <NumberStepper
+            label=""
+            value={inches}
+            min={0}
+            max={11}
+            onChange={(v) => onChange({ heightCm: ftInToCm(ft, v) })}
+            step={1}
+            unit=" in"
+            editable
+            style={{ flex: 1 }}
+          />
+        </View>
+      )}
 
       {/* Weight */}
-      <Text style={[stepStyles.label, { marginTop: 16 }]}>Weight (kg)</Text>
-      <NumberStepper
-        label=""
-        value={data.weightKg ?? 70}
-        min={30}
-        max={300}
-        onChange={(v) => onChange({ weightKg: v })}
-        step={0.5}
-        unit="kg"
-        editable
-        decimal
-      />
+      <Text style={[stepStyles.label, { marginTop: 16 }]}>Weight</Text>
+      {useMetric ? (
+        <NumberStepper
+          label=""
+          value={weightKg}
+          min={30}
+          max={300}
+          onChange={(v) => onChange({ weightKg: v })}
+          step={0.5}
+          unit=" kg"
+          editable
+          decimal
+        />
+      ) : (
+        <NumberStepper
+          label=""
+          value={weightLbs}
+          min={66}
+          max={660}
+          onChange={(v) => onChange({ weightKg: lbsToKg(v) })}
+          step={1}
+          unit=" lbs"
+          editable
+          decimal
+        />
+      )}
     </ScrollView>
   );
 }
@@ -682,6 +754,18 @@ const stepStyles = StyleSheet.create({
   chipButtonActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.1)' },
   chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
   chipTextActive: { color: '#3B82F6' },
+});
+
+const unitStyles = StyleSheet.create({
+  toggle: {
+    flexDirection: 'row', backgroundColor: '#0B1326', borderRadius: 10,
+    borderWidth: 1, borderColor: '#162540', padding: 3, marginBottom: 16,
+    alignSelf: 'flex-start',
+  },
+  btn: { paddingHorizontal: 20, paddingVertical: 7, borderRadius: 8 },
+  btnActive: { backgroundColor: '#3B82F6' },
+  btnText: { color: '#718FAF', fontSize: 13, fontWeight: '600' },
+  btnTextActive: { color: '#fff' },
 });
 
 const stepperStyles = StyleSheet.create({
