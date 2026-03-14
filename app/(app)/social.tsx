@@ -131,19 +131,6 @@ export default function SocialScreen() {
           </TouchableOpacity>
         ))}
 
-        {/* Grow your network */}
-        <TouchableOpacity
-          style={styles.networkCard}
-          onPress={() => router.push('/(screens)/social/search' as never)}
-          activeOpacity={0.75}
-        >
-          <Ionicons name="people-outline" size={20} color="#718FAF" />
-          <View style={styles.networkText}>
-            <Text style={styles.networkLabel}>Grow your network</Text>
-            <Text style={styles.networkSub}>Find athletes to follow</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color="#4A6080" />
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

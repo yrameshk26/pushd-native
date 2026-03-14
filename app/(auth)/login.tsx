@@ -4,6 +4,7 @@ import {
   View, Text, TextInput, TouchableOpacity, ActivityIndicator,
   StyleSheet, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuthStore } from '../../src/store/auth';
 import { useGoogleAuth } from '../../src/hooks/useGoogleAuth';
@@ -12,6 +13,7 @@ export default function LoginScreen() {
   const { message } = useLocalSearchParams<{ message?: string }>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const sendOtp = useAuthStore((s) => s.sendOtp);
   const { promptAsync, loading: googleLoading, error: googleError } = useGoogleAuth();
@@ -82,18 +84,23 @@ export default function LoginScreen() {
           returnKeyType="next"
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#4A6080"
-          secureTextEntry
-          autoCapitalize="none"
-          autoComplete="password"
-          value={password}
-          onChangeText={setPassword}
-          onSubmitEditing={handleSend}
-          returnKeyType="done"
-        />
+        <View style={styles.passwordWrap}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            placeholderTextColor="#4A6080"
+            secureTextEntry={!showPassword}
+            autoCapitalize="none"
+            autoComplete="password"
+            value={password}
+            onChangeText={setPassword}
+            onSubmitEditing={handleSend}
+            returnKeyType="done"
+          />
+          <TouchableOpacity style={styles.eyeBtn} onPress={() => setShowPassword((v) => !v)}>
+            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#4A6080" />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSend} disabled={loading}>
           {loading ? (
@@ -161,6 +168,17 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#162540', marginBottom: 16,
     fontFamily: 'DMSans-Regular',
   },
+  passwordWrap: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#0B1326', borderRadius: 12,
+    borderWidth: 1, borderColor: '#162540', marginBottom: 16,
+  },
+  passwordInput: {
+    flex: 1, color: '#fff',
+    paddingHorizontal: 16, paddingVertical: 14, fontSize: 16,
+    fontFamily: 'DMSans-Regular',
+  },
+  eyeBtn: { paddingHorizontal: 14 },
   button: {
     backgroundColor: '#3B82F6', borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Stack, router, usePathname } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Platform, View } from 'react-native';
+import { Platform, View, LogBox } from 'react-native';
+
+// Suppress Expo Go warning about push notifications not being supported
+LogBox.ignoreLogs(['expo-notifications: Android Push notifications']);
 import { useAuthStore } from '../src/store/auth';
 import TabBar from '../src/components/TabBar';
 import { setupNotificationHandler, registerForPushNotificationsAsync } from '../src/lib/notifications';

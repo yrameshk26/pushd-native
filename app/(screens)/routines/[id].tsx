@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { confirmAction } from '../../../src/utils/confirm';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -107,8 +108,13 @@ export default function RoutineDetailScreen() {
     queryKey: ['routine', id],
     queryFn: () => fetchRoutine(id),
     enabled: !!id,
-    staleTime: 2 * 60 * 1000,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteRoutine(id),
@@ -125,10 +131,7 @@ export default function RoutineDetailScreen() {
     mutationFn: () => duplicateRoutine(id),
     onSuccess: (newRoutine) => {
       queryClient.invalidateQueries({ queryKey: ['routines'] });
-      Alert.alert('Duplicated', `"${newRoutine.name}" has been created.`, [
-        { text: 'View', onPress: () => router.push(`/(screens)/routines/${newRoutine.id}`) },
-        { text: 'OK' },
-      ]);
+      router.replace(`/(screens)/routines/${newRoutine.id}`);
     },
     onError: () => {
       Alert.alert('Error', 'Failed to duplicate routine. Please try again.');

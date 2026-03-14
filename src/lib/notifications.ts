@@ -3,12 +3,17 @@
 
 import { Platform } from 'react-native';
 
-// Graceful import — expo-notifications may not be installed yet
+// Graceful import — expo-notifications is not supported in Expo Go on Android (SDK 53+)
 let Notifications: typeof import('expo-notifications') | null = null;
 try {
-  Notifications = require('expo-notifications');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mod = require('expo-notifications');
+  // Expo Go on Android removes push notification support — check for a key export
+  if (mod && typeof mod.getPermissionsAsync === 'function') {
+    Notifications = mod;
+  }
 } catch {
-  console.warn('[notifications] expo-notifications not installed. Run: npx expo install expo-notifications');
+  // Not installed or not supported in this environment
 }
 
 const WORKOUT_REMINDER_IDENTIFIER_PREFIX = 'workout-reminder-';
