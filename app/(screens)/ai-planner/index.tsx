@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,28 +12,31 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
+import { storage } from '../../../src/utils/storage';
+import { TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
-type Goal = 'strength' | 'hypertrophy' | 'endurance' | 'weight_loss' | 'general_fitness';
+type Goal = 'Build Muscle' | 'Lose Fat' | 'Get Stronger' | 'Improve Fitness' | 'Athletic Performance';
 type Level = 'beginner' | 'intermediate' | 'advanced';
+type Sex = 'male' | 'female' | 'other';
 type Equipment =
-  | 'BARBELL'
-  | 'DUMBBELL'
-  | 'MACHINE'
-  | 'BODYWEIGHT'
-  | 'CABLE'
-  | 'KETTLEBELL';
+  | 'BARBELL' | 'DUMBBELL' | 'CABLE' | 'MACHINE'
+  | 'BODYWEIGHT' | 'KETTLEBELL' | 'RESISTANCE_BAND' | 'SMITH_MACHINE';
 
 interface PlanForm {
+  age: string;
+  sex: Sex | '';
+  heightCm: string;
+  weightKg: string;
   goal: Goal | '';
   level: Level | '';
   daysPerWeek: number;
-  workoutDurationMinutes: number | null;
+  duration: number;
   equipment: Equipment[];
-  preferences: string;
+  notes: string;
 }
 
 interface GeneratedRoutine {
@@ -50,12 +53,12 @@ interface GeneratedPlan {
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
-const GOALS: { value: Goal; label: string; emoji: string; desc: string }[] = [
-  { value: 'strength', label: 'Get Stronger', emoji: '🏋️', desc: 'Increase strength in key lifts' },
-  { value: 'hypertrophy', label: 'Build Muscle', emoji: '💪', desc: 'Increase muscle size and definition' },
-  { value: 'endurance', label: 'Improve Endurance', emoji: '❤️', desc: 'Better stamina and cardiovascular fitness' },
-  { value: 'weight_loss', label: 'Lose Fat', emoji: '🔥', desc: 'Burn fat while preserving muscle' },
-  { value: 'general_fitness', label: 'General Fitness', emoji: '⚡', desc: 'Overall health and fitness improvement' },
+const GOALS: { value: Goal; emoji: string; desc: string }[] = [
+  { value: 'Build Muscle', emoji: '💪', desc: 'Increase muscle size and definition' },
+  { value: 'Lose Fat', emoji: '🔥', desc: 'Burn fat while preserving muscle' },
+  { value: 'Get Stronger', emoji: '🏋️', desc: 'Increase strength in key lifts' },
+  { value: 'Improve Fitness', emoji: '❤️', desc: 'Better endurance and overall health' },
+  { value: 'Athletic Performance', emoji: '⚡', desc: 'Sport-specific strength & power' },
 ];
 
 const LEVELS: { value: Level; label: string; desc: string }[] = [
@@ -64,41 +67,34 @@ const LEVELS: { value: Level; label: string; desc: string }[] = [
   { value: 'advanced', label: 'Advanced', desc: '3+ years of training' },
 ];
 
-const DAYS_OPTIONS = [3, 4, 5, 6];
+const DAYS_OPTIONS = [2, 3, 4, 5, 6];
+const DURATION_PRESETS = [30, 45, 60, 75, 90] as const;
 
 const EQUIPMENT_OPTIONS: { value: Equipment; label: string }[] = [
   { value: 'BARBELL', label: 'Barbell' },
   { value: 'DUMBBELL', label: 'Dumbbells' },
+  { value: 'CABLE', label: 'Cables' },
   { value: 'MACHINE', label: 'Machines' },
   { value: 'BODYWEIGHT', label: 'Bodyweight' },
-  { value: 'CABLE', label: 'Cables' },
   { value: 'KETTLEBELL', label: 'Kettlebells' },
-];
-
-const MOTIVATIONAL_TEXTS = [
-  'Analysing your goals...',
-  'Designing your workout structure...',
-  'Selecting the best exercises...',
-  'Optimising sets and reps...',
-  'Finalising your personalised plan...',
+  { value: 'RESISTANCE_BAND', label: 'Resistance Bands' },
+  { value: 'SMITH_MACHINE', label: 'Smith Machine' },
 ];
 
 const STEPS = [
+  { title: 'About You', subtitle: 'Help us personalise your plan' },
   { title: 'Your Goal', subtitle: 'What are you training for?' },
-  { title: 'Training Details', subtitle: 'Level, schedule, and session length' },
+  { title: 'Training Details', subtitle: 'Level and schedule' },
   { title: 'Equipment', subtitle: 'What do you have access to?' },
-  { title: 'Preferences', subtitle: 'Any injuries or focus areas?' },
+  { title: 'Anything Else?', subtitle: 'Injuries, preferences, focus areas' },
 ];
 
-const DURATION_PRESETS = [30, 45, 60] as const;
-
 const DEFAULT_FORM: PlanForm = {
-  goal: '',
-  level: '',
-  daysPerWeek: 4,
-  workoutDurationMinutes: 45,
+  age: '', sex: '', heightCm: '', weightKg: '',
+  goal: '', level: '',
+  daysPerWeek: 3, duration: 60,
   equipment: ['BARBELL', 'DUMBBELL', 'CABLE', 'MACHINE', 'BODYWEIGHT'],
-  preferences: '',
+  notes: '',
 };
 
 // ─── Helper components ─────────────────────────────────────────────────────
@@ -123,12 +119,97 @@ const dotStyles = StyleSheet.create({
   dotPast: { backgroundColor: '#3B82F6', opacity: 0.4 },
 });
 
+// ─── Step 0: About You ─────────────────────────────────────────────────────
+
+function StepAbout({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
+  const SEX_OPTIONS: { value: Sex; label: string }[] = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' },
+  ];
+
+  return (
+    <View style={stepStyles.container}>
+      <Text style={stepStyles.sectionLabel}>Age</Text>
+      <TextInput
+        style={inputStyles.field}
+        value={form.age}
+        onChangeText={(t) => update({ age: t })}
+        placeholder="e.g. 28"
+        placeholderTextColor="#4A6080"
+        keyboardType="number-pad"
+        maxLength={3}
+      />
+
+      <Text style={[stepStyles.sectionLabel, { marginTop: 20 }]}>Sex</Text>
+      <View style={inputStyles.sexRow}>
+        {SEX_OPTIONS.map(({ value, label }) => (
+          <TouchableOpacity
+            key={value}
+            style={[inputStyles.sexBtn, form.sex === value && inputStyles.sexBtnSelected]}
+            onPress={() => update({ sex: value })}
+            activeOpacity={0.7}
+          >
+            <Text style={[inputStyles.sexBtnText, form.sex === value && inputStyles.sexBtnTextSelected]}>
+              {label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={inputStyles.row}>
+        <View style={inputStyles.halfWrap}>
+          <Text style={stepStyles.sectionLabel}>Height (cm)</Text>
+          <TextInput
+            style={inputStyles.field}
+            value={form.heightCm}
+            onChangeText={(t) => update({ heightCm: t })}
+            placeholder="e.g. 178"
+            placeholderTextColor="#4A6080"
+            keyboardType="number-pad"
+            maxLength={3}
+          />
+        </View>
+        <View style={inputStyles.halfWrap}>
+          <Text style={stepStyles.sectionLabel}>Weight (kg)</Text>
+          <TextInput
+            style={inputStyles.field}
+            value={form.weightKg}
+            onChangeText={(t) => update({ weightKg: t })}
+            placeholder="e.g. 80"
+            placeholderTextColor="#4A6080"
+            keyboardType="decimal-pad"
+            maxLength={5}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const inputStyles = StyleSheet.create({
+  field: {
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
+    borderRadius: 12, padding: 14, color: '#fff', fontSize: 15,
+  },
+  row: { flexDirection: 'row', gap: 12, marginTop: 20 },
+  halfWrap: { flex: 1 },
+  sexRow: { flexDirection: 'row', gap: 8 },
+  sexBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1,
+    borderColor: '#162540', backgroundColor: '#0B1326', alignItems: 'center',
+  },
+  sexBtnSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+  sexBtnText: { color: '#718FAF', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  sexBtnTextSelected: { color: '#fff' },
+});
+
 // ─── Step 1: Goal ──────────────────────────────────────────────────────────
 
 function StepGoal({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
   return (
     <View style={stepStyles.container}>
-      {GOALS.map(({ value, label, emoji, desc }) => {
+      {GOALS.map(({ value, emoji, desc }) => {
         const selected = form.goal === value;
         return (
           <TouchableOpacity
@@ -139,7 +220,7 @@ function StepGoal({ form, update }: { form: PlanForm; update: (p: Partial<PlanFo
           >
             <Text style={stepStyles.optionEmoji}>{emoji}</Text>
             <View style={stepStyles.optionInfo}>
-              <Text style={stepStyles.optionLabel}>{label}</Text>
+              <Text style={stepStyles.optionLabel}>{value}</Text>
               <Text style={stepStyles.optionDesc}>{desc}</Text>
             </View>
             {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
@@ -150,22 +231,9 @@ function StepGoal({ form, update }: { form: PlanForm; update: (p: Partial<PlanFo
   );
 }
 
-// ─── Step 2: Level + Days + Duration ──────────────────────────────────────
+// ─── Step 2: Training Details ──────────────────────────────────────────────
 
 function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
-  const [customDuration, setCustomDuration] = React.useState('');
-  const isCustom = !DURATION_PRESETS.includes(form.workoutDurationMinutes as any);
-
-  function handleCustomChange(text: string) {
-    setCustomDuration(text);
-    const parsed = parseInt(text, 10);
-    if (!isNaN(parsed) && parsed >= 10 && parsed <= 180) {
-      update({ workoutDurationMinutes: parsed });
-    } else {
-      update({ workoutDurationMinutes: null });
-    }
-  }
-
   return (
     <View style={stepStyles.container}>
       <Text style={stepStyles.sectionLabel}>Fitness Level</Text>
@@ -188,8 +256,7 @@ function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<Pl
       })}
 
       <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>
-        Days Per Week
-        <Text style={stepStyles.accentText}> {form.daysPerWeek}</Text>
+        Days per week<Text style={stepStyles.accentText}> {form.daysPerWeek}</Text>
       </Text>
       <View style={stepStyles.daysRow}>
         {DAYS_OPTIONS.map((d) => (
@@ -206,39 +273,23 @@ function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<Pl
         ))}
       </View>
 
-      <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>Workout Duration (optional)</Text>
+      <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>
+        Session duration<Text style={stepStyles.accentText}> {form.duration} min</Text>
+      </Text>
       <View style={stepStyles.daysRow}>
         {DURATION_PRESETS.map((d) => (
           <TouchableOpacity
             key={d}
-            style={[stepStyles.dayBtn, form.workoutDurationMinutes === d && !isCustom && stepStyles.dayBtnSelected]}
-            onPress={() => { setCustomDuration(''); update({ workoutDurationMinutes: d }); }}
+            style={[stepStyles.dayBtn, form.duration === d && stepStyles.dayBtnSelected]}
+            onPress={() => update({ duration: d })}
             activeOpacity={0.7}
           >
-            <Text style={[stepStyles.dayBtnText, form.workoutDurationMinutes === d && !isCustom && stepStyles.dayBtnTextSelected]}>
-              {d}m
+            <Text style={[stepStyles.dayBtnText, form.duration === d && stepStyles.dayBtnTextSelected]}>
+              {d}
             </Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity
-          style={[stepStyles.dayBtn, isCustom && stepStyles.dayBtnSelected]}
-          onPress={() => { update({ workoutDurationMinutes: null }); setCustomDuration(''); }}
-          activeOpacity={0.7}
-        >
-          <Text style={[stepStyles.dayBtnText, isCustom && stepStyles.dayBtnTextSelected]}>Custom</Text>
-        </TouchableOpacity>
       </View>
-      {isCustom && (
-        <TextInput
-          style={durationStyles.input}
-          value={customDuration}
-          onChangeText={handleCustomChange}
-          placeholder="Minutes (e.g. 75)"
-          placeholderTextColor="#4A6080"
-          keyboardType="number-pad"
-          maxLength={3}
-        />
-      )}
     </View>
   );
 }
@@ -253,13 +304,12 @@ function StepEquipment({ form, update }: { form: PlanForm; update: (p: Partial<P
     update({ equipment: next });
   }
 
-  function selectAll() {
-    update({ equipment: EQUIPMENT_OPTIONS.map((e) => e.value) });
-  }
-
   return (
     <View style={stepStyles.container}>
-      <TouchableOpacity onPress={selectAll} style={stepStyles.selectAllBtn}>
+      <TouchableOpacity
+        onPress={() => update({ equipment: EQUIPMENT_OPTIONS.map((e) => e.value) })}
+        style={stepStyles.selectAllBtn}
+      >
         <Text style={stepStyles.selectAllText}>Select all (full gym)</Text>
       </TouchableOpacity>
       <View style={chipStyles.grid}>
@@ -302,37 +352,30 @@ const chipStyles = StyleSheet.create({
   chipTextSelected: { color: '#fff' },
 });
 
-// ─── Step 4: Preferences ──────────────────────────────────────────────────
+// ─── Step 4: Notes ─────────────────────────────────────────────────────────
 
-function StepPreferences({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
+function StepNotes({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
   return (
     <View style={stepStyles.container}>
       <Text style={stepStyles.optionDesc}>
         Tell the AI anything else that would help personalise your plan — injuries, weak points, exercises you enjoy or want to avoid, etc.
       </Text>
       <TextInput
-        style={prefStyles.textarea}
-        value={form.preferences}
-        onChangeText={(t) => update({ preferences: t })}
+        style={notesStyles.textarea}
+        value={form.notes}
+        onChangeText={(t) => update({ notes: t })}
         placeholder="e.g. Bad left knee — avoid deep squats. Want to focus on upper body. Love deadlifts."
         placeholderTextColor="#4A6080"
         multiline
         numberOfLines={5}
         textAlignVertical="top"
       />
-      <Text style={prefStyles.hint}>Optional — leave blank if nothing to add.</Text>
+      <Text style={notesStyles.hint}>Optional — leave blank if nothing to add.</Text>
     </View>
   );
 }
 
-const durationStyles = StyleSheet.create({
-  input: {
-    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#3B82F6',
-    borderRadius: 12, padding: 14, color: '#fff', fontSize: 15, marginTop: 10,
-  },
-});
-
-const prefStyles = StyleSheet.create({
+const notesStyles = StyleSheet.create({
   textarea: {
     backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
     borderRadius: 12, padding: 14, color: '#fff', fontSize: 15, lineHeight: 22,
@@ -341,7 +384,7 @@ const prefStyles = StyleSheet.create({
   hint: { color: '#4A6080', fontSize: 13, marginTop: 8 },
 });
 
-// ─── Shared step styles ───────────────────────────────────────────────────
+// ─── Shared step styles ────────────────────────────────────────────────────
 
 const stepStyles = StyleSheet.create({
   container: { gap: 10 },
@@ -355,24 +398,23 @@ const stepStyles = StyleSheet.create({
   optionRowSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
   optionEmoji: { fontSize: 22 },
   optionInfo: { flex: 1 },
-  optionLabel: { color: '#fff', fontSize: 15, fontWeight: '700',
-    fontFamily: 'DMSans-Bold', marginBottom: 2 },
+  optionLabel: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold', marginBottom: 2 },
   optionDesc: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
   selectAllBtn: { alignSelf: 'flex-start', marginBottom: 4 },
   selectAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
-  daysRow: { flexDirection: 'row', gap: 10 },
+  daysRow: { flexDirection: 'row', gap: 8 },
   dayBtn: {
     flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1,
     borderColor: '#162540', backgroundColor: '#0B1326', alignItems: 'center',
   },
   dayBtnSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  dayBtnText: { color: '#718FAF', fontSize: 16, fontWeight: '700' },
+  dayBtnText: { color: '#718FAF', fontSize: 14, fontWeight: '700' },
   dayBtnTextSelected: { color: '#fff' },
 });
 
 // ─── Loading / Success screen ──────────────────────────────────────────────
 
-function GeneratingScreen({ motivationalText }: { motivationalText: string }) {
+function GeneratingScreen({ status }: { status: string }) {
   return (
     <View style={genStyles.container}>
       <View style={genStyles.pulseWrap}>
@@ -382,7 +424,7 @@ function GeneratingScreen({ motivationalText }: { motivationalText: string }) {
         </View>
       </View>
       <Text style={genStyles.title}>Building Your Plan</Text>
-      <Text style={genStyles.status}>{motivationalText}</Text>
+      <Text style={genStyles.status}>{status}</Text>
       <Text style={genStyles.hint}>This usually takes 15–30 seconds</Text>
     </View>
   );
@@ -399,7 +441,6 @@ function SuccessScreen({ plan, onViewRoutines }: { plan: GeneratedPlan; onViewRo
       {plan.weeklySchedule ? (
         <Text style={successStyles.schedule}>Schedule: {plan.weeklySchedule}</Text>
       ) : null}
-
       <View style={successStyles.routineList}>
         {plan.routines.map((r) => (
           <TouchableOpacity
@@ -416,7 +457,6 @@ function SuccessScreen({ plan, onViewRoutines }: { plan: GeneratedPlan; onViewRo
           </TouchableOpacity>
         ))}
       </View>
-
       <TouchableOpacity style={successStyles.viewBtn} onPress={onViewRoutines} activeOpacity={0.8}>
         <Text style={successStyles.viewBtnText}>View All My Routines</Text>
       </TouchableOpacity>
@@ -435,8 +475,7 @@ const genStyles = StyleSheet.create({
     width: 56, height: 56, borderRadius: 28,
     backgroundColor: 'rgba(59, 130, 246,0.2)', alignItems: 'center', justifyContent: 'center',
   },
-  title: { color: '#fff', fontSize: 20, fontWeight: '700',
-    fontFamily: 'BarlowCondensed-Bold', marginBottom: 10, textAlign: 'center' },
+  title: { color: '#fff', fontSize: 20, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold', marginBottom: 10, textAlign: 'center' },
   status: { color: '#718FAF', fontSize: 15, textAlign: 'center', marginBottom: 8 },
   hint: { color: '#4A6080', fontSize: 13, textAlign: 'center' },
 });
@@ -444,9 +483,7 @@ const genStyles = StyleSheet.create({
 const successStyles = StyleSheet.create({
   container: { padding: 24, paddingBottom: 40, alignItems: 'center' },
   iconWrap: { marginBottom: 16 },
-  planName: { color: '#fff', fontSize: 22, fontWeight: '800',
-    fontFamily: 'BarlowCondensed-ExtraBold',
-    fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center', marginBottom: 8 },
+  planName: { color: '#fff', fontSize: 22, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center', marginBottom: 8 },
   planDesc: { color: '#718FAF', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 6 },
   schedule: { color: '#3B82F6', fontSize: 13, textAlign: 'center', marginBottom: 20 },
   routineList: { width: '100%', gap: 10, marginBottom: 24 },
@@ -459,122 +496,149 @@ const successStyles = StyleSheet.create({
     width: 34, height: 34, borderRadius: 8,
     backgroundColor: 'rgba(59, 130, 246,0.15)', alignItems: 'center', justifyContent: 'center',
   },
-  routineName: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600',
-    fontFamily: 'DMSans-SemiBold' },
-  viewBtn: {
-    width: '100%', backgroundColor: '#3B82F6', borderRadius: 14,
-    paddingVertical: 18, alignItems: 'center',
-  },
-  viewBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
-    fontFamily: 'DMSans-Bold' },
+  routineName: { flex: 1, color: '#fff', fontSize: 15, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  viewBtn: { width: '100%', backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 18, alignItems: 'center' },
+  viewBtnText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 });
 
-// ─── Main screen ──────────────────────────────────────────────────────────
+// ─── Main screen ───────────────────────────────────────────────────────────
 
 export default function AIPlannerScreen() {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<PlanForm>(DEFAULT_FORM);
   const [generating, setGenerating] = useState(false);
-  const [motivationalIdx, setMotivationalIdx] = useState(0);
+  const [status, setStatus] = useState('Initialising...');
   const [plan, setPlan] = useState<GeneratedPlan | null>(null);
   const [error, setError] = useState('');
+
+  // Fetch body profile for pre-population
+  const { data: profile } = useQuery({
+    queryKey: ['onboarding-profile'],
+    queryFn: async () => {
+      const { data } = await api.get('/api/users/onboarding');
+      return data?.data ?? data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Pre-populate age, sex, height, weight from profile
+  useEffect(() => {
+    if (!profile) return;
+    const updates: Partial<PlanForm> = {};
+
+    if (profile.heightCm) {
+      updates.heightCm = String(profile.heightCm);
+    }
+    if (profile.latestWeightKg) {
+      updates.weightKg = String(Math.round(profile.latestWeightKg));
+    }
+    if (profile.dateOfBirth) {
+      const dob = new Date(profile.dateOfBirth);
+      const now = new Date();
+      const age = now.getFullYear() - dob.getFullYear() -
+        (now < new Date(now.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+      if (age >= 13 && age <= 100) updates.age = String(age);
+    }
+    if (profile.sex === 'MALE') {
+      updates.sex = 'male';
+    } else if (profile.sex === 'FEMALE') {
+      updates.sex = 'female';
+    }
+
+    if (Object.keys(updates).length > 0) {
+      setForm((prev) => ({ ...prev, ...updates }));
+    }
+  }, [profile]);
 
   function update(partial: Partial<PlanForm>) {
     setForm((prev) => ({ ...prev, ...partial }));
   }
 
   function canNext(): boolean {
-    if (step === 0) return !!form.goal;
-    if (step === 1) return !!form.level;
-    if (step === 2) return form.equipment.length > 0;
+    if (step === 0) return !!form.age && !!form.sex;
+    if (step === 1) return !!form.goal;
+    if (step === 2) return !!form.level;
+    if (step === 3) return form.equipment.length > 0;
     return true;
   }
 
-  // Map AI planner goal values to what the API accepts
-  const GOAL_MAP: Record<string, string> = {
-    strength: 'strength',
-    hypertrophy: 'hypertrophy',
-    endurance: 'general',
-    weight_loss: 'fat_loss',
-    general_fitness: 'general',
-  };
-
-  const GOAL_NAMES: Record<string, string> = {
-    strength: 'Strength Program',
-    hypertrophy: 'Hypertrophy Program',
-    endurance: 'Endurance Program',
-    weight_loss: 'Fat Loss Program',
-    general_fitness: 'General Fitness Program',
-  };
-
-  const generateMutation = useMutation({
-    throwOnError: false,
-    mutationFn: async () => {
-      const mappedGoal = GOAL_MAP[form.goal] ?? 'general';
-      const planName = GOAL_NAMES[form.goal] ?? 'My Program';
-      const focusAreas = form.preferences.trim() ? [form.preferences.trim()] : undefined;
-
-      const { data } = await api.post('/api/ai/generate-program', {
-        name: planName,
-        goal: mappedGoal,
-        experience: form.level,
-        daysPerWeek: form.daysPerWeek,
-        durationWeeks: 8,
-        equipment: form.equipment,
-        focusAreas,
-        ...(form.workoutDurationMinutes != null
-          ? { workoutDurationMinutes: form.workoutDurationMinutes }
-          : {}),
-      });
-      const result = data?.data ?? data;
-      return {
-        planName: result.name ?? planName,
-        planDescription: result.description ?? `${form.daysPerWeek} days/week · ${form.level} level`,
-        weeklySchedule: result.weeklySchedule,
-        routines: result.routines ?? [],
-      } as GeneratedPlan;
-    },
-    onSuccess: (data) => {
-      setPlan(data);
-      setGenerating(false);
-      queryClient.invalidateQueries({ queryKey: ['routines'] });
-    },
-    onError: (err: any) => {
-      const status = err?.response?.status;
-      const message =
-        status === 429 ? 'Rate limit reached — you can generate up to 5 plans per hour. Please try again later.' :
-        status === 401 ? 'Your session has expired. Please log in again.' :
-        (err?.response?.data?.error ?? 'Failed to generate plan. Please try again.');
-      setError(message);
-      setGenerating(false);
-      Alert.alert(status === 429 ? '⏱ Rate Limit Reached' : 'Generation Failed', message);
-    },
-  });
-
-  async function handleGenerate() {
+  async function generate() {
     setGenerating(true);
     setError('');
-    setMotivationalIdx(0);
-
-    // Cycle through motivational messages while generating
-    const interval = setInterval(() => {
-      setMotivationalIdx((prev) => {
-        const next = prev + 1;
-        if (next >= MOTIVATIONAL_TEXTS.length) {
-          clearInterval(interval);
-          return prev;
-        }
-        return next;
-      });
-    }, 5000);
+    setStatus('Initialising...');
 
     try {
-      await generateMutation.mutateAsync();
-    } catch {
-      // Error handled in onError callback
+      const token = await storage.getItemAsync(TOKEN_STORAGE_KEY);
+
+      const res = await fetch(`${API_BASE_URL}/api/ai-planner`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          age: parseInt(form.age) || undefined,
+          sex: form.sex || undefined,
+          heightCm: parseFloat(form.heightCm) || undefined,
+          weightKg: parseFloat(form.weightKg) || undefined,
+          goal: form.goal || undefined,
+          level: form.level || undefined,
+          daysPerWeek: form.daysPerWeek,
+          duration: form.duration,
+          equipment: form.equipment,
+          notes: form.notes.trim() || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        const status429 = res.status === 429;
+        const msg = status429
+          ? 'Rate limit reached — you can generate up to 50 plans per hour. Please try again later.'
+          : (errJson.error ?? 'Failed to generate plan. Please try again.');
+        throw new Error(msg);
+      }
+
+      if (!res.body) throw new Error('No response stream');
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done: streamDone, value } = await reader.read();
+        if (streamDone) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const json = JSON.parse(line.slice(6));
+
+          if (json.type === 'status') {
+            setStatus(json.message);
+          } else if (json.type === 'error') {
+            throw new Error(json.message);
+          } else if (json.type === 'done') {
+            setPlan({
+              planName: json.planName,
+              planDescription: json.planDescription,
+              weeklySchedule: json.weeklySchedule,
+              routines: json.routines ?? [],
+            });
+            queryClient.invalidateQueries({ queryKey: ['routines'] });
+          }
+        }
+      }
+    } catch (err: any) {
+      const msg = err?.message ?? 'Failed to generate plan. Please try again.';
+      setError(msg);
+      Alert.alert('Generation Failed', msg);
     } finally {
-      clearInterval(interval);
+      setGenerating(false);
     }
   }
 
@@ -601,22 +665,7 @@ export default function AIPlannerScreen() {
           <Text style={styles.heading}>AI Planner</Text>
           <View style={{ width: 40 }} />
         </View>
-        {error ? (
-          <View style={styles.errorWrap}>
-            <View style={styles.errorBox}>
-              <Ionicons name="alert-circle" size={24} color="#ef4444" style={{ marginBottom: 8 }} />
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity
-                style={styles.retryBtn}
-                onPress={() => { setGenerating(false); setError(''); }}
-              >
-                <Text style={styles.retryText}>Go back and try again</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <GeneratingScreen motivationalText={MOTIVATIONAL_TEXTS[motivationalIdx]} />
-        )}
+        <GeneratingScreen status={status} />
       </SafeAreaView>
     );
   }
@@ -636,9 +685,7 @@ export default function AIPlannerScreen() {
           <Ionicons name="sparkles" size={18} color="#3B82F6" />
           <Text style={styles.heading}>AI Planner</Text>
         </View>
-        <Text style={styles.stepCount}>
-          {step + 1}/{STEPS.length}
-        </Text>
+        <Text style={styles.stepCount}>{step + 1}/{STEPS.length}</Text>
       </View>
 
       <ScrollView
@@ -646,18 +693,17 @@ export default function AIPlannerScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Progress dots */}
         <StepDots current={step} total={STEPS.length} />
 
-        {/* Step title */}
         <Text style={styles.stepTitle}>{STEPS[step].title}</Text>
         <Text style={styles.stepSubtitle}>{STEPS[step].subtitle}</Text>
 
         <View style={{ marginTop: 20 }}>
-          {step === 0 && <StepGoal form={form} update={update} />}
-          {step === 1 && <StepTraining form={form} update={update} />}
-          {step === 2 && <StepEquipment form={form} update={update} />}
-          {step === 3 && <StepPreferences form={form} update={update} />}
+          {step === 0 && <StepAbout form={form} update={update} />}
+          {step === 1 && <StepGoal form={form} update={update} />}
+          {step === 2 && <StepTraining form={form} update={update} />}
+          {step === 3 && <StepEquipment form={form} update={update} />}
+          {step === 4 && <StepNotes form={form} update={update} />}
         </View>
       </ScrollView>
 
@@ -670,17 +716,12 @@ export default function AIPlannerScreen() {
           </View>
         ) : null}
         <TouchableOpacity
-          style={[styles.nextBtn, (!canNext() || generating) && styles.nextBtnDisabled]}
-          onPress={step < STEPS.length - 1 ? () => { setError(''); setStep((s) => s + 1); } : handleGenerate}
-          disabled={!canNext() || generating}
+          style={[styles.nextBtn, !canNext() && styles.nextBtnDisabled]}
+          onPress={step < STEPS.length - 1 ? () => { setError(''); setStep((s) => s + 1); } : generate}
+          disabled={!canNext()}
           activeOpacity={0.8}
         >
-          {generating && step === STEPS.length - 1 ? (
-            <>
-              <ActivityIndicator size="small" color="#fff" />
-              <Text style={styles.nextBtnText}>Generating…</Text>
-            </>
-          ) : step < STEPS.length - 1 ? (
+          {step < STEPS.length - 1 ? (
             <>
               <Text style={styles.nextBtnText}>Continue</Text>
               <Ionicons name="arrow-forward" size={18} color="#fff" />
@@ -705,31 +746,21 @@ const styles = StyleSheet.create({
   },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
-  heading: { color: '#fff', fontSize: 18, fontWeight: '700',
-    fontFamily: 'BarlowCondensed-Bold' },
+  heading: { color: '#fff', fontSize: 18, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
   stepCount: { color: '#718FAF', fontSize: 13, width: 40, textAlign: 'right' },
   content: { paddingHorizontal: 20, paddingBottom: 24 },
-  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800',
-    fontFamily: 'BarlowCondensed-ExtraBold',
-    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
+  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
   stepSubtitle: { color: '#718FAF', fontSize: 14 },
-  footer: {
-    padding: 20, borderTopWidth: 1, borderTopColor: '#0B1326',
-    backgroundColor: '#060C1B',
-  },
+  footer: { padding: 20, borderTopWidth: 1, borderTopColor: '#0B1326', backgroundColor: '#060C1B' },
   nextBtn: {
     backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 18,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   nextBtnDisabled: { opacity: 0.4 },
-  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
-    fontFamily: 'DMSans-Bold' },
-  errorWrap: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
-  errorBox: {
-    backgroundColor: '#0B1326', borderRadius: 16, padding: 24,
-    borderWidth: 1, borderColor: '#ef444430', alignItems: 'center', width: '100%',
+  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  errorBanner: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+    backgroundColor: 'rgba(239,68,68,0.1)', borderRadius: 10, padding: 12, marginBottom: 12,
   },
-  errorText: { color: '#ef4444', fontSize: 15, textAlign: 'center', lineHeight: 22 },
-  retryBtn: { marginTop: 14 },
-  retryText: { color: '#718FAF', fontSize: 13, textDecorationLine: 'underline' },
+  errorBannerText: { flex: 1, color: '#ef4444', fontSize: 13, lineHeight: 19 },
 });
