@@ -85,29 +85,30 @@ interface RoutineCardProps {
 }
 
 const CARD_WIDTH = 80;
-const FULL_SWIPE_THRESHOLD = 200;
 
 function RoutineCard({ routine, onDelete }: RoutineCardProps) {
   const swipeableRef = useRef<Swipeable>(null);
 
-  const renderRightActions = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>) => {
-    const bgColor = dragX.interpolate({
-      inputRange: [-FULL_SWIPE_THRESHOLD, -CARD_WIDTH],
-      outputRange: ['#b91c1c', '#ef4444'],
-      extrapolate: 'clamp',
-    });
+  const renderRightActions = (progress: Animated.AnimatedInterpolation<number>) => {
     const scale = progress.interpolate({
       inputRange: [0, 1],
       outputRange: [0.8, 1],
       extrapolate: 'clamp',
     });
     return (
-      <Animated.View style={[styles.deleteAction, { backgroundColor: bgColor }]}>
+      <TouchableOpacity
+        style={styles.deleteAction}
+        activeOpacity={0.8}
+        onPress={() => {
+          swipeableRef.current?.close();
+          onDelete(routine.id);
+        }}
+      >
         <Animated.View style={{ transform: [{ scale }], alignItems: 'center', gap: 4 }}>
           <Ionicons name="trash-outline" size={22} color="#fff" />
           <Text style={styles.deleteActionText}>Delete</Text>
         </Animated.View>
-      </Animated.View>
+      </TouchableOpacity>
     );
   };
 
@@ -117,11 +118,6 @@ function RoutineCard({ routine, onDelete }: RoutineCardProps) {
       renderRightActions={renderRightActions}
       rightThreshold={CARD_WIDTH}
       overshootRight={false}
-      onSwipeableWillOpen={() => {
-        // full swipe detected — delete immediately
-        swipeableRef.current?.close();
-        onDelete(routine.id);
-      }}
     >
       <TouchableOpacity
         style={styles.routineCard}
