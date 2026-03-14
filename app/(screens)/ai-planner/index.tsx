@@ -619,6 +619,7 @@ export default function AIPlannerScreen() {
           daysPerWeek: form.daysPerWeek,
           duration: form.duration,
           equipment: form.equipment,
+          fullGym: form.equipment.length === EQUIPMENT_OPTIONS.length,
           notes: form.notes.trim() || undefined,
           dryRun: true,
         }),
