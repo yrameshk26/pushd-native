@@ -46,8 +46,9 @@ export function NLWorkoutInput({ onParsed, onClose }: Props) {
       } else {
         setPreview(exercises);
       }
-    } catch {
-      setError('Failed to parse workout. Please try again.');
+    } catch (err: any) {
+      const serverMsg = err?.response?.data?.error;
+      setError(serverMsg ?? 'Failed to parse workout. Please try again.');
     } finally {
       setIsLoading(false);
     }
