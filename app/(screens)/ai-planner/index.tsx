@@ -314,6 +314,8 @@ function StepTraining({ form, update }: { form: PlanForm; update: (p: Partial<Pl
 // ─── Step 3: Equipment ─────────────────────────────────────────────────────
 
 function StepEquipment({ form, update }: { form: PlanForm; update: (p: Partial<PlanForm>) => void }) {
+  const allSelected = form.equipment.length === EQUIPMENT_OPTIONS.length;
+
   function toggle(eq: Equipment) {
     const next = form.equipment.includes(eq)
       ? form.equipment.filter((e) => e !== eq)
@@ -321,13 +323,21 @@ function StepEquipment({ form, update }: { form: PlanForm; update: (p: Partial<P
     update({ equipment: next });
   }
 
+  function toggleAll() {
+    update({ equipment: allSelected ? [] : EQUIPMENT_OPTIONS.map((e) => e.value) });
+  }
+
   return (
     <View style={stepStyles.container}>
       <TouchableOpacity
-        onPress={() => update({ equipment: EQUIPMENT_OPTIONS.map((e) => e.value) })}
-        style={stepStyles.selectAllBtn}
+        onPress={toggleAll}
+        style={[stepStyles.fullGymPill, allSelected && stepStyles.fullGymPillSelected]}
+        activeOpacity={0.7}
       >
-        <Text style={stepStyles.selectAllText}>Select all (full gym)</Text>
+        <Ionicons name="barbell-outline" size={16} color={allSelected ? '#3B82F6' : '#718FAF'} />
+        <Text style={[stepStyles.fullGymText, allSelected && stepStyles.fullGymTextSelected]}>
+          Everything (Full Gym)
+        </Text>
       </TouchableOpacity>
       <View style={chipStyles.grid}>
         {EQUIPMENT_OPTIONS.map(({ value, label }) => {
@@ -417,8 +427,14 @@ const stepStyles = StyleSheet.create({
   optionInfo: { flex: 1 },
   optionLabel: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold', marginBottom: 2 },
   optionDesc: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
-  selectAllBtn: { alignSelf: 'flex-start', marginBottom: 4 },
-  selectAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
+  fullGymPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start',
+    paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20,
+    borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326', marginBottom: 10,
+  },
+  fullGymPillSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.12)' },
+  fullGymText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
+  fullGymTextSelected: { color: '#3B82F6' },
   daysRow: { flexDirection: 'row', gap: 8 },
   dayBtn: {
     flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1,
