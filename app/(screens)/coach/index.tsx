@@ -3,6 +3,7 @@ import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Keyboard
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '../../../src/api/client';
+import { ProGate } from '../../../components/ProGate';
 
 interface Message { id: string; role: 'user' | 'assistant'; content: string }
 
@@ -44,6 +45,7 @@ export default function CoachScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ProGate required="pro">
       <View style={styles.header}>
         <Text style={styles.heading}>AI Coach</Text>
         {remaining !== null && <Text style={styles.remaining}>{remaining} messages left today</Text>}
@@ -97,6 +99,7 @@ export default function CoachScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      </ProGate>
     </SafeAreaView>
   );
 }
@@ -104,9 +107,7 @@ export default function CoachScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#060C1B' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-  heading: { fontSize: 24, fontWeight: '800',
-    fontFamily: 'BarlowCondensed-ExtraBold',
-    fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
+  heading: { fontSize: 24, fontWeight: '800', fontFamily: 'BarlowCondensed-ExtraBold', color: '#fff' },
   remaining: { color: '#718FAF', fontSize: 13 },
   emptyState: { alignItems: 'center', paddingTop: 40, paddingBottom: 20 },
   emptyTitle: { color: '#fff', fontSize: 20, fontWeight: '700',
