@@ -1,797 +1,471 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-  StyleSheet,
-  Animated,
-  Easing,
+  View, Text, ScrollView, TouchableOpacity, TextInput,
+  StyleSheet, Animated, Easing,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
 
-// ─── Types ─────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-type ProgramGoal = 'strength' | 'hypertrophy' | 'fat_loss' | 'general';
-type Experience = 'beginner' | 'intermediate' | 'advanced';
-type DurationWeeks = 4 | 8 | 12;
-type DaysPerWeek = 3 | 4 | 5 | 6;
+type Focus = 'Full Body' | 'Push' | 'Pull' | 'Legs' | 'Upper Body' | 'Shoulders & Arms' | 'Core';
+type Goal  = 'muscle' | 'strength' | 'fat_loss' | 'general';
+type Level = 'beginner' | 'intermediate' | 'advanced';
+type Duration = 30 | 45 | 60 | 75;
 
-type Equipment =
-  | 'BARBELL'
-  | 'DUMBBELL'
-  | 'MACHINE'
-  | 'BODYWEIGHT'
-  | 'CABLE'
-  | 'KETTLEBELL'
-  | 'RESISTANCE_BAND';
-
-const DEFAULT_PROGRAM_NAMES: Record<ProgramGoal, string> = {
-  strength: 'Strength Program',
-  hypertrophy: 'Hypertrophy Program',
-  fat_loss: 'Fat Loss Program',
-  general: 'General Fitness Program',
-};
-
-interface GenerateForm {
-  goal: ProgramGoal | '';
-  experience: Experience | '';
-  durationWeeks: DurationWeeks | 0;
-  daysPerWeek: DaysPerWeek | 0;
-  equipment: Equipment[];
-  notes: string;
+interface RoutineExercise {
+  exercise: { name: string; primaryMuscle: string };
+  targetSets: number;
+  targetReps: number;
+  notes: string | null;
 }
 
-interface GenerateResult {
-  programName: string;
-  routines: { id: string; name: string }[];
+interface GeneratedRoutine {
+  id: string;
+  name: string;
+  description: string | null;
+  exercises: RoutineExercise[];
 }
 
-// ─── Constants ─────────────────────────────────────────────────────────────
+// ─── Options ──────────────────────────────────────────────────────────────────
+
+const FOCUS_OPTIONS: { value: Focus; emoji: string }[] = [
+  { value: 'Full Body',        emoji: '💪' },
+  { value: 'Push',             emoji: '🫸' },
+  { value: 'Pull',             emoji: '🫷' },
+  { value: 'Legs',             emoji: '🦵' },
+  { value: 'Upper Body',       emoji: '🏋️' },
+  { value: 'Shoulders & Arms', emoji: '🦾' },
+  { value: 'Core',             emoji: '🎯' },
+];
+
+const GOAL_OPTIONS: { value: Goal; label: string; sub: string; icon: string }[] = [
+  { value: 'muscle',   label: 'Build Muscle',    sub: 'Hypertrophy volume', icon: 'barbell-outline' },
+  { value: 'strength', label: 'Get Stronger',    sub: 'Heavy compounds',    icon: 'flash-outline' },
+  { value: 'fat_loss', label: 'Burn Fat',        sub: 'High reps, less rest', icon: 'flame-outline' },
+  { value: 'general',  label: 'General Fitness', sub: 'Balanced training',  icon: 'fitness-outline' },
+];
+
+const LEVEL_OPTIONS: { value: Level; label: string; sub: string }[] = [
+  { value: 'beginner',     label: 'Beginner',     sub: '< 1 year training' },
+  { value: 'intermediate', label: 'Intermediate', sub: '1–3 years training' },
+  { value: 'advanced',     label: 'Advanced',     sub: '3+ years training' },
+];
+
+const DURATION_OPTIONS: { value: Duration; label: string }[] = [
+  { value: 30, label: '30 min' },
+  { value: 45, label: '45 min' },
+  { value: 60, label: '60 min' },
+  { value: 75, label: '75+ min' },
+];
+
+const EQUIPMENT_OPTIONS: { value: string; label: string }[] = [
+  { value: 'BARBELL',         label: 'Barbell' },
+  { value: 'DUMBBELL',        label: 'Dumbbell' },
+  { value: 'CABLE',           label: 'Cable' },
+  { value: 'MACHINE',         label: 'Machine' },
+  { value: 'BODYWEIGHT',      label: 'Bodyweight' },
+  { value: 'KETTLEBELL',      label: 'Kettlebell' },
+  { value: 'RESISTANCE_BAND', label: 'Bands' },
+  { value: 'SMITH_MACHINE',   label: 'Smith Machine' },
+];
+
+const LOADING_TIPS = [
+  'Analysing your goals…',
+  'Selecting best exercises…',
+  'Balancing sets & reps…',
+  'Building your routine…',
+];
 
 const TOTAL_STEPS = 4;
 
-const GOALS: { value: ProgramGoal; label: string; icon: string; desc: string }[] = [
-  { value: 'strength', label: 'Strength', icon: 'barbell-outline', desc: 'Build max strength in compound lifts' },
-  { value: 'hypertrophy', label: 'Hypertrophy', icon: 'body-outline', desc: 'Maximize muscle size and definition' },
-  { value: 'fat_loss', label: 'Fat Loss', icon: 'flame-outline', desc: 'Burn fat while preserving muscle' },
-  { value: 'general', label: 'General Fitness', icon: 'heart-outline', desc: 'Balanced fitness and wellness' },
-];
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 
-const EXPERIENCE_OPTIONS: { value: Experience; label: string; desc: string }[] = [
-  { value: 'beginner', label: 'Beginner', desc: 'Less than 1 year of consistent training' },
-  { value: 'intermediate', label: 'Intermediate', desc: '1–3 years of consistent training' },
-  { value: 'advanced', label: 'Advanced', desc: '3+ years of consistent training' },
-];
+export default function BuildRoutineScreen() {
+  const [step, setStep] = useState(1);
+  const [focus, setFocus] = useState<Focus | null>(null);
+  const [goal, setGoal] = useState<Goal | null>(null);
+  const [level, setLevel] = useState<Level | null>(null);
+  const [duration, setDuration] = useState<Duration | null>(null);
+  const [equipment, setEquipment] = useState<string[]>([]);
+  const [notes, setNotes] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [tipIndex, setTipIndex] = useState(0);
+  const [routine, setRoutine] = useState<GeneratedRoutine | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-const DURATION_OPTIONS: { value: DurationWeeks; label: string }[] = [
-  { value: 4, label: '4 weeks' },
-  { value: 8, label: '8 weeks' },
-  { value: 12, label: '12 weeks' },
-];
-
-const DAYS_OPTIONS: { value: DaysPerWeek; label: string }[] = [
-  { value: 3, label: '3 days' },
-  { value: 4, label: '4 days' },
-  { value: 5, label: '5 days' },
-  { value: 6, label: '6 days' },
-];
-
-
-const EQUIPMENT_OPTIONS: { value: Equipment; label: string }[] = [
-  { value: 'BARBELL', label: 'Barbell' },
-  { value: 'DUMBBELL', label: 'Dumbbells' },
-  { value: 'CABLE', label: 'Cables' },
-  { value: 'MACHINE', label: 'Machines' },
-  { value: 'BODYWEIGHT', label: 'Bodyweight' },
-  { value: 'KETTLEBELL', label: 'Kettlebells' },
-  { value: 'RESISTANCE_BAND', label: 'Resistance Bands' },
-];
-
-const AI_TIPS = [
-  'Analysing your goal and schedule...',
-  'Designing your weekly splits...',
-  'Selecting optimal exercises...',
-  'Adding progressive overload...',
-  'Balancing volume and intensity...',
-  'Finalising your program...',
-];
-
-const DEFAULT_FORM: GenerateForm = {
-  goal: '',
-  experience: '',
-  durationWeeks: 0,
-  daysPerWeek: 0,
-  equipment: [],
-  notes: '',
-};
-
-// ─── Step dots ─────────────────────────────────────────────────────────────
-
-function StepDots({ current, total }: { current: number; total: number }) {
-  return (
-    <View style={dotStyles.row}>
-      {Array.from({ length: total }).map((_, i) => (
-        <View
-          key={i}
-          style={[
-            dotStyles.dot,
-            i === current && dotStyles.dotActive,
-            i < current && dotStyles.dotPast,
-          ]}
-        />
-      ))}
-    </View>
-  );
-}
-
-const dotStyles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#162540' },
-  dotActive: { width: 26, backgroundColor: '#3B82F6' },
-  dotPast: { backgroundColor: '#3B82F6', opacity: 0.4 },
-});
-
-// ─── Step 1: Goal + Duration ───────────────────────────────────────────────
-
-function Step1({
-  form,
-  update,
-}: {
-  form: GenerateForm;
-  update: (p: Partial<GenerateForm>) => void;
-}) {
-  return (
-    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-      <Text style={stepStyles.sectionLabel}>Program Goal</Text>
-      <View style={stepStyles.gap10}>
-        {GOALS.map(({ value, label, icon, desc }) => {
-          const selected = form.goal === value;
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[stepStyles.optionRow, selected && stepStyles.optionRowSelected]}
-              onPress={() => update({ goal: value })}
-              activeOpacity={0.7}
-            >
-              <View style={[stepStyles.iconWrap, selected && stepStyles.iconWrapSelected]}>
-                <Ionicons name={icon as any} size={20} color={selected ? '#3B82F6' : '#718FAF'} />
-              </View>
-              <View style={stepStyles.optionInfo}>
-                <Text style={stepStyles.optionLabel}>{label}</Text>
-                <Text style={stepStyles.optionDesc}>{desc}</Text>
-              </View>
-              {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>Program Duration</Text>
-      <View style={stepStyles.chipRow}>
-        {DURATION_OPTIONS.map(({ value, label }) => {
-          const selected = form.durationWeeks === value;
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[stepStyles.chip, selected && stepStyles.chipSelected]}
-              onPress={() => update({ durationWeeks: value })}
-              activeOpacity={0.7}
-            >
-              <Text style={[stepStyles.chipText, selected && stepStyles.chipTextSelected]}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </ScrollView>
-  );
-}
-
-// ─── Step 2: Frequency + Session Duration ─────────────────────────────────
-
-function Step2({
-  form,
-  update,
-}: {
-  form: GenerateForm;
-  update: (p: Partial<GenerateForm>) => void;
-}) {
-  return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={stepStyles.sectionLabel}>Training Frequency</Text>
-      <View style={stepStyles.chipRow}>
-        {DAYS_OPTIONS.map(({ value, label }) => {
-          const selected = form.daysPerWeek === value;
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[stepStyles.chip, selected && stepStyles.chipSelected]}
-              onPress={() => update({ daysPerWeek: value })}
-              activeOpacity={0.7}
-            >
-              <Text style={[stepStyles.chipText, selected && stepStyles.chipTextSelected]}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      <Text style={[stepStyles.sectionLabel, { marginTop: 24 }]}>Experience Level</Text>
-      <View style={stepStyles.gap10}>
-        {EXPERIENCE_OPTIONS.map(({ value, label, desc }) => {
-          const selected = form.experience === value;
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[stepStyles.optionCard, selected && stepStyles.optionCardSelected]}
-              onPress={() => update({ experience: value })}
-              activeOpacity={0.7}
-            >
-              <View style={stepStyles.optionLeft}>
-                <Text style={[stepStyles.optionLabel, selected && stepStyles.optionLabelSelected]}>{label}</Text>
-                <Text style={stepStyles.optionDesc}>{desc}</Text>
-              </View>
-              {selected && <Ionicons name="checkmark-circle" size={20} color="#3B82F6" />}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </ScrollView>
-  );
-}
-
-// ─── Step 3: Equipment ─────────────────────────────────────────────────────
-
-function Step3({
-  form,
-  update,
-}: {
-  form: GenerateForm;
-  update: (p: Partial<GenerateForm>) => void;
-}) {
-  function toggle(eq: Equipment) {
-    const next = form.equipment.includes(eq)
-      ? form.equipment.filter((e) => e !== eq)
-      : [...form.equipment, eq];
-    update({ equipment: next });
-  }
-
-  function selectAll() {
-    update({ equipment: EQUIPMENT_OPTIONS.map((e) => e.value) });
-  }
-
-  return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <TouchableOpacity onPress={selectAll} style={stepStyles.selectAllBtn} activeOpacity={0.7}>
-        <Text style={stepStyles.selectAllText}>Select all (full gym)</Text>
-      </TouchableOpacity>
-      <View style={equipStyles.grid}>
-        {EQUIPMENT_OPTIONS.map(({ value, label }) => {
-          const selected = form.equipment.includes(value);
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[equipStyles.chip, selected && equipStyles.chipSelected]}
-              onPress={() => toggle(value)}
-              activeOpacity={0.7}
-            >
-              <View style={[equipStyles.checkbox, selected && equipStyles.checkboxSelected]}>
-                {selected && <Ionicons name="checkmark" size={12} color="#fff" />}
-              </View>
-              <Text style={[equipStyles.chipText, selected && equipStyles.chipTextSelected]}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </ScrollView>
-  );
-}
-
-const equipStyles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#162540',
-    backgroundColor: '#0B1326',
-    minWidth: '45%',
-    flex: 1,
-  },
-  chipSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
-  checkbox: {
-    width: 18, height: 18, borderRadius: 4, borderWidth: 1,
-    borderColor: '#4A6080', alignItems: 'center', justifyContent: 'center',
-  },
-  checkboxSelected: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
-  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
-  chipTextSelected: { color: '#fff' },
-});
-
-// ─── Step 4: Notes ─────────────────────────────────────────────────────────
-
-function Step4({
-  form,
-  update,
-}: {
-  form: GenerateForm;
-  update: (p: Partial<GenerateForm>) => void;
-}) {
-  return (
-    <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-      <Text style={stepStyles.optionDesc}>
-        Tell the AI anything specific: focus muscle groups, injuries to avoid, preferred exercise styles, or any other context.
-      </Text>
-      <TextInput
-        style={notesStyles.textarea}
-        value={form.notes}
-        onChangeText={(t) => update({ notes: t })}
-        placeholder="e.g. Focus on upper body. Avoid heavy squats due to knee. Love Romanian deadlifts."
-        placeholderTextColor="#4A6080"
-        multiline
-        numberOfLines={6}
-        textAlignVertical="top"
-        maxLength={400}
-      />
-      <Text style={notesStyles.charCount}>{form.notes.length}/400</Text>
-      <Text style={notesStyles.hint}>Optional — leave blank to let the AI decide.</Text>
-    </ScrollView>
-  );
-}
-
-const notesStyles = StyleSheet.create({
-  textarea: {
-    backgroundColor: '#0B1326',
-    borderWidth: 1,
-    borderColor: '#162540',
-    borderRadius: 12,
-    padding: 14,
-    color: '#fff',
-    fontSize: 15,
-    lineHeight: 22,
-    minHeight: 140,
-    marginTop: 16,
-  },
-  charCount: { color: '#4A6080', fontSize: 12, textAlign: 'right', marginTop: 6 },
-  hint: { color: '#4A6080', fontSize: 13, marginTop: 8 },
-});
-
-// ─── Generating screen ─────────────────────────────────────────────────────
-
-function GeneratingScreen({ tip }: { tip: string }) {
-  const rotation = useRef(new Animated.Value(0)).current;
+  const spinAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const anim = Animated.loop(
-      Animated.timing(rotation, {
-        toValue: 1,
-        duration: 1800,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
-    anim.start();
-    return () => anim.stop();
-  }, [rotation]);
+    if (generating) {
+      Animated.loop(
+        Animated.timing(spinAnim, { toValue: 1, duration: 1200, easing: Easing.linear, useNativeDriver: true })
+      ).start();
+    } else {
+      spinAnim.stopAnimation();
+      spinAnim.setValue(0);
+    }
+  }, [generating, spinAnim]);
 
-  const rotate = rotation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+  useEffect(() => {
+    if (!generating) return;
+    const t = setInterval(() => setTipIndex((i) => (i + 1) % LOADING_TIPS.length), 2200);
+    return () => clearInterval(t);
+  }, [generating]);
 
-  return (
-    <View style={genStyles.container}>
-      <View style={genStyles.iconWrap}>
-        <View style={genStyles.pulseOuter} />
-        <View style={genStyles.pulseInner}>
-          <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="sparkles" size={28} color="#3B82F6" />
-          </Animated.View>
-        </View>
-      </View>
-      <Text style={genStyles.title}>AI is building your program...</Text>
-      <Text style={genStyles.tip}>{tip}</Text>
-      <Text style={genStyles.hint}>This usually takes 15–30 seconds</Text>
-    </View>
-  );
-}
-
-const genStyles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-  iconWrap: { width: 80, height: 80, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
-  pulseOuter: {
-    position: 'absolute',
-    width: 80, height: 80, borderRadius: 40,
-    backgroundColor: 'rgba(59, 130, 246,0.12)',
-  },
-  pulseInner: {
-    width: 60, height: 60, borderRadius: 30,
-    backgroundColor: 'rgba(59, 130, 246,0.2)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  title: { color: '#fff', fontSize: 20, fontWeight: '700',
-    fontFamily: 'BarlowCondensed-Bold', marginBottom: 10, textAlign: 'center' },
-  tip: { color: '#718FAF', fontSize: 15, textAlign: 'center', marginBottom: 8, lineHeight: 22 },
-  hint: { color: '#4A6080', fontSize: 13, textAlign: 'center' },
-});
-
-// ─── Success screen ────────────────────────────────────────────────────────
-
-function SuccessScreen({ result }: { result: GenerateResult }) {
-  return (
-    <ScrollView
-      contentContainerStyle={successStyles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={successStyles.iconWrap}>
-        <Ionicons name="checkmark-circle" size={52} color="#22c55e" />
-      </View>
-
-      <Text style={successStyles.programName}>{result.programName}</Text>
-      <Text style={successStyles.programDesc}>
-        {result.routines.length} routine{result.routines.length !== 1 ? 's' : ''} created and saved to your library
-      </Text>
-
-      {/* Routines list */}
-      <View style={successStyles.scheduleCard}>
-        <Text style={successStyles.scheduleTitle}>Created Routines</Text>
-        {result.routines.map((r, i) => (
-          <View key={r.id} style={successStyles.scheduleRow}>
-            <View style={successStyles.routineNum}>
-              <Text style={successStyles.routineNumText}>{i + 1}</Text>
-            </View>
-            <Text style={[successStyles.scheduleDay, { flex: 1 }]}>{r.name}</Text>
-            <Ionicons name="checkmark" size={16} color="#22c55e" />
-          </View>
-        ))}
-      </View>
-
-      <TouchableOpacity
-        style={successStyles.saveBtn}
-        onPress={() => router.replace('/(app)/routines' as any)}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="list-outline" size={18} color="#fff" />
-        <Text style={successStyles.saveBtnText}>View My Routines</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={successStyles.secondaryBtn}
-        onPress={() => router.replace('/(screens)/programs/generate' as any)}
-        activeOpacity={0.8}
-      >
-        <Text style={successStyles.secondaryBtnText}>Generate Another Program</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-}
-
-const successStyles = StyleSheet.create({
-  container: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 40, alignItems: 'center' },
-  iconWrap: { marginBottom: 16 },
-  programName: { color: '#fff', fontSize: 22, fontWeight: '800',
-    fontFamily: 'BarlowCondensed-ExtraBold',
-    fontFamily: 'BarlowCondensed-ExtraBold', textAlign: 'center', marginBottom: 8 },
-  programDesc: { color: '#718FAF', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 20 },
-  scheduleCard: {
-    width: '100%', backgroundColor: '#0B1326', borderRadius: 14,
-    borderWidth: 1, borderColor: '#162540', padding: 16, marginBottom: 20,
-  },
-  scheduleTitle: { color: '#718FAF', fontSize: 11, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 },
-  scheduleRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#162540',
-  },
-  scheduleDay: { color: '#fff', fontSize: 14, fontWeight: '600',
-    fontFamily: 'DMSans-SemiBold' },
-  routineNum: {
-    width: 24, height: 24, borderRadius: 12,
-    backgroundColor: 'rgba(59, 130, 246,0.2)', alignItems: 'center', justifyContent: 'center',
-  },
-  routineNumText: { color: '#3B82F6', fontSize: 12, fontWeight: '700' },
-  saveBtn: {
-    width: '100%', backgroundColor: '#3B82F6', borderRadius: 14,
-    paddingVertical: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    marginBottom: 12,
-  },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
-    fontFamily: 'DMSans-Bold' },
-  secondaryBtn: { paddingVertical: 12 },
-  secondaryBtnText: { color: '#718FAF', fontSize: 14, textDecorationLine: 'underline' },
-});
-
-// ─── Shared step styles ────────────────────────────────────────────────────
-
-const stepStyles = StyleSheet.create({
-  sectionLabel: { color: '#718FAF', fontSize: 12, fontWeight: '700', letterSpacing: 0.6, marginBottom: 10 },
-  gap10: { gap: 10 },
-  optionRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    padding: 16, borderRadius: 14, borderWidth: 1,
-    borderColor: '#162540', backgroundColor: '#0B1326',
-  },
-  optionRowSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
-  iconWrap: {
-    width: 40, height: 40, borderRadius: 10,
-    backgroundColor: '#162540', alignItems: 'center', justifyContent: 'center',
-  },
-  iconWrapSelected: { backgroundColor: 'rgba(59, 130, 246,0.2)' },
-  optionInfo: { flex: 1 },
-  optionLabel: { color: '#718FAF', fontSize: 15, fontWeight: '700', marginBottom: 2 },
-  optionLabelSelected: { color: '#fff' },
-  optionDesc: { color: '#718FAF', fontSize: 13, lineHeight: 19 },
-  optionCard: {
-    flexDirection: 'row', alignItems: 'center',
-    padding: 16, borderRadius: 14, borderWidth: 1,
-    borderColor: '#162540', backgroundColor: '#0B1326',
-  },
-  optionCardSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
-  optionLeft: { flex: 1 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  chip: {
-    paddingHorizontal: 18, paddingVertical: 12, borderRadius: 12,
-    borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326',
-  },
-  chipSelected: { borderColor: '#3B82F6', backgroundColor: 'rgba(59, 130, 246,0.12)' },
-  chipText: { color: '#718FAF', fontSize: 14, fontWeight: '600' },
-  chipTextSelected: { color: '#fff' },
-  selectAllBtn: { alignSelf: 'flex-start' },
-  selectAllText: { color: '#3B82F6', fontSize: 13, fontWeight: '600' },
-});
-
-// ─── Main screen ──────────────────────────────────────────────────────────
-
-const STEP_META = [
-  { title: 'Your Goal', subtitle: 'What are you training for?' },
-  { title: 'Your Schedule', subtitle: 'Frequency and session length' },
-  { title: 'Equipment', subtitle: 'What do you have access to?' },
-  { title: 'Any Notes?', subtitle: 'Focus areas or things to avoid' },
-];
-
-export default function GenerateProgramScreen() {
-  const queryClient = useQueryClient();
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState<GenerateForm>(DEFAULT_FORM);
-  const [generating, setGenerating] = useState(false);
-  const [tipIdx, setTipIdx] = useState(0);
-  const [generateResult, setGenerateResult] = useState<GenerateResult | null>(null);
-  const [error, setError] = useState('');
-
-  function update(partial: Partial<GenerateForm>) {
-    setForm((prev) => ({ ...prev, ...partial }));
+  function toggleEquipment(value: string) {
+    setEquipment((prev) => prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]);
   }
-
-  function canNext(): boolean {
-    if (step === 0) return !!form.goal && form.durationWeeks > 0;
-    if (step === 1) return form.daysPerWeek > 0 && !!form.experience;
-    if (step === 2) return form.equipment.length > 0;
-    return true;
-  }
-
-  const generateMutation = useMutation({
-    throwOnError: false,
-    mutationFn: async () => {
-      const { data } = await api.post('/api/ai/generate-program', {
-        name: DEFAULT_PROGRAM_NAMES[form.goal as ProgramGoal] ?? 'My Program',
-        goal: form.goal,
-        experience: form.experience,
-        durationWeeks: form.durationWeeks,
-        daysPerWeek: form.daysPerWeek,
-        equipment: form.equipment,
-        focusAreas: form.notes.trim() ? [form.notes.trim()] : undefined,
-      });
-      return (data?.data ?? data) as { routines: { id: string; name: string }[]; programName: string };
-    },
-    onSuccess: (data) => {
-      setGenerateResult({ programName: data.programName, routines: data.routines ?? [] });
-      queryClient.invalidateQueries({ queryKey: ['routines'] });
-      setGenerating(false);
-    },
-    onError: (err: any) => {
-      const status = err?.response?.status;
-      const message =
-        status === 429 ? 'Rate limit reached. You can generate up to 100 programs per day. Try again tomorrow.' :
-        status === 401 ? 'Your session has expired. Please log in again.' :
-        (err?.response?.data?.error ?? 'Failed to generate program. Please try again.');
-      setError(message);
-      setGenerating(false);
-    },
-  });
 
   async function handleGenerate() {
+    if (!focus || !goal || !level || !duration || equipment.length === 0) {
+      setError('Please answer all questions first.');
+      return;
+    }
+    setError(null);
     setGenerating(true);
-    setError('');
-    setTipIdx(0);
-
-    const interval = setInterval(() => {
-      setTipIdx((prev) => {
-        const next = prev + 1;
-        if (next >= AI_TIPS.length) {
-          clearInterval(interval);
-          return prev;
-        }
-        return next;
-      });
-    }, 4500);
-
+    setTipIndex(0);
     try {
-      await generateMutation.mutateAsync();
-    } catch {
-      // Error handled in onError callback above
+      const { data } = await api.post('/api/ai/build-routine', {
+        focus, goal, level, durationMins: duration, equipment,
+        notes: notes.trim() || undefined,
+      });
+      setRoutine(data.routine);
+      setStep(5);
+    } catch (e: any) {
+      setError(e?.response?.data?.error ?? e?.message ?? 'Something went wrong. Please try again.');
     } finally {
-      clearInterval(interval);
+      setGenerating(false);
     }
   }
 
-  // ── Generated program success view
-  if (generateResult) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View style={{ width: 40 }} />
-          <Text style={styles.headerTitle}>Program Ready</Text>
-          <View style={{ width: 40 }} />
-        </View>
-        <SuccessScreen result={generateResult} />
-      </SafeAreaView>
-    );
-  }
+  const canStep1 = !!focus && !!goal;
+  const canStep2 = !!level && !!duration;
+  const canStep3 = equipment.length > 0;
+  const spin = spinAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
-  // ── Generating view
-  if (generating) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View style={{ width: 40 }} />
-          <Text style={styles.headerTitle}>Generating</Text>
-          <View style={{ width: 40 }} />
-        </View>
-        {error ? (
-          <View style={styles.errorWrap}>
-            <View style={styles.errorBox}>
-              <Ionicons name="alert-circle" size={24} color="#ef4444" style={{ marginBottom: 8 }} />
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity
-                style={styles.retryBtn}
-                onPress={() => { setGenerating(false); setError(''); }}
-              >
-                <Text style={styles.retryText}>Go back and try again</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <GeneratingScreen tip={AI_TIPS[tipIdx]} />
-        )}
-      </SafeAreaView>
-    );
-  }
-
-  // ── Multi-step form
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={step > 0 ? () => setStep((s) => s - 1) : () => router.back()}
-          style={styles.backBtn}
-        >
+        <TouchableOpacity onPress={() => step <= 1 || step === 5 ? router.back() : setStep((s) => s - 1)} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Ionicons name="sparkles" size={16} color="#3B82F6" />
-          <Text style={styles.headerTitle}>Build with AI</Text>
+          <Text style={styles.headerTitle}>✨ Build a Routine</Text>
+          {step < 5 && <Text style={styles.headerSub}>Step {step} of {TOTAL_STEPS}</Text>}
         </View>
-        <Text style={styles.stepCount}>{step + 1}/{TOTAL_STEPS}</Text>
+        {step < 5 ? (
+          <TouchableOpacity onPress={() => router.back()} style={styles.cancelBtn}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 52 }} />
+        )}
       </View>
 
-      <View style={styles.formContent}>
-        {/* Progress dots */}
-        <StepDots current={step} total={TOTAL_STEPS} />
-
-        {/* Step title */}
-        <Text style={styles.stepTitle}>{STEP_META[step].title}</Text>
-        <Text style={styles.stepSubtitle}>{STEP_META[step].subtitle}</Text>
-
-        {/* Step content */}
-        <View style={styles.stepBody}>
-          {step === 0 && <Step1 form={form} update={update} />}
-          {step === 1 && <Step2 form={form} update={update} />}
-          {step === 2 && <Step3 form={form} update={update} />}
-          {step === 3 && <Step4 form={form} update={update} />}
+      {/* Progress dots */}
+      {step < 5 && (
+        <View style={styles.progressRow}>
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+            <View key={i} style={[styles.progressDot, i < step && styles.progressDotActive]} />
+          ))}
         </View>
-      </View>
+      )}
 
-      {/* Footer CTA */}
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.nextBtn, !canNext() && styles.nextBtnDisabled]}
-          onPress={
-            step < TOTAL_STEPS - 1
-              ? () => setStep((s) => s + 1)
-              : handleGenerate
-          }
-          disabled={!canNext()}
-          activeOpacity={0.8}
-        >
-          {step < TOTAL_STEPS - 1 ? (
-            <>
-              <Text style={styles.nextBtnText}>Continue</Text>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          ) : (
-            <>
-              <Ionicons name="sparkles" size={18} color="#fff" />
-              <Text style={styles.nextBtnText}>Generate Program</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+
+        {/* ── Step 1: Focus + Goal ── */}
+        {step === 1 && (
+          <View>
+            <Text style={styles.stepTitle}>What are you training?</Text>
+            <Text style={styles.stepSub}>Pick a focus area for this routine.</Text>
+            <View style={styles.grid2}>
+              {FOCUS_OPTIONS.map(({ value, emoji }) => (
+                <TouchableOpacity key={value} style={[styles.chipCard, focus === value && styles.chipCardActive]} onPress={() => setFocus(value)}>
+                  <Text style={styles.chipEmoji}>{emoji}</Text>
+                  <Text style={[styles.chipLabel, focus === value && styles.chipLabelActive]}>{value}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={[styles.stepTitle, { marginTop: 24 }]}>Primary goal</Text>
+            <Text style={styles.stepSub}>What do you want from this session?</Text>
+            <View style={styles.grid2}>
+              {GOAL_OPTIONS.map(({ value, label, sub, icon }) => (
+                <TouchableOpacity key={value} style={[styles.goalCard, goal === value && styles.goalCardActive]} onPress={() => setGoal(value)}>
+                  <Ionicons name={icon as any} size={20} color={goal === value ? '#3B82F6' : '#718FAF'} />
+                  <Text style={[styles.goalLabel, goal === value && styles.goalLabelActive]}>{label}</Text>
+                  <Text style={styles.goalSub}>{sub}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={[styles.continueBtn, !canStep1 && styles.continueBtnDisabled]} onPress={() => canStep1 && setStep(2)} disabled={!canStep1}>
+              <Text style={styles.continueBtnText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* ── Step 2: Level + Duration ── */}
+        {step === 2 && (
+          <View>
+            <Text style={styles.stepTitle}>Your experience level</Text>
+            <Text style={styles.stepSub}>{"We'll tailor exercise difficulty to match."}</Text>
+            {LEVEL_OPTIONS.map(({ value, label, sub }) => (
+              <TouchableOpacity key={value} style={[styles.rowCard, level === value && styles.rowCardActive]} onPress={() => setLevel(value)}>
+                <View>
+                  <Text style={[styles.rowCardLabel, level === value && styles.rowCardLabelActive]}>{label}</Text>
+                  <Text style={styles.rowCardSub}>{sub}</Text>
+                </View>
+                {level === value && <Ionicons name="checkmark-circle" size={18} color="#3B82F6" />}
+              </TouchableOpacity>
+            ))}
+
+            <Text style={[styles.stepTitle, { marginTop: 24 }]}>How long do you have?</Text>
+            <Text style={styles.stepSub}>This sets the number of exercises.</Text>
+            <View style={styles.grid4}>
+              {DURATION_OPTIONS.map(({ value, label }) => (
+                <TouchableOpacity key={value} style={[styles.durationBtn, duration === value && styles.durationBtnActive]} onPress={() => setDuration(value)}>
+                  <Text style={[styles.durationBtnText, duration === value && styles.durationBtnTextActive]}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={[styles.continueBtn, !canStep2 && styles.continueBtnDisabled]} onPress={() => canStep2 && setStep(3)} disabled={!canStep2}>
+              <Text style={styles.continueBtnText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* ── Step 3: Equipment ── */}
+        {step === 3 && (
+          <View>
+            <Text style={styles.stepTitle}>Available equipment</Text>
+            <Text style={styles.stepSub}>Select everything you have access to.</Text>
+            <View style={styles.pillsRow}>
+              {EQUIPMENT_OPTIONS.map(({ value, label }) => (
+                <TouchableOpacity key={value} style={[styles.pill, equipment.includes(value) && styles.pillActive]} onPress={() => toggleEquipment(value)}>
+                  <Text style={[styles.pillText, equipment.includes(value) && styles.pillTextActive]}>{label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={[styles.continueBtn, !canStep3 && styles.continueBtnDisabled, { marginTop: 32 }]} onPress={() => canStep3 && setStep(4)} disabled={!canStep3}>
+              <Text style={styles.continueBtnText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* ── Step 4: Notes + Generate ── */}
+        {step === 4 && (
+          <View>
+            <Text style={styles.stepTitle}>Anything specific?</Text>
+            <Text style={styles.stepSub}>Injuries, preferences, or must-have exercises. Optional.</Text>
+
+            <TextInput
+              style={styles.notesInput}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="e.g. avoid squats due to knee pain, include Romanian deadlifts..."
+              placeholderTextColor="#4A6080"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+              maxLength={400}
+            />
+            <Text style={styles.charCount}>{notes.length}/400</Text>
+
+            <View style={styles.summaryCard}>
+              {[
+                { label: 'Focus', value: focus },
+                { label: 'Goal', value: goal?.replace('_', ' ') },
+                { label: 'Level', value: level },
+                { label: 'Duration', value: `${duration} min` },
+                { label: 'Equipment', value: equipment.map((e) => e.charAt(0) + e.slice(1).toLowerCase()).join(', ') },
+              ].map(({ label, value }) => (
+                <View key={label} style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>{label}</Text>
+                  <Text style={styles.summaryValue} numberOfLines={2}>{value}</Text>
+                </View>
+              ))}
+            </View>
+
+            {error && <Text style={styles.errorText}>{error}</Text>}
+
+            <TouchableOpacity style={[styles.generateBtn, generating && styles.generateBtnDisabled]} onPress={handleGenerate} disabled={generating}>
+              <View style={styles.generatingRow}>
+                {generating ? (
+                  <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                    <Ionicons name="sparkles" size={18} color="#fff" />
+                  </Animated.View>
+                ) : (
+                  <Ionicons name="sparkles" size={18} color="#fff" />
+                )}
+                <Text style={styles.generateBtnText}>
+                  {generating ? LOADING_TIPS[tipIndex] : 'Build My Routine'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* ── Step 5: Result ── */}
+        {step === 5 && routine && (
+          <View>
+            <View style={styles.successHeader}>
+              <Ionicons name="checkmark-circle" size={22} color="#22c55e" />
+              <Text style={styles.successTitle}>Routine ready!</Text>
+            </View>
+            {routine.description ? <Text style={styles.successDesc}>{routine.description}</Text> : null}
+
+            <View style={styles.routineCard}>
+              <View style={styles.routineCardHeader}>
+                <Ionicons name="list" size={16} color="#3B82F6" />
+                <Text style={styles.routineCardName}>{routine.name}</Text>
+                <Text style={styles.exerciseCount}>{routine.exercises.length} exercises</Text>
+              </View>
+              {routine.exercises.map((re, i) => (
+                <View key={i} style={[styles.exerciseRow, i > 0 && styles.exerciseRowBorder]}>
+                  <View style={styles.exerciseInfo}>
+                    <Text style={styles.exerciseName}>{re.exercise.name}</Text>
+                    {re.notes ? <Text style={styles.exerciseNotes}>{re.notes}</Text> : null}
+                  </View>
+                  <Text style={styles.exerciseSets}>{re.targetSets}×{re.targetReps}</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.viewBtn} onPress={() => router.replace(`/(screens)/routines/${routine.id}` as never)}>
+              <Text style={styles.viewBtnText}>View Routine</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.regenBtn} onPress={() => { setRoutine(null); setStep(4); setError(null); }}>
+              <Ionicons name="refresh" size={16} color="#718FAF" />
+              <Text style={styles.regenBtnText}>Regenerate</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#060C1B' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#0B1326' },
+  backBtn: { width: 36 },
+  headerCenter: { flex: 1, alignItems: 'center' },
+  headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
+  headerSub: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular', marginTop: 1 },
+  cancelBtn: { width: 52, alignItems: 'flex-end' },
+  cancelText: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#0B1326',
-  },
-  backBtn: { width: 40, height: 40, justifyContent: 'center' },
-  headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  headerTitle: { color: '#fff', fontSize: 17, fontWeight: '700' },
-  stepCount: { color: '#718FAF', fontSize: 13, width: 40, textAlign: 'right' },
+  progressRow: { flexDirection: 'row', gap: 6, paddingHorizontal: 16, paddingTop: 12 },
+  progressDot: { flex: 1, height: 3, borderRadius: 2, backgroundColor: '#162540' },
+  progressDotActive: { backgroundColor: '#3B82F6' },
 
-  formContent: { flex: 1, paddingHorizontal: 20, paddingTop: 24 },
-  stepTitle: { color: '#fff', fontSize: 22, fontWeight: '800',
-    fontFamily: 'BarlowCondensed-ExtraBold',
-    fontFamily: 'BarlowCondensed-ExtraBold', marginBottom: 4 },
-  stepSubtitle: { color: '#718FAF', fontSize: 14, marginBottom: 20 },
-  stepBody: { flex: 1 },
+  scrollContent: { padding: 16, paddingBottom: 48 },
 
-  footer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#0B1326',
-    backgroundColor: '#060C1B',
-  },
-  nextBtn: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 14,
-    paddingVertical: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  nextBtnDisabled: { opacity: 0.4 },
-  nextBtnText: { color: '#fff', fontSize: 16, fontWeight: '700',
-    fontFamily: 'DMSans-Bold' },
+  stepTitle: { color: '#fff', fontSize: 17, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold', marginBottom: 4, marginTop: 8 },
+  stepSub: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular', marginBottom: 16 },
 
-  errorWrap: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
-  errorBox: {
-    backgroundColor: '#0B1326', borderRadius: 16, padding: 24,
-    borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)',
-    alignItems: 'center', width: '100%',
+  grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  chipCard: {
+    width: '47%', flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: '#0B1326', borderRadius: 12, borderWidth: 1, borderColor: '#162540', padding: 12,
   },
-  errorText: { color: '#ef4444', fontSize: 15, textAlign: 'center', lineHeight: 22 },
-  retryBtn: { marginTop: 14 },
-  retryText: { color: '#718FAF', fontSize: 13, textDecorationLine: 'underline' },
+  chipCardActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
+  chipEmoji: { fontSize: 16 },
+  chipLabel: { color: '#718FAF', fontSize: 13, fontWeight: '500', fontFamily: 'DMSans-Medium', flex: 1 },
+  chipLabelActive: { color: '#3B82F6' },
+
+  goalCard: {
+    width: '47%', backgroundColor: '#0B1326', borderRadius: 12, borderWidth: 1,
+    borderColor: '#162540', padding: 12, gap: 4,
+  },
+  goalCardActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.08)' },
+  goalLabel: { color: '#fff', fontSize: 13, fontWeight: '600', fontFamily: 'DMSans-SemiBold', marginTop: 4 },
+  goalLabelActive: { color: '#3B82F6' },
+  goalSub: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular' },
+
+  rowCard: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#0B1326', borderRadius: 12, borderWidth: 1, borderColor: '#162540',
+    padding: 14, marginBottom: 10,
+  },
+  rowCardActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.08)' },
+  rowCardLabel: { color: '#fff', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  rowCardLabelActive: { color: '#3B82F6' },
+  rowCardSub: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular', marginTop: 2 },
+
+  grid4: { flexDirection: 'row', gap: 8, marginTop: 4 },
+  durationBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center',
+    backgroundColor: '#0B1326', borderWidth: 1, borderColor: '#162540',
+  },
+  durationBtnActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
+  durationBtnText: { color: '#718FAF', fontSize: 12, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  durationBtnTextActive: { color: '#3B82F6' },
+
+  pillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  pill: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 999, borderWidth: 1, borderColor: '#162540', backgroundColor: '#0B1326' },
+  pillActive: { borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)' },
+  pillText: { color: '#718FAF', fontSize: 13, fontWeight: '500', fontFamily: 'DMSans-Medium' },
+  pillTextActive: { color: '#3B82F6' },
+
+  notesInput: {
+    backgroundColor: '#0B1326', borderRadius: 12, borderWidth: 1, borderColor: '#162540',
+    padding: 14, color: '#fff', fontSize: 14, fontFamily: 'DMSans-Regular',
+    minHeight: 100, marginBottom: 4,
+  },
+  charCount: { color: '#4A6080', fontSize: 11, textAlign: 'right', marginBottom: 16, fontFamily: 'DMSans-Regular' },
+
+  summaryCard: {
+    backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1,
+    borderColor: '#162540', padding: 14, gap: 10, marginBottom: 20,
+  },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  summaryLabel: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular' },
+  summaryValue: { color: '#fff', fontSize: 13, fontWeight: '500', fontFamily: 'DMSans-Medium', flex: 1, textAlign: 'right', marginLeft: 8, textTransform: 'capitalize' },
+
+  errorText: { color: '#f87171', fontSize: 13, fontFamily: 'DMSans-Regular', marginBottom: 12 },
+
+  continueBtn: { backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 24 },
+  continueBtnDisabled: { opacity: 0.4 },
+  continueBtnText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+
+  generateBtn: { backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
+  generateBtnDisabled: { opacity: 0.6 },
+  generateBtnText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  generatingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+
+  successHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
+  successTitle: { color: '#fff', fontSize: 20, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold' },
+  successDesc: { color: '#718FAF', fontSize: 13, fontFamily: 'DMSans-Regular', marginBottom: 16, lineHeight: 18 },
+
+  routineCard: {
+    backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1,
+    borderColor: '#162540', marginBottom: 20, overflow: 'hidden',
+  },
+  routineCardHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    padding: 14, borderBottomWidth: 1, borderBottomColor: '#162540',
+  },
+  routineCardName: { flex: 1, color: '#fff', fontSize: 14, fontWeight: '600', fontFamily: 'DMSans-SemiBold' },
+  exerciseCount: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular' },
+  exerciseRow: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 8 },
+  exerciseRowBorder: { borderTopWidth: 1, borderTopColor: '#162540' },
+  exerciseInfo: { flex: 1 },
+  exerciseName: { color: '#fff', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
+  exerciseNotes: { color: '#718FAF', fontSize: 11, fontFamily: 'DMSans-Regular', marginTop: 2 },
+  exerciseSets: { color: '#3B82F6', fontSize: 13, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+
+  viewBtn: { backgroundColor: '#3B82F6', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginBottom: 12 },
+  viewBtnText: { color: '#fff', fontSize: 15, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  regenBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, borderWidth: 1, borderColor: '#162540', paddingVertical: 14 },
+  regenBtnText: { color: '#718FAF', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
 });
