@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "fit.pushd.app",
+      "bundleIdentifier": "fit.pushd.web",
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",
