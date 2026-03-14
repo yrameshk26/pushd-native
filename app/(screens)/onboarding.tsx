@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  ActivityIndicator, Alert, Platform,
+  ActivityIndicator, Alert, Platform, Modal, FlatList,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -133,23 +133,19 @@ function StepPersonalInfo({
           onChange={(v) => setDOBField('year', v)}
           style={{ flex: 2 }}
         />
-        <NumberStepper
+        <DropdownPicker
           label="Month"
           value={data.dateOfBirth?.month ?? 1}
-          min={1}
-          max={12}
+          items={MONTHS}
           onChange={(v) => setDOBField('month', v)}
-          style={{ flex: 1.5 }}
-          compact
+          style={{ flex: 2 }}
         />
-        <NumberStepper
+        <DropdownPicker
           label="Day"
           value={data.dateOfBirth?.day ?? 1}
-          min={1}
-          max={31}
+          items={Array.from({ length: 31 }, (_, i) => ({ label: String(i + 1), value: i + 1 }))}
           onChange={(v) => setDOBField('day', v)}
           style={{ flex: 1.5 }}
-          compact
         />
       </View>
 
@@ -179,6 +175,83 @@ function StepPersonalInfo({
     </ScrollView>
   );
 }
+
+// ─── Dropdown Picker ──────────────────────────────────────────────────────────
+
+function DropdownPicker({
+  label, value, items, onChange, style,
+}: {
+  label: string;
+  value: number;
+  items: { label: string; value: number }[];
+  onChange: (v: number) => void;
+  style?: object;
+}) {
+  const [open, setOpen] = useState(false);
+  const selected = items.find((i) => i.value === value);
+
+  return (
+    <View style={[dropdownStyles.container, style]}>
+      {label ? <Text style={dropdownStyles.label}>{label}</Text> : null}
+      <TouchableOpacity style={dropdownStyles.trigger} onPress={() => setOpen(true)} activeOpacity={0.7}>
+        <Text style={dropdownStyles.triggerText}>{selected?.label ?? value}</Text>
+        <Ionicons name="chevron-down" size={14} color="#718FAF" />
+      </TouchableOpacity>
+
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <TouchableOpacity style={dropdownStyles.backdrop} activeOpacity={1} onPress={() => setOpen(false)}>
+          <View style={dropdownStyles.sheet}>
+            <Text style={dropdownStyles.sheetTitle}>{label}</Text>
+            <FlatList
+              data={items}
+              keyExtractor={(i) => String(i.value)}
+              showsVerticalScrollIndicator={false}
+              getItemLayout={(_, index) => ({ length: 48, offset: 48 * index, index })}
+              initialScrollIndex={Math.max(0, items.findIndex((i) => i.value === value))}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[dropdownStyles.option, item.value === value && dropdownStyles.optionActive]}
+                  onPress={() => { onChange(item.value); setOpen(false); }}
+                >
+                  <Text style={[dropdownStyles.optionText, item.value === value && dropdownStyles.optionTextActive]}>
+                    {item.label}
+                  </Text>
+                  {item.value === value && <Ionicons name="checkmark" size={16} color="#3B82F6" />}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
+  );
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+].map((label, i) => ({ label, value: i + 1 }));
+
+const dropdownStyles = StyleSheet.create({
+  container: { marginBottom: 0 },
+  label: { color: '#718FAF', fontSize: 12, marginBottom: 4 },
+  trigger: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#0B1326', borderRadius: 12, borderWidth: 1, borderColor: '#162540',
+    paddingHorizontal: 12, height: 48,
+  },
+  triggerText: { color: '#fff', fontSize: 15, fontWeight: '700', flex: 1 },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: '#0B1326', borderTopLeftRadius: 20, borderTopRightRadius: 20,
+    paddingTop: 16, paddingHorizontal: 16, paddingBottom: 40, maxHeight: '60%',
+  },
+  sheetTitle: { color: '#718FAF', fontSize: 13, fontWeight: '600', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
+  option: { height: 48, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#162540' },
+  optionActive: { backgroundColor: 'rgba(59,130,246,0.08)' },
+  optionText: { color: '#fff', fontSize: 16, flex: 1 },
+  optionTextActive: { color: '#3B82F6', fontWeight: '700' },
+});
 
 // ─── Number Stepper ───────────────────────────────────────────────────────────
 
