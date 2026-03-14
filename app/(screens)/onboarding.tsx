@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  ActivityIndicator, Alert, Platform, Modal, FlatList,
+  ActivityIndicator, Alert, Platform, Modal, FlatList, TextInput,
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -132,6 +132,7 @@ function StepPersonalInfo({
           max={currentYear - 13}
           onChange={(v) => setDOBField('year', v)}
           style={{ flex: 2 }}
+          editable
         />
         <DropdownPicker
           label="Month"
@@ -159,6 +160,7 @@ function StepPersonalInfo({
         onChange={(v) => onChange({ heightCm: v })}
         step={1}
         unit="cm"
+        editable
       />
 
       {/* Weight */}
@@ -171,6 +173,8 @@ function StepPersonalInfo({
         onChange={(v) => onChange({ weightKg: v })}
         step={0.5}
         unit="kg"
+        editable
+        decimal
       />
     </ScrollView>
   );
@@ -256,7 +260,7 @@ const dropdownStyles = StyleSheet.create({
 // ─── Number Stepper ───────────────────────────────────────────────────────────
 
 function NumberStepper({
-  label, value, min, max, step = 1, unit = '', onChange, style, compact = false,
+  label, value, min, max, step = 1, unit = '', onChange, style, compact = false, editable = false, decimal = false,
 }: {
   label: string;
   value: number;
@@ -267,7 +271,12 @@ function NumberStepper({
   onChange: (v: number) => void;
   style?: object;
   compact?: boolean;
+  editable?: boolean;
+  decimal?: boolean;
 }) {
+  const [inputText, setInputText] = useState('');
+  const [editing, setEditing] = useState(false);
+
   const decrement = () => {
     const next = Math.round((value - step) * 100) / 100;
     if (next >= min) onChange(next);
@@ -275,6 +284,17 @@ function NumberStepper({
   const increment = () => {
     const next = Math.round((value + step) * 100) / 100;
     if (next <= max) onChange(next);
+  };
+
+  const handleInputChange = (text: string) => {
+    setInputText(decimal ? text.replace(/[^0-9.]/g, '') : text.replace(/[^0-9]/g, ''));
+  };
+
+  const commitInput = () => {
+    const num = decimal ? parseFloat(inputText) : parseInt(inputText, 10);
+    if (!isNaN(num) && num >= min && num <= max) onChange(num);
+    setEditing(false);
+    setInputText('');
   };
 
   const btnStyle = compact ? [stepperStyles.btn, stepperStyles.btnCompact] : stepperStyles.btn;
@@ -287,7 +307,25 @@ function NumberStepper({
         <TouchableOpacity style={btnStyle} onPress={decrement}>
           <Ionicons name="remove" size={iconSize} color="#fff" />
         </TouchableOpacity>
-        <Text style={stepperStyles.value}>{value}{unit}</Text>
+        {editable && editing ? (
+          <TextInput
+            style={stepperStyles.valueInput}
+            value={inputText}
+            onChangeText={handleInputChange}
+            onBlur={commitInput}
+            onSubmitEditing={commitInput}
+            keyboardType={decimal ? 'decimal-pad' : 'number-pad'}
+            maxLength={decimal ? 6 : 4}
+            autoFocus
+            selectTextOnFocus
+          />
+        ) : editable ? (
+          <TouchableOpacity style={{ flex: 1 }} onPress={() => { setInputText(String(value)); setEditing(true); }}>
+            <Text style={stepperStyles.value}>{value}{unit}</Text>
+          </TouchableOpacity>
+        ) : (
+          <Text style={stepperStyles.value}>{value}{unit}</Text>
+        )}
         <TouchableOpacity style={btnStyle} onPress={increment}>
           <Ionicons name="add" size={iconSize} color="#fff" />
         </TouchableOpacity>
@@ -663,6 +701,11 @@ const stepperStyles = StyleSheet.create({
   },
   value: { color: '#fff', fontSize: 18, fontWeight: '700',
     fontFamily: 'BarlowCondensed-Bold', flex: 1, textAlign: 'center' },
+  valueInput: {
+    color: '#fff', fontSize: 18, fontWeight: '700',
+    fontFamily: 'BarlowCondensed-Bold', flex: 1, textAlign: 'center',
+    borderBottomWidth: 1, borderBottomColor: '#3B82F6',
+  },
 });
 
 const goalStyles = StyleSheet.create({
