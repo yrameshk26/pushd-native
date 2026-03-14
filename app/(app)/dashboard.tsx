@@ -275,7 +275,7 @@ export default function DashboardScreen() {
       const res = await api.get('/api/weekly-review/latest');
       return res.data.data ?? res.data;
     },
-    staleTime: 6 * 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
     retry: 1,
   });
 
