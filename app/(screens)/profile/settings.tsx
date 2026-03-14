@@ -31,6 +31,7 @@ interface UserProfile {
   email: string;
   weightUnit: 'KG' | 'LBS';
   avatarUrl?: string | null;
+  isAdmin?: boolean;
 }
 
 function getInitials(name: string): string {
@@ -414,6 +415,23 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={16} color="#4A6080" />
           </TouchableOpacity>
         </View>
+
+        {/* Admin */}
+        {data?.isAdmin && (
+          <>
+            <Text style={styles.sectionLabel}>Admin</Text>
+            <View style={styles.card}>
+              <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/admin' as never)}>
+                <Ionicons name="shield-checkmark" size={20} color="#F59E0B" style={styles.linkIcon} />
+                <View style={styles.linkTextGroup}>
+                  <Text style={[styles.linkLabel, { color: '#F59E0B' }]}>Admin Dashboard</Text>
+                  <Text style={styles.linkSub}>Manage users, tiers and promo codes</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#F59E0B" />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
         {/* Support */}
         <Text style={styles.sectionLabel}>Support</Text>
