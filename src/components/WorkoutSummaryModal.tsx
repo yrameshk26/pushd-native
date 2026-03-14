@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActiveWorkout } from '../types';
 
@@ -55,76 +55,82 @@ export function WorkoutSummaryModal({ visible, workout, elapsedSeconds, onSave, 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <View style={styles.container}>
-        {/* Trophy icon */}
-        <View style={styles.iconWrap}>
-          <Ionicons name="trophy" size={48} color="#FFD700" />
-        </View>
-
-        <Text style={styles.heading}>Great work!</Text>
-        <Text style={styles.message}>{message}</Text>
-
-        {/* Workout title */}
-        <Text style={styles.workoutTitle}>{workout.title}</Text>
-
-        {/* Stats grid */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statCell}>
-            <Ionicons name="time-outline" size={22} color="#3B82F6" />
-            <Text style={styles.statValue}>{formatDuration(elapsedSeconds)}</Text>
-            <Text style={styles.statLabel}>Duration</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {/* Trophy icon */}
+          <View style={styles.iconWrap}>
+            <Ionicons name="trophy" size={48} color="#FFD700" />
           </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statCell}>
-            <Ionicons name="barbell-outline" size={22} color="#3B82F6" />
-            <Text style={styles.statValue}>{formatVolume(volume)}</Text>
-            <Text style={styles.statLabel}>Volume</Text>
+
+          <Text style={styles.heading}>Great work!</Text>
+          <Text style={styles.message}>{message}</Text>
+
+          {/* Workout title */}
+          <Text style={styles.workoutTitle}>{workout.title}</Text>
+
+          {/* Stats grid */}
+          <View style={styles.statsGrid}>
+            <View style={styles.statCell}>
+              <Ionicons name="time-outline" size={22} color="#3B82F6" />
+              <Text style={styles.statValue}>{formatDuration(elapsedSeconds)}</Text>
+              <Text style={styles.statLabel}>Duration</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statCell}>
+              <Ionicons name="barbell-outline" size={22} color="#3B82F6" />
+              <Text style={styles.statValue}>{formatVolume(volume)}</Text>
+              <Text style={styles.statLabel}>Volume</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statCell}>
+              <Ionicons name="layers-outline" size={22} color="#3B82F6" />
+              <Text style={styles.statValue}>{totalSets}</Text>
+              <Text style={styles.statLabel}>Sets</Text>
+            </View>
           </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statCell}>
-            <Ionicons name="layers-outline" size={22} color="#3B82F6" />
-            <Text style={styles.statValue}>{totalSets}</Text>
-            <Text style={styles.statLabel}>Sets</Text>
+
+          <View style={styles.statsGrid}>
+            <View style={styles.statCell}>
+              <Ionicons name="body-outline" size={22} color="#3B82F6" />
+              <Text style={styles.statValue}>{workout.exercises.length}</Text>
+              <Text style={styles.statLabel}>Exercises</Text>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.statsGrid}>
-          <View style={styles.statCell}>
-            <Ionicons name="body-outline" size={22} color="#3B82F6" />
-            <Text style={styles.statValue}>{workout.exercises.length}</Text>
-            <Text style={styles.statLabel}>Exercises</Text>
+          {/* Exercise list summary */}
+          <View style={styles.exerciseList}>
+            {workout.exercises.map((ex) => {
+              const completedSets = ex.sets.filter((s) => s.isCompleted).length;
+              return (
+                <View key={ex.localId} style={styles.exerciseRow}>
+                  <Text style={styles.exerciseName} numberOfLines={1}>{ex.exerciseName}</Text>
+                  <Text style={styles.exerciseSets}>{completedSets} sets</Text>
+                </View>
+              );
+            })}
           </View>
-        </View>
 
-        {/* Exercise list summary */}
-        <View style={styles.exerciseList}>
-          {workout.exercises.map((ex) => {
-            const completedSets = ex.sets.filter((s) => s.isCompleted).length;
-            return (
-              <View key={ex.localId} style={styles.exerciseRow}>
-                <Text style={styles.exerciseName} numberOfLines={1}>{ex.exerciseName}</Text>
-                <Text style={styles.exerciseSets}>{completedSets} sets</Text>
-              </View>
-            );
-          })}
-        </View>
+          {/* Actions */}
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={isSaving}>
+              {isSaving ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <>
+                  <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                  <Text style={styles.saveBtnText}>Save Workout</Text>
+                </>
+              )}
+            </TouchableOpacity>
 
-        {/* Actions */}
-        <View style={styles.actions}>
-          <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={isSaving}>
-            {isSaving ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                <Text style={styles.saveBtnText}>Save Workout</Text>
-              </>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.discardBtn} onPress={onDiscard} disabled={isSaving}>
-            <Text style={styles.discardBtnText}>Discard</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.discardBtn} onPress={onDiscard} disabled={isSaving}>
+              <Text style={styles.discardBtnText}>Discard</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -133,7 +139,9 @@ export function WorkoutSummaryModal({ visible, workout, elapsedSeconds, onSave, 
 const styles = StyleSheet.create({
   container: {
     flex: 1, backgroundColor: '#060C1B',
-    alignItems: 'center', padding: 32, paddingTop: 60,
+  },
+  scrollContent: {
+    alignItems: 'center', padding: 32, paddingTop: 60, paddingBottom: 40,
   },
   iconWrap: {
     width: 88, height: 88, borderRadius: 44,
