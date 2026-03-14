@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../src/api/client';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -84,6 +85,7 @@ const TOTAL_STEPS = 4;
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function BuildRoutineScreen() {
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [focus, setFocus] = useState<Focus | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
@@ -133,6 +135,7 @@ export default function BuildRoutineScreen() {
         notes: notes.trim() || undefined,
       });
       setRoutine(data.routine);
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
       setStep(5);
     } catch (e: any) {
       setError(e?.response?.data?.error ?? e?.message ?? 'Something went wrong. Please try again.');
