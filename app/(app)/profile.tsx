@@ -5,6 +5,7 @@ import { useAuthStore } from '../../src/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useSubscriptionStore, isPro, isElite } from '../../src/store/subscription';
 
 interface UserProfile {
   id: string;
@@ -73,6 +74,7 @@ export default function ProfileScreen() {
   const { data: me, isLoading: meLoading } = useMe();
   const { data: stats, isLoading: statsLoading } = useUserStats();
   const logout = useAuthStore((s) => s.logout);
+  const { tier } = useSubscriptionStore();
 
   const displayName = me?.displayName ?? me?.username ?? 'User';
   const initials = getInitials(displayName);
@@ -135,6 +137,40 @@ export default function ProfileScreen() {
               {me?.username && <Text style={styles.username}>@{me.username}</Text>}
               {me?.bio ? <Text style={styles.bio}>{me.bio}</Text> : null}
             </View>
+
+            {/* Subscription card */}
+            <TouchableOpacity
+              style={[
+                styles.subCard,
+                tier === 'ELITE' && styles.subCardElite,
+                tier === 'PRO' && styles.subCardPro,
+              ]}
+              onPress={() => router.push('/(screens)/paywall' as never)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.subCardLeft}>
+                <Ionicons
+                  name={tier === 'ELITE' ? 'diamond' : tier === 'PRO' ? 'star' : 'sparkles'}
+                  size={18}
+                  color={tier === 'ELITE' ? '#F59E0B' : tier === 'PRO' ? '#3B82F6' : '#718FAF'}
+                />
+                <View>
+                  <Text style={styles.subCardTier}>
+                    {tier === 'FREE' ? 'Free Plan' : tier === 'PRO' ? 'Pro' : 'Elite'}
+                  </Text>
+                  {!isElite(tier) && (
+                    <Text style={styles.subCardSub}>
+                      {tier === 'FREE' ? 'Upgrade to unlock all features' : 'Upgrade to Elite for AI Coach'}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              {!isElite(tier) && (
+                <View style={[styles.subUpgradeBtn, tier === 'PRO' ? styles.subUpgradeBtnElite : styles.subUpgradeBtnPro]}>
+                  <Text style={styles.subUpgradeBtnText}>Upgrade</Text>
+                </View>
+              )}
+            </TouchableOpacity>
 
             {/* Stats row — 3 columns matching PWA */}
             {statsLoading ? (
@@ -229,4 +265,19 @@ const styles = StyleSheet.create({
   },
   linkIcon: { marginRight: 12 },
   linkLabel: { flex: 1, color: '#fff', fontSize: 14, fontWeight: '500', fontFamily: 'DMSans-Medium' },
+
+  subCard: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#0B1326', borderRadius: 14, borderWidth: 1, borderColor: '#162540',
+    padding: 14, marginBottom: 20,
+  },
+  subCardPro: { borderColor: 'rgba(59,130,246,0.4)' },
+  subCardElite: { borderColor: 'rgba(245,158,11,0.4)' },
+  subCardLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  subCardTier: { color: '#fff', fontSize: 14, fontWeight: '700', fontFamily: 'DMSans-Bold' },
+  subCardSub: { color: '#718FAF', fontSize: 12, fontFamily: 'DMSans-Regular', marginTop: 1 },
+  subUpgradeBtn: { borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
+  subUpgradeBtnPro: { backgroundColor: '#3B82F6' },
+  subUpgradeBtnElite: { backgroundColor: '#F59E0B' },
+  subUpgradeBtnText: { color: '#fff', fontSize: 12, fontWeight: '700', fontFamily: 'DMSans-Bold' },
 });

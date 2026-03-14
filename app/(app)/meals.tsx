@@ -4,6 +4,8 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { api } from '../../src/api/client';
+import { useSubscriptionStore, isPro } from '../../src/store/subscription';
+import { ProGate } from '../../components/ProGate';
 
 interface MealPlan {
   id: string;
@@ -28,6 +30,7 @@ const GOAL_STYLE: Record<string, { color: string; bg: string }> = {
 };
 
 export default function MealsScreen() {
+  const { tier } = useSubscriptionStore();
   const { data, isLoading, isError, refetch } = useQuery<MealPlan[]>({
     queryKey: ['meal-plans'],
     queryFn: async () => {
@@ -39,6 +42,14 @@ export default function MealsScreen() {
   });
 
   const plans = data ?? [];
+
+  if (!isPro(tier)) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#060C1B' }}>
+        <ProGate required="pro">{null}</ProGate>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>

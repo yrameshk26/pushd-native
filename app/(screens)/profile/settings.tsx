@@ -296,6 +296,19 @@ export default function SettingsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
+        {/* Subscription & Billing */}
+        <Text style={styles.sectionLabel}>Subscription</Text>
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(screens)/paywall' as never)}>
+            <Ionicons name="sparkles-outline" size={20} color="#F59E0B" style={styles.linkIcon} />
+            <View style={styles.linkTextGroup}>
+              <Text style={styles.linkLabel}>Subscription &amp; Billing</Text>
+              <Text style={styles.linkSub}>Manage your plan, upgrade or apply promo codes</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#4A6080" />
+          </TouchableOpacity>
+        </View>
+
         {/* Avatar */}
         <TouchableOpacity style={styles.avatarSection} onPress={handleChangePhoto} activeOpacity={0.8} disabled={avatarUploading}>
           <View style={styles.avatarWrap}>

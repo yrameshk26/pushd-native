@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSubscriptionStore, isElite } from '../../../src/store/subscription';
+import { ProGate } from '../../../components/ProGate';
 import { api } from '../../../src/api/client';
 import { storage } from '../../../src/utils/storage';
 import { TOKEN_STORAGE_KEY, API_BASE_URL } from '../../../src/constants/config';
@@ -516,7 +518,23 @@ const successStyles = StyleSheet.create({
 // ─── Main screen ───────────────────────────────────────────────────────────
 
 export default function AIPlannerScreen() {
+  const { tier } = useSubscriptionStore();
   const queryClient = useQueryClient();
+
+  if (!isElite(tier)) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#060C1B' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14 }}>
+          <TouchableOpacity onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center' }}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={{ color: '#fff', fontSize: 18, fontWeight: '700', fontFamily: 'BarlowCondensed-Bold', flex: 1, textAlign: 'center' }}>AI Planner</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <ProGate required="elite">{null}</ProGate>
+      </SafeAreaView>
+    );
+  }
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<PlanForm>(DEFAULT_FORM);
   const [generating, setGenerating] = useState(false);
