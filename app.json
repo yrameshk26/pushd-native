@@ -20,7 +20,14 @@
           "fetch",
           "remote-notification"
         ],
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.457233933936-je2apg0il7a9cm51ktrh2s8q7c5rmrad"
+            ]
+          }
+        ]
       },
       "entitlements": {
         "com.apple.developer.associated-domains": [
