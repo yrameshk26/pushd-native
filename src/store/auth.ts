@@ -122,12 +122,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
-    const refreshToken = await storage.getItemAsync(REFRESH_TOKEN_STORAGE_KEY);
-    if (refreshToken) {
-      await api.post('/api/auth/native/revoke', { refresh_token: refreshToken }).catch(() => {});
-    }
+    // Keep the refresh token so biometric login can re-authenticate on next visit.
+    // The token is protected by Face ID / Touch ID — it cannot be used without passing biometrics.
     await storage.deleteItemAsync(TOKEN_STORAGE_KEY);
-    await storage.deleteItemAsync(REFRESH_TOKEN_STORAGE_KEY);
     set({
       isAuthenticated: false,
       userId: null,
